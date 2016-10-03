@@ -3,22 +3,28 @@
     "type": "A",
     "queue": [
       {
-        "ticket_number": 4
+        "ticket_number": 1,
+        "request_timestamp": 1251
       },
       {
-        "ticket_number": 2
+        "ticket_number": 2,
+        "request_timestamp": 1251
       },
       {
-        "ticket_number": 3
+        "ticket_number": 3,
+        "request_timestamp": 1251
       },
       {
-        "ticket_number": 4
+        "ticket_number": 4,
+        "request_timestamp": 1251
       },
       {
-        "ticket_number": 5
+        "ticket_number": 5,
+        "request_timestamp": 1251
       },
       {
-        "ticket_number": 6
+        "ticket_number": 6,
+        "request_timestamp": 1251
       }
     ]
   },
@@ -26,7 +32,8 @@
     "type": "B",
     "queue": [
       {
-        "ticket_number": -2
+        "ticket_number": -2,
+        "request_timestamp": 1251
       }
     ]
   }

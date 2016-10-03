@@ -112,7 +112,42 @@ app.get('/employee/nextTicket', function (req, res) {
 
 app.get('/employee/fullQueue', function (req, res) {
     console.log('employee fullQueue - entered');
-    res.status(200).end("employee/fullQueue...");
+    var ticket_type = req.query.ticket_type;
+    var filesPath = [ticket_queue_path];
+
+
+    async.map(filesPath, function (filePath, cb) { //reading files or dir
+        fs.readFile(filePath, 'utf8', cb);
+    }, function (err, results) {
+        //console.log(data[0]['type'])
+        var queues = JSON.parse(results[0]);
+        //var queues = data;
+
+        if (ticket_type != null) {
+
+            console.log('employee fullQueue - searching ticket type (%s) queue', ticket_type);
+
+            for (var i = 0; i < queues.length; i++) {
+                if (queues[i]['type'] == ticket_type) {
+                    console.log('employee fullQueue - found ticket type queue');
+                    var ticket_queue= queues[i]['queue'];
+                    break;
+                }
+            }
+            res.status(200).end(JSON.stringify(ticket_queue));
+
+        }
+        else {
+            console.log('employee fullQueue - bad request (no ticket type parameter)');
+            var error_resp = JSON.parse(error_template);
+            error_resp['code'] = 400;
+            error_resp['message'] = "bad request";
+            error_resp['fields'] = "ticket_type";
+            console.log(error_resp);
+            res.status(400).end(JSON.stringify(error_resp));
+
+        }
+    });
 
 });
 
