@@ -1,0 +1,33 @@
+[
+  {
+    "type": "A",
+    "queue": [
+      {
+        "ticket_number": 4
+      },
+      {
+        "ticket_number": 2
+      },
+      {
+        "ticket_number": 3
+      },
+      {
+        "ticket_number": 4
+      },
+      {
+        "ticket_number": 5
+      },
+      {
+        "ticket_number": 6
+      }
+    ]
+  },
+  {
+    "type": "B",
+    "queue": [
+      {
+        "ticket_number": -2
+      }
+    ]
+  }
+]

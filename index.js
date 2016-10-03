@@ -6,9 +6,12 @@ var fs = require("fs");
 var async = require("async");
 
 
-/****Final Variables & Templates****/
+/**** Final Variables & Templates ****/
+var ticket_queue_path = __dirname + "/data/ticket_queue.json"
 
-
+var ticket_template = '{"ticket_number":-1,"ticket_type":"A"}';
+var ticket_brief_template = '{"ticket_number":-1}';
+var error_template = '{"code":-1,"message":"A","fields":"xpto"}';
 
 /**** Initial Things *****/
 
@@ -38,7 +41,6 @@ app.use(bodyParser.urlencoded({
 }));
 
 
-
 /**** Private functions ****/
 
 /**** GET METHODS ****/
@@ -46,20 +48,119 @@ app.use(bodyParser.urlencoded({
 /**** for everyone ****/
 app.get('/', function (req, res) {
     //console.log( data );
-    res.end("good evening...");
+    res.status(200).end("good evening...");
+
+});
+
+app.get('/clientByTicket', function (req, res) {
+    console.log('clients by ticket - entered');
+    res.status(200).end("clientByTicket...");
+
+});
+
+app.get('/ticketByClient', function (req, res) {
+    console.log('ticket by client - entered');
+    res.status(200).end(ticket_template);
 
 });
 
 
+/**** for employees ****/
+
+app.get('/employee/nextTicket', function (req, res) {
+    console.log('employee nextTicket - entered');
+    var ticket_type = req.query.ticket_type;
+    var filesPath = [ticket_queue_path];
+
+
+    async.map(filesPath, function (filePath, cb) { //reading files or dir
+        fs.readFile(filePath, 'utf8', cb);
+    }, function (err, results) {
+        //console.log(data[0]['type'])
+        var queues = JSON.parse(results[0]);
+        //var queues = data;
+
+        if (ticket_type != null) {
+
+            var next_ticket = JSON.parse(ticket_brief_template);
+            console.log('employee nextTicket - searching ticket type (%s) queue', ticket_type);
+
+            for (var i = 0; i < queues.length; i++) {
+                if (queues[i]['type'] == ticket_type) {
+                    console.log('employee nextTicket - found ticket type queue');
+                    next_ticket['ticket_number'] = queues[i]['queue'][0]['ticket_number'];
+                    break;
+                }
+            }
+            res.status(200).end(JSON.stringify(next_ticket));
+
+        }
+        else {
+            console.log('employee nextTicket - bad request (no ticket type parameter)');
+            var error_resp = JSON.parse(error_template);
+            error_resp['code'] = 400;
+            error_resp['message'] = "bad request";
+            error_resp['fields'] = "ticket_type";
+            console.log(error_resp);
+            res.status(400).end(JSON.stringify(error_resp));
+
+        }
+    });
+
+
+});
+
+app.get('/employee/fullQueue', function (req, res) {
+    console.log('employee fullQueue - entered');
+    res.status(200).end("employee/fullQueue...");
+
+});
+
+
+/**** for clients ****/
+
+app.get('/client/remainingTime', function (req, res) {
+    console.log('client remainingTime - entered');
+    res.status(200).end("client/remainingTime...");
+
+});
+
 
 /**** POST methods ****/
 
+/**** for employees ****/
 
+app.post('/employee/ticketAttended', function (req, res) {
+    console.log('employee ticketAttended - entered');
+    res.status(200).end("employee/ticketAttended...");
+
+});
+
+app.post('/employee/closeForTheDay', function (req, res) {
+    console.log('employee closeForTheDay - entered');
+    res.status(200).end("employee/closeForTheDay...");
+
+});
+
+app.post('/employee/newDay', function (req, res) {
+    console.log('employee newDay - entered');
+    res.status(200).end("employee/newDay...");
+
+});
+
+
+/**** for clients *****/
+
+app.post('/client/requestTicket', function (req, res) {
+    console.log('client requestTicket - entered');
+    res.status(200).end("client/requestTicket...");
+
+});
 
 
 /**** Put server running ****/
 
-var server = app.listen(5000, function () {
+var server = app.listen(80, function () {
 
     var host = server.address().address;
     var port = server.address().port;
@@ -71,8 +172,8 @@ var server = app.listen(5000, function () {
 
 /********************* Break! this section is for routine check on server ******************/
 
-var minutes = 30, the_interval = minutes * 60 * 1000;
+var minutes = 5, the_interval = minutes * 60 * 1000;
 setInterval(function () {
-    console.log("I am doing my 6 seconds check");
+    console.log("I am doing my %d minute(s) check", minutes);
     // do your stuff here
 }, the_interval);
