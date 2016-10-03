@@ -1,0 +1,32 @@
+{
+  "name": "Ticket_module",
+  "version": "1.0.0",
+  "description": "nodejs server for backend operations for the ticket module for the ES project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TFM93/Service-Engeneering.git"
+  },
+  "keywords": [
+    "node",
+    "js"
+  ],
+  "author": "rofler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TFM93/Service-Engeneering/issues"
+  },
+  "homepage": "https://github.com/TFM93/Service-Engeneering#readme",
+  "dependencies": {
+    "async": "^2.0.1",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "jsonfile": "^2.3.1"
+  }
+}
