@@ -1,0 +1,87 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: Notifications Module
+  description: Move your app forward with the Notifications API
+  version: "1.0.0"
+# the domain of the service
+host: api.notifications.com
+# array of all schemes that your API supports
+schemes:
+  - https
+# will be prefixed to all paths
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /notification/getMethods:
+    get:
+      summary: Usable notifications
+      description: |
+        The getMethods endpoint returns information about the available notification methods.
+      tags:
+        - Methods
+      responses:
+        200:
+          description: An array of methods
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Methods'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /notification/notify:
+    post:
+      summary: send notification
+      description: |
+        Send a notification via selected method to the desired client.
+      tags:
+        - Notifications
+      parameters:
+        - name: method
+          in: query
+          description: Name of the desired notification method. check availlable options at /notficiation/getMethods
+          required: true
+          type: string
+          format: double
+        - name: content
+          in: query
+          description: String with message content
+          required: true
+          type: string
+        - name: contact
+          in: query
+          description: destination contact. could be sms number, email address or other... accordingly to the selected method
+          required: true
+          type: string
+      responses:
+        200:
+          description: notification sent
+          schema:
+            type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  Methods:
+    type: string
+    properties:
+      method_id:
+        type: string
+        description: Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles.
+
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
