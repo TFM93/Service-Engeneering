@@ -1,0 +1,10 @@
+cd templates/master
+npm install
+bower i
+gulp scripts:app styles:app styles:themes
+source ~/es-venv/bin/activate
+pip install -r requirements.txt
+export FLASK_APP='id-server.py'
+# For debug
+export FLASKP_DEBUG=1
+deactivate
