@@ -485,7 +485,7 @@ app.post('/client/requestTicket', function (req, res) {
 
 /**** Put server running ****/
 
-var server = app.listen(5000, function () {
+var server = app.listen(process.env.PORT || 80, function () {
 
     var host = server.address().address;
     var port = server.address().port;
