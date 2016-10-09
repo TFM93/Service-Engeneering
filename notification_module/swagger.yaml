@@ -52,6 +52,11 @@ paths:
           description: String with message content
           required: true
           type: string
+        - name: subject
+          in: query
+          description: String with message subject
+          required: true
+          type: string
         - name: contact
           in: query
           description: destination contact. could be sms number, email address or other... accordingly to the selected method
