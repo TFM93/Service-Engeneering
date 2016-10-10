@@ -61,7 +61,6 @@ function findTicketInQueue(queue, ticket_number) {
         console.log('findTicketInQueue - ticket is not at the top of the queue - check if bogus');
         if (ticket_number < queue[0]['ticket_number']) {
             console.log('findTicketInQueue - ticket is not in the queue');
-            return -1;
         }
         else {
             for (var i = 1; i < queue.length; i++) {
@@ -71,6 +70,7 @@ function findTicketInQueue(queue, ticket_number) {
                 }
             }
         }
+        return -1;
         //res.status(200).end("shit");
     }
 }
@@ -232,7 +232,7 @@ app.post('/employee/ticketAttended', function (req, res) {
         //console.log(data[0]['type'])
         var queues = JSON.parse(results[0]);
 
-        if (ticket_req.ticket_type != null && ticket_req.ticket_number != null && ticket_req.ticket_number > 0) {
+        if (ticket_req != null && ticket_req.ticket_type != null && ticket_req.ticket_number != null && ticket_req.ticket_number > 0) {
 
             console.log('employee ticketAttended - searching ticket type (%s) queue', ticket_req.ticket_type);
 
@@ -331,7 +331,7 @@ app.post('/employee/makeNewType', function (req, res) {
             //console.log(data[0]['type'])
             var queues = JSON.parse(results[0]);
 
-            if (ticket_req.ticket_type != null) {
+            if (ticket_req != null && ticket_req.ticket_type != null) {
 
                 console.log('employee makeNewType - searching ticket type (%s) queue', ticket_req.ticket_type);
 
@@ -417,7 +417,7 @@ app.post('/client/requestTicket', function (req, res) {
             //console.log(data[0]['type'])
             var queues = JSON.parse(results[0]);
 
-            if (ticket_req.ticket_type != null) {
+            if (ticket_req != null && ticket_req.ticket_type != null) {
 
                 console.log('client requestTicket - searching ticket type (%s) queue', ticket_req.ticket_type);
 
