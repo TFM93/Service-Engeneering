@@ -1,0 +1,278 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: Ticket Server API
+  description: API for the ticket service (to be used by Compositor module and Arduino endpoint).
+  version: "0.0.5"
+# the domain of the service
+host: localhost
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /v1
+produces:
+  - application/json
+paths:
+
+################################  GET methods ###############################
+
+
+  /employee/nextTicket:
+    get:
+      summary: get next ticket number
+      description: |
+        To be used by service employees to get next client to call.
+      parameters:
+        - name: ticket_type
+          in: query
+          type: string
+          description: Ticket type.
+      tags:
+        - employees
+      responses:
+        200:
+          description: Json with ticket number
+          schema:
+            $ref: '#/definitions/Ticket_brief'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+            
+  /employee/fullQueue:
+    get:
+      summary: get full ticket queue
+      description: |
+        get array with full ticket queue
+      parameters:
+        - name: ticket_type
+          in: query
+          type: string
+          description: Ticket type.
+      tags:
+        - employees
+      responses:
+        200:
+          description: Json array with ticket queue
+          schema:
+            $ref: '#/definitions/Ticket_queue_brief'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /client/remainingTime:
+    get:
+      summary: get a prediction for the remainging waiting time for specific ticket
+      description: |
+        average resolution time for each ticket is calculated by the server, this call allows the user to get a prediction for the remaining waiing time for his/her ticket to be called.
+      parameters:
+        - name: ticket_number
+          in: query
+          type: integer
+          format: int32
+          description: Ticket number.
+        - name: ticket_type
+          in: query
+          type: string
+          description: Ticket type.
+      tags:
+        - clients
+      responses:
+        200:
+          description: Json array with ticket queue
+          schema:
+            $ref: '#/definitions/remaining_time'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+
+#################################  POST methods  #########################################
+
+
+  /employee/ticketAttended:
+    post:
+      summary: Client is attended, ticket is removed
+      description: |
+        Before client is attended, employee comunicates to the server that the ticket is now null.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ticket
+          in: body
+          description: ticket to be removed from queue.
+          required: true
+          schema:
+            $ref: '#/definitions/Ticket'
+      tags:
+        - employees
+      responses:
+        200:
+          description: Json with ok code
+          schema:
+              $ref: '#/definitions/Ok_res'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+            
+  /employee/makeNewType:
+    post:
+      summary: create new line
+      description: |
+        Creates new line for clients to request tickets from.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ticket_type
+          in: body
+          description: type.
+          required: true
+          schema:
+            $ref: '#/definitions/Ticket_type'
+      tags:
+        - employees
+      responses:
+        200:
+          description: Json with ok code
+          schema:
+              $ref: '#/definitions/Ok_res'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+            
+  /employee/closeForTheDay:
+    post:
+      summary: resets System
+      description: makes api stop accepting ticket request calls until action is resumed (with newDay call)
+      #parameters:
+      tags:
+        - employees
+      responses:
+        200:
+          description: Json with ok code
+          schema:
+              $ref: '#/definitions/Ok_res'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+            
+  /employee/newDay:
+    post:
+      summary: initiates activity
+      description: allows employees/clients to acces active methods from the api (take tickets, check the queue, ...)
+      #parameters:
+      tags:
+        - employees
+      responses:
+        200:
+          description: Json with ok code
+          schema:
+              $ref: '#/definitions/Ok_res'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+            
+  /client/requestTicket:
+    post:
+      summary: client takes ticket
+      description: client takes ticket (indirectly through rfid sensor in arduino endpoint). Ticket is added to queue and associated with client's id.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ticket_request
+          in: body
+          description: ticket request from client.
+          required: true
+          schema:
+            $ref: '#/definitions/Ticket_request'
+      tags:
+        - clients
+      responses:
+        200:
+          description: Json with ok code
+          schema:
+              $ref: '#/definitions/Ok_res'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+            
+
+definitions:
+ 
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
+        
+  Ticket:
+    type: object
+    properties:
+      ticket_number:
+        type: integer
+        format: int32
+      ticket_type:
+        type: string
+        
+  Ticket_brief:
+    type: object
+    properties:
+      ticket_number:
+        type: integer
+        format: int32
+        
+  Ticket_type:
+    type: object
+    properties:
+      ticket_type:
+        type: string
+        
+        
+  Ok_res:
+    type: object
+    properties:
+      result:
+        type: string
+        
+  Ticket_request:
+    type: object
+    properties:
+      endpoint_id:
+        type: integer
+        format: int32
+      ticket_type:
+        type: string
+      
+        
+  Ticket_queue_brief:
+    type: array
+    items:
+        $ref: '#/definitions/Ticket_brief'
+        
+  remaining_time:
+    type: object
+    properties:
+      remaining_time:
+        type: integer
+        format: int32
+      

@@ -8,15 +8,17 @@ var async = require("async");
 
 /**** Final Variables & Templates ****/
 var ticket_queue_path = __dirname + "/data/ticket_queue.json";
+var average_time_path = __dirname + "/data/average_time.json";
 
 var ticket_template = JSON.parse('{"ticket_number":-1,"request_timestamp":0}');
 var ticket_brief_template = JSON.parse('{"ticket_number":-1}');
 var error_template = JSON.parse('{"code":-1,"message":"A","fields":"xpto"}');
 var everyThing_template = JSON.parse('[{"type": "A","queue": [],"last_ticket": 0}]');
 var queue_template = JSON.parse('{"type": "xpto","queue": [],"last_ticket": 0}');
+var average_time_template = JSON.parse('[{"type": "A", "number_of_tickets": 0,"current_average_time": 0}]');
+var remaining_time_res_template = JSON.parse('{"remaining_time": 0}');
 
-
-var average_time = JSON.parse('[{"type":"A", "number_of_tickets":0, "average_time":0}]');
+var average_time_element_template = JSON.parse('{"type":"A", "number_of_tickets":0, "current_average_time":0}');
 var closed_for_requests = false;
 
 /**** Initial Things *****/
@@ -51,6 +53,12 @@ app.use(bodyParser.urlencoded({
 
 function findTicketInQueue(queue, ticket_number) {
 
+    console.log('findTicketInQueue - checking if queue is empty');
+    if (queue.length == 0) {
+        return -1;
+    }
+
+
     console.log('findTicketInQueue - checking if ticket number is at the top of the queue');
     if (ticket_number == queue[0]['ticket_number']) {
         console.log('findTicketInQueue - ticket is at the top of the queue - everything goes as planned');
@@ -83,6 +91,18 @@ function removeTicketFromQueue(queue, ticket_pos) {
     return newQueue;
 }
 
+function updateAverageTime(request_timestamp, tickets_passed, average_element) {
+    //TO DO
+
+    var current_timestamp = new Date().getTime();
+    var new_value = current_timestamp - request_timestamp;
+
+    average_element['current_average_time'] = ((average_element['current_average_time'] * average_element['number_of_tickets']) + (new_value * tickets_passed)) / (average_element['number_of_tickets'] + tickets_passed);
+    average_element['number_of_tickets'] = average_element['number_of_tickets'] + tickets_passed;
+
+    return average_element;
+
+}
 
 /**** GET METHODS ****/
 
@@ -90,18 +110,6 @@ function removeTicketFromQueue(queue, ticket_pos) {
 app.get('/', function (req, res) {
     //console.log( data );
     res.status(200).end("good evening...");
-
-});
-
-app.get('/clientByTicket', function (req, res) {
-    console.log('clients by ticket - entered');
-    res.status(200).end("clientByTicket...");
-
-});
-
-app.get('/ticketByClient', function (req, res) {
-    console.log('ticket by client - entered');
-    res.status(200).end(ticket_template);
 
 });
 
@@ -211,7 +219,84 @@ app.get('/employee/fullQueue', function (req, res) {
 
 app.get('/client/remainingTime', function (req, res) {
     console.log('client remainingTime - entered');
-    res.status(200).end("client/remainingTime...");
+    var ticket_number = req.query.ticket_number;
+    var ticket_type = req.query.ticket_type;
+    var filesPath = [ticket_queue_path, average_time_path];
+
+    async.map(filesPath, function (filePath, cb) { //reading files or dir
+        fs.readFile(filePath, 'utf8', cb);
+    }, function (err, results) {
+        //console.log(data[0]['type'])
+        var queues = JSON.parse(results[0]);
+        var average_times = JSON.parse(results[1]);
+
+        if (ticket_type != null && ticket_number != null) {
+
+            console.log('client remainingTime - searching ticket type (%s) queue', ticket_type);
+
+            queue_pos = -1;
+
+            for (var i = 0; i < queues.length; i++) {
+                if (queues[i]['type'] == ticket_type) {
+                    console.log('client remainingTime - found ticket type queue');
+                    var queue_pos = i;
+                    break;
+                }
+            }
+
+            if (queue_pos != -1 && average_times[queue_pos]['current_average_time'] > 0) {
+
+                console.log('client remainingTime - counting tickets before');
+
+                var ticket_pos = findTicketInQueue(queues[queue_pos]['queue'], ticket_number);
+
+                if(ticket_pos != -1)
+                {
+                    var average_time_for_queue = average_times[queue_pos]['current_average_time'];
+                    var time_remaining = average_time_for_queue * (ticket_pos+1);
+                    console.log('number of tickets in between: %d', ticket_pos+1);
+
+                    var result = remaining_time_res_template;
+                    result['remaining_time'] = time_remaining;
+                    console.log(JSON.stringify(result))
+                    res.status(200).end(JSON.stringify(result));
+                }
+                else
+                {
+                    console.log('client remainingTime - bogus ticket number');
+                    var error_resp = error_template;
+                    error_resp['code'] = 400;
+                    error_resp['message'] = "bad request - wrong ticket number or type";
+                    error_resp['fields'] = "ticket_type or ticket_number";
+                    //console.log(error_resp);
+                    res.status(400).end(JSON.stringify(error_resp));
+                }
+
+            }
+            else
+            {
+                console.log('client remainingTime - bad request (queue not found or service not ready)');
+                var error_resp = error_template;
+                error_resp['code'] = 400;
+                error_resp['message'] = "bad request - queue not found or service not ready";
+                error_resp['fields'] = "ticket_type";
+                //console.log(error_resp);
+                res.status(400).end(JSON.stringify(error_resp));
+            }
+
+        }
+        else {
+            console.log('client remainingTime - bad request (no ticket type parameter)');
+            var error_resp = error_template;
+            error_resp['code'] = 400;
+            error_resp['message'] = "bad request - missing ticket type";
+            error_resp['fields'] = "ticket_type";
+            //console.log(error_resp);
+            res.status(400).end(JSON.stringify(error_resp));
+
+        }
+
+    });
 });
 
 
@@ -222,7 +307,7 @@ app.get('/client/remainingTime', function (req, res) {
 app.post('/employee/ticketAttended', function (req, res) {
     console.log('employee ticketAttended - entered');
     var ticket_req = req.body.ticket;
-    var filesPath = [ticket_queue_path];
+    var filesPath = [ticket_queue_path, average_time_path];
 
     //console.log(JSON.stringify(ticket_req));
 
@@ -231,6 +316,7 @@ app.post('/employee/ticketAttended', function (req, res) {
     }, function (err, results) {
         //console.log(data[0]['type'])
         var queues = JSON.parse(results[0]);
+        var average_times = JSON.parse(results[1]);
 
         if (ticket_req != null && ticket_req.ticket_type != null && ticket_req.ticket_number != null && ticket_req.ticket_number > 0) {
 
@@ -247,8 +333,10 @@ app.post('/employee/ticketAttended', function (req, res) {
 
             if (ticket_pos != -1) {
                 //update average time (TO DO)
-                //updateAverageTime(queues[queue_pos]['type'], ticket_pos+1, new Date());
+                //console.log(JSON.stringify(average_times[queue_pos]));
+                average_times[queue_pos] = updateAverageTime(queues[queue_pos]['queue'][ticket_pos]['request_timestamp'], ticket_pos + 1, average_times[queue_pos]);
 
+                //console.log(JSON.stringify(average_times[queue_pos]));
 
                 //console.log(queues[queue_pos]);
                 queues[queue_pos]['queue'] = removeTicketFromQueue(queues[queue_pos]['queue'], ticket_pos);
@@ -256,6 +344,10 @@ app.post('/employee/ticketAttended', function (req, res) {
                 console.log('employee ticketAttended - writing new queue');
 
                 fs.writeFile(ticket_queue_path, JSON.stringify(queues), function (err) {
+                    console.error(err)
+                });
+
+                fs.writeFile(average_time_path, JSON.stringify(average_times), function (err) {
                     console.error(err)
                 });
 
@@ -269,7 +361,7 @@ app.post('/employee/ticketAttended', function (req, res) {
                 error_resp['code'] = 400;
                 error_resp['message'] = "bad request - wrong ticket number or type";
                 error_resp['fields'] = "ticket_type or ticket_number";
-                console.log(error_resp);
+                //console.log(error_resp);
                 res.status(400).end(JSON.stringify(error_resp));
             }
 
@@ -281,7 +373,7 @@ app.post('/employee/ticketAttended', function (req, res) {
             error_resp['code'] = 400;
             error_resp['message'] = "bad request - missing ticket number or type";
             error_resp['fields'] = "ticket_type or ticket_number";
-            console.log(error_resp);
+            //console.log(error_resp);
             res.status(400).end(JSON.stringify(error_resp));
 
         }
@@ -310,6 +402,11 @@ app.post('/employee/newDay', function (req, res) {
         console.error(err)
     });
 
+    fs.writeFile(average_time_path, JSON.stringify(average_time_template), function (err) {
+        console.error(err)
+    });
+
+
     closed_for_requests = false;
 
 
@@ -320,7 +417,7 @@ app.post('/employee/newDay', function (req, res) {
 app.post('/employee/makeNewType', function (req, res) {
     console.log('employee makeNewType - entered');
     var ticket_req = req.body.ticket_type;
-    var filesPath = [ticket_queue_path];
+    var filesPath = [ticket_queue_path, average_time_path];
 
     //console.log(JSON.stringify(ticket_req));
 
@@ -330,6 +427,7 @@ app.post('/employee/makeNewType', function (req, res) {
         }, function (err, results) {
             //console.log(data[0]['type'])
             var queues = JSON.parse(results[0]);
+            var average_times = JSON.parse(results[1]);
 
             if (ticket_req != null && ticket_req.ticket_type != null) {
 
@@ -353,7 +451,15 @@ app.post('/employee/makeNewType', function (req, res) {
                     new_queue['type'] = ticket_req.ticket_type;
                     queues[queues.length] = new_queue;
 
+                    var new_avg_time_element = average_time_element_template;
+                    new_avg_time_element['type'] = ticket_req.ticket_type;
+                    average_times[average_times.length] = new_avg_time_element;
+
                     fs.writeFile(ticket_queue_path, JSON.stringify(queues), function (err) {
+                        console.error(err)
+                    });
+
+                    fs.writeFile(average_time_path, JSON.stringify(average_times), function (err) {
                         console.error(err)
                     });
 
@@ -367,7 +473,7 @@ app.post('/employee/makeNewType', function (req, res) {
                     error_resp['code'] = 400;
                     error_resp['message'] = "bad request - type already exists";
                     error_resp['fields'] = "ticket_type";
-                    console.log(error_resp);
+                    //console.log(error_resp);
                     res.status(400).end(JSON.stringify(error_resp));
                 }
 
@@ -379,7 +485,7 @@ app.post('/employee/makeNewType', function (req, res) {
                 error_resp['code'] = 400;
                 error_resp['message'] = "bad request - missing ticket type";
                 error_resp['fields'] = "ticket_type";
-                console.log(error_resp);
+                //console.log(error_resp);
                 res.status(400).end(JSON.stringify(error_resp));
 
             }
@@ -392,7 +498,7 @@ app.post('/employee/makeNewType', function (req, res) {
         error_resp['code'] = 400;
         error_resp['message'] = "Gone - service terminated for the day";
         error_resp['fields'] = "none";
-        console.log(error_resp);
+        //console.log(error_resp);
         res.status(410).end(JSON.stringify(error_resp));
     }
     //res.status(200).end("employee/ticketAttended...");
@@ -431,17 +537,22 @@ app.post('/client/requestTicket', function (req, res) {
                     }
                 }
                 if (queue_pos != -1) {
-                    console.log(queues[queue_pos]);
+                    //console.log(queues[queue_pos]);
                     var new_ticket = ticket_template;
                     new_ticket['ticket_number'] = queues[queue_pos]['last_ticket'] + 1;
                     new_ticket['request_timestamp'] = new Date().getTime();
                     queues[queue_pos]['queue'][queues[queue_pos]['queue'].length] = new_ticket;
                     queues[queue_pos]['last_ticket'] = new_ticket['ticket_number'];
 
-                    console.log(queues[queue_pos]);
+                    //console.log(queues[queue_pos]);
                     fs.writeFile(ticket_queue_path, JSON.stringify(queues), function (err) {
                         console.error(err)
                     });
+
+
+                    //TO DO - alert composer (Rui Monteiro)
+                    //...
+
 
                     var result = '{"result":"success"}';
                     res.status(200).end(result);
@@ -452,7 +563,7 @@ app.post('/client/requestTicket', function (req, res) {
                     error_resp['code'] = 400;
                     error_resp['message'] = "bad request - ticket type non-existent";
                     error_resp['fields'] = "ticket_type";
-                    console.log(error_resp);
+                    //console.log(error_resp);
                     res.status(400).end(JSON.stringify(error_resp));
                 }
 
@@ -463,7 +574,7 @@ app.post('/client/requestTicket', function (req, res) {
                 error_resp['code'] = 400;
                 error_resp['message'] = "bad request - missing ticket type";
                 error_resp['fields'] = "ticket_type";
-                console.log(error_resp);
+                //console.log(error_resp);
                 res.status(400).end(JSON.stringify(error_resp));
 
             }
@@ -476,7 +587,7 @@ app.post('/client/requestTicket', function (req, res) {
         error_resp['code'] = 400;
         error_resp['message'] = "Gone - service terminated for the day";
         error_resp['fields'] = "none";
-        console.log(error_resp);
+        //console.log(error_resp);
         res.status(410).end(JSON.stringify(error_resp));
     }
 
