@@ -250,19 +250,17 @@ app.get('/client/remainingTime', function (req, res) {
 
                 var ticket_pos = findTicketInQueue(queues[queue_pos]['queue'], ticket_number);
 
-                if(ticket_pos != -1)
-                {
+                if (ticket_pos != -1) {
                     var average_time_for_queue = average_times[queue_pos]['current_average_time'];
-                    var time_remaining = average_time_for_queue * (ticket_pos+1);
-                    console.log('number of tickets in between: %d', ticket_pos+1);
+                    var time_remaining = average_time_for_queue * (ticket_pos + 1);
+                    console.log('number of tickets in between: %d', ticket_pos + 1);
 
                     var result = remaining_time_res_template;
                     result['remaining_time'] = time_remaining;
-                    console.log(JSON.stringify(result))
+                    //console.log(JSON.stringify(result));
                     res.status(200).end(JSON.stringify(result));
                 }
-                else
-                {
+                else {
                     console.log('client remainingTime - bogus ticket number');
                     var error_resp = error_template;
                     error_resp['code'] = 400;
@@ -273,8 +271,7 @@ app.get('/client/remainingTime', function (req, res) {
                 }
 
             }
-            else
-            {
+            else {
                 console.log('client remainingTime - bad request (queue not found or service not ready)');
                 var error_resp = error_template;
                 error_resp['code'] = 400;
@@ -554,7 +551,7 @@ app.post('/client/requestTicket', function (req, res) {
                     //...
 
 
-                    var result = '{"result":"success"}';
+                    var result = '{"result":"success","ticket_number":' + new_ticket['ticket_number'] + '}';
                     res.status(200).end(result);
                 }
                 else {
