@@ -10,11 +10,11 @@ var async = require("async");
 var ticket_queue_path = __dirname + "/data/ticket_queue.json";
 var average_time_path = __dirname + "/data/average_time.json";
 
-var ticket_template = JSON.parse('{"ticket_number":-1,"request_timestamp":0}');
+var ticket_template = JSON.parse('{"ticket_number":-1,"request_timestamp":0,"ticket_UUID":0}');
 var ticket_brief_template = JSON.parse('{"ticket_number":-1}');
-var error_template = JSON.parse('{"code":-1,"message":"A","fields":"xpto"}');
+var error_template = JSON.parse('{"code":-1,"message":"A","fields":"a"}');
 var everyThing_template = JSON.parse('[{"type": "A","queue": [],"last_ticket": 0}]');
-var queue_template = JSON.parse('{"type": "xpto","queue": [],"last_ticket": 0}');
+var queue_template = JSON.parse('{"type": "a","queue": [],"last_ticket": 0}');
 var average_time_template = JSON.parse('[{"type": "A", "number_of_tickets": 0,"current_average_time": 0}]');
 var remaining_time_res_template = JSON.parse('{"remaining_time": 0}');
 
@@ -91,6 +91,15 @@ function removeTicketFromQueue(queue, ticket_pos) {
     return newQueue;
 }
 
+
+function cancelTicketInQueue(queue, ticket_pos) {
+
+    var newQueue = queue;
+    newQueue.splice(ticket_pos, 1);
+
+    return newQueue;
+}
+
 function updateAverageTime(request_timestamp, tickets_passed, average_element) {
     //TO DO
 
@@ -102,6 +111,26 @@ function updateAverageTime(request_timestamp, tickets_passed, average_element) {
 
     return average_element;
 
+}
+
+/**
+ * @return {boolean}
+ */
+function UUID_alreadyInQueue(queue, UUID) {
+    console.log('UUID_alreadyInQueue - checking if queue is empty');
+    if (queue.length == 0) {
+        return false;
+    }
+
+    for (var i = 0; i < queue.length; i++) {
+        if (UUID == queue[i]['ticket_UUID']) {
+            console.log('UUID_alreadyInQueue - ticket found in pos %d', i);
+            return true;
+        }
+    }
+
+    return false;
+    //res.status(200).end("shit");
 }
 
 /**** GET METHODS ****/
@@ -255,8 +284,12 @@ app.get('/client/remainingTime', function (req, res) {
                     var time_remaining = average_time_for_queue * (ticket_pos + 1);
                     console.log('number of tickets in between: %d', ticket_pos + 1);
 
+                    var date = new Date(time_remaining);
+
                     var result = remaining_time_res_template;
-                    result['remaining_time'] = time_remaining;
+
+                    result['remaining_time'] = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+                    //result['remaining_time'] = time_remaining.getHours();
                     //console.log(JSON.stringify(result));
                     res.status(200).end(JSON.stringify(result));
                 }
@@ -379,6 +412,7 @@ app.post('/employee/ticketAttended', function (req, res) {
     //res.status(200).end("employee/ticketAttended...");
 
 });
+
 
 app.post('/employee/closeForTheDay', function (req, res) {
     console.log('employee closeForTheDay - entered');
@@ -512,15 +546,13 @@ app.post('/client/requestTicket', function (req, res) {
         var ticket_req = req.body.ticket_request;
         var filesPath = [ticket_queue_path];
 
-        //console.log(JSON.stringify(ticket_req));
-
         async.map(filesPath, function (filePath, cb) { //reading files or dir
             fs.readFile(filePath, 'utf8', cb);
         }, function (err, results) {
             //console.log(data[0]['type'])
             var queues = JSON.parse(results[0]);
 
-            if (ticket_req != null && ticket_req.ticket_type != null) {
+            if (ticket_req != null && ticket_req.ticket_type != null && ticket_req.endpoint_id != null) {
 
                 console.log('client requestTicket - searching ticket type (%s) queue', ticket_req.ticket_type);
 
@@ -534,25 +566,46 @@ app.post('/client/requestTicket', function (req, res) {
                     }
                 }
                 if (queue_pos != -1) {
-                    //console.log(queues[queue_pos]);
-                    var new_ticket = ticket_template;
-                    new_ticket['ticket_number'] = queues[queue_pos]['last_ticket'] + 1;
-                    new_ticket['request_timestamp'] = new Date().getTime();
-                    queues[queue_pos]['queue'][queues[queue_pos]['queue'].length] = new_ticket;
-                    queues[queue_pos]['last_ticket'] = new_ticket['ticket_number'];
 
-                    //console.log(queues[queue_pos]);
-                    fs.writeFile(ticket_queue_path, JSON.stringify(queues), function (err) {
-                        console.error(err)
-                    });
+                    if (UUID_alreadyInQueue(queues[queue_pos]['queue'], ticket_req.endpoint_id) == false) {
+                        //console.log(queues[queue_pos]);
+                        var new_ticket = ticket_template;
+
+                        console.log(JSON.stringify(new_ticket));
+
+                        new_ticket['ticket_number'] = queues[queue_pos]['last_ticket'] + 1;
+                        new_ticket['ticket_UUID'] = ticket_req.endpoint_id;
+                        new_ticket['request_timestamp'] = new Date().getTime();
+
+                        console.log(JSON.stringify(new_ticket));
+
+                        queues[queue_pos]['queue'][queues[queue_pos]['queue'].length] = new_ticket;
+                        queues[queue_pos]['last_ticket'] = new_ticket['ticket_number'];
+
+                        //console.log(queues[queue_pos]);
+                        fs.writeFile(ticket_queue_path, JSON.stringify(queues), function (err) {
+                            console.error(err)
+                        });
 
 
-                    //TO DO - alert composer (Rui Monteiro)
-                    //...
+                        //TO DO - alert composer (Rui Monteiro)
+                        //...
 
 
-                    var result = '{"result":"success","ticket_number":' + new_ticket['ticket_number'] + '}';
-                    res.status(200).end(result);
+                        var result = '{"result":"success","ticket_number":' + new_ticket['ticket_number'] + '}';
+                        res.status(200).end(result);
+                    }
+                    else {
+                        console.log('client requestTicket - bad request (UUID already in queue)');
+                        var error_resp = error_template;
+                        error_resp['code'] = 400;
+                        error_resp['message'] = "bad request - UUID already in queue";
+                        error_resp['fields'] = "ticket_type";
+                        //console.log(error_resp);
+                        res.status(400).end(JSON.stringify(error_resp));
+                    }
+
+
                 }
                 else {
                     console.log('client requestTicket - bad request (ticket type non-existent)');
@@ -587,6 +640,81 @@ app.post('/client/requestTicket', function (req, res) {
         //console.log(error_resp);
         res.status(410).end(JSON.stringify(error_resp));
     }
+
+});
+
+
+app.post('/client/cancelTicket', function (req, res) {
+    console.log('client cancelTicket - entered');
+    var ticket_req = req.body.ticket;
+    var filesPath = [ticket_queue_path, average_time_path];
+
+    //console.log(JSON.stringify(ticket_req));
+
+    async.map(filesPath, function (filePath, cb) { //reading files or dir
+        fs.readFile(filePath, 'utf8', cb);
+    }, function (err, results) {
+        //console.log(data[0]['type'])
+        var queues = JSON.parse(results[0]);
+        var average_times = JSON.parse(results[1]);
+
+        if (ticket_req != null && ticket_req.ticket_type != null && ticket_req.ticket_number != null && ticket_req.ticket_number > 0) {
+
+            console.log('client cancelTicket - searching ticket type (%s) queue', ticket_req.ticket_type);
+
+            for (var i = 0; i < queues.length; i++) {
+                if (queues[i]['type'] == ticket_req.ticket_type) {
+                    console.log('client cancelTicket - found ticket type queue');
+                    var ticket_pos = findTicketInQueue(queues[i]['queue'], ticket_req.ticket_number);
+                    var queue_pos = i;
+                    break;
+                }
+            }
+
+            if (ticket_pos != -1) {
+
+                //console.log(queues[queue_pos]);
+                queues[queue_pos]['queue'] = cancelTicketInQueue(queues[queue_pos]['queue'], ticket_pos);
+                //console.log(queues[queue_pos]);
+                console.log('client cancelTicket - writing new queue');
+
+                fs.writeFile(ticket_queue_path, JSON.stringify(queues), function (err) {
+                    console.error(err)
+                });
+
+                fs.writeFile(average_time_path, JSON.stringify(average_times), function (err) {
+                    console.error(err)
+                });
+
+                var result = '{"result":"success"}';
+                res.status(200).end(result);
+
+            }
+            else {
+                console.log('client cancelTicket - bogus ticket number');
+                var error_resp = error_template;
+                error_resp['code'] = 400;
+                error_resp['message'] = "bad request - wrong ticket number or type";
+                error_resp['fields'] = "ticket_type or ticket_number";
+                //console.log(error_resp);
+                res.status(400).end(JSON.stringify(error_resp));
+            }
+
+
+        }
+        else {
+            console.log('client cancelTicket - bad request (no ticket type or ticket number parameter)');
+            var error_resp = error_template;
+            error_resp['code'] = 400;
+            error_resp['message'] = "bad request - missing ticket number or type";
+            error_resp['fields'] = "ticket_type or ticket_number";
+            //console.log(error_resp);
+            res.status(400).end(JSON.stringify(error_resp));
+
+        }
+
+    });
+    //res.status(200).end("client/cancelTicket...");
 
 });
 
