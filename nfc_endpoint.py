@@ -36,12 +36,15 @@ def connected(tag):
     print(tag.ndef.message.pretty() if tag.ndef else "Sorry, no NDEF")
     """
 
-    ticket_type = 'A'
+    ticket_type = "A"
 #    ticket_type = raw_input('choose ticket type: ')
     
     print('calling server')
 
-    body = {"ticket_request":{"ticket_type":ticket_type}, "endpoint_id": tag_id}
+    body = {"ticket_request":{"ticket_type":ticket_type, "endpoint_id": tag_id}}
+
+    print(body)
+
     resp = requests.post('http://192.168.1.78/client/requestTicket', json=body)
 
     if resp.status_code == 200:
