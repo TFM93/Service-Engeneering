@@ -1,5 +1,5 @@
 import nfc
-import nfc.ndef
+#import nfc.ndef
 import requests
 
 
@@ -10,7 +10,7 @@ def connected(tag):
     tag_id = str(tag).split(' ')[4].split('=')[1]
     print("tag id: " + tag_id)
     #print("tag message: " + tag.ndef.message)
-"""
+    """
     new_ndef = nfc.ndef
 
     record1 = nfc.ndef.Record("urn:nfc:wkt:T", "id1", "\x02enHello World!")
@@ -34,7 +34,7 @@ def connected(tag):
     #tag.ndef = new_ndef
 
     print(tag.ndef.message.pretty() if tag.ndef else "Sorry, no NDEF")
-"""
+    """
 
     ticket_type = 'A'
 #    ticket_type = raw_input('choose ticket type: ')
@@ -42,7 +42,7 @@ def connected(tag):
     print('calling server')
 
     body = {"ticket_request":{"ticket_type":ticket_type}, "endpoint_id": tag_id}
-    resp = requests.post('http://localhost/client/requestTicket', json=body)
+    resp = requests.post('http://192.168.1.78/client/requestTicket', json=body)
 
     if resp.status_code == 200:
         print('done')
