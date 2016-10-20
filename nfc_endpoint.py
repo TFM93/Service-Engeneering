@@ -3,7 +3,7 @@ import nfc
 import requests
 from RPLCD import CharLCD
 
-current_ticket_type ⁼ 'A'
+current_ticket_type ⁼ "A"
 
 def writeOnLCD(text1, text2):
     lcd = CharLCD()
