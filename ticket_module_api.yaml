@@ -3,8 +3,8 @@
 swagger: '2.0'
 info:
   title: Ticket Server API
-  description: API for the ticket service (to be used by Compositor module and Arduino endpoint).
-  version: "0.0.5"
+  description: API for the ticket service (to be used by Compositor module and Hardware endpoint).
+  version: "0.1.0"
 # the domain of the service
 host: localhost
 # array of all schemes that your API supports
@@ -201,6 +201,35 @@ paths:
             $ref: '#/definitions/Ticket_request'
       tags:
         - clients
+      responses:
+        200:
+          description: Json with ok code
+          schema:
+              $ref: '#/definitions/Ok_res'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+            
+            
+  /client/cancelTicket:
+    post:
+      summary: cancel ticket, removing it from queue
+      description: |
+        A client can cancel a ticket he/she is not going to use. This saves time for other clients in the queue.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ticket
+          in: body
+          description: ticket to be removed from queue.
+          required: true
+          schema:
+            $ref: '#/definitions/Ticket'
+      tags:
+        - employees
       responses:
         200:
           description: Json with ok code
