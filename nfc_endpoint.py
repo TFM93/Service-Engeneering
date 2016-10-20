@@ -1,7 +1,7 @@
 import nfc
 #import nfc.ndef
 import requests
-#from RPLCD import CharLCD
+from RPLCD import CharLCD
 
 current_ticket_type = "A"
 
@@ -70,7 +70,7 @@ def connected(tag):
     return True
 
 
-#writeOnLCD('ticket type', current_ticket_type)
+writeOnLCD('ticket type', current_ticket_type)
 
 clf = nfc.ContactlessFrontend('usb')
 clf.connect(rdwr={'on-connect': connected})
