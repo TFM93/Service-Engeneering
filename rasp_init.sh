@@ -1,5 +1,5 @@
 
-sudo pacman -Syu wget git python2
+sudo pacman -Syu wget git python2 zsh
 wget https://bootstrap.pypa.io/get-pip.py
 sudo python2 get-pip.py
 sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"

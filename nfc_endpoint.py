@@ -2,6 +2,7 @@ import nfc
 #import nfc.ndef
 import requests
 
+current_ticket_type = 'A'
 
 def connected(tag):
     print('tag has been connected')
