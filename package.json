@@ -1,0 +1,23 @@
+{
+  "name": "ticket_module_client",
+  "version": "0.0.0",
+  "description": "client module for ticket queue service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TFM93/Service-Engeneering.git"
+  },
+  "author": "rofler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TFM93/Service-Engeneering/issues"
+  },
+  "homepage": "https://github.com/TFM93/Service-Engeneering#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "http": "0.0.0"
+  }
+}
