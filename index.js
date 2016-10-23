@@ -352,6 +352,9 @@ app.post('/employee/ticketAttended', function (req, res) {
 
             console.log('employee ticketAttended - searching ticket type (%s) queue', ticket_req.ticket_type);
 
+            ticket_pos = -1;
+            queue_pos = -1;
+
             for (var i = 0; i < queues.length; i++) {
                 if (queues[i]['type'] == ticket_req.ticket_type) {
                     console.log('employee ticketAttended - found ticket type queue');
@@ -361,7 +364,7 @@ app.post('/employee/ticketAttended', function (req, res) {
                 }
             }
 
-            if (ticket_pos != -1) {
+            if (queue_pos != -1 && ticket_pos != -1) {
                 //update average time (TO DO)
                 //console.log(JSON.stringify(average_times[queue_pos]));
                 average_times[queue_pos] = updateAverageTime(queues[queue_pos]['queue'][ticket_pos]['request_timestamp'], ticket_pos + 1, average_times[queue_pos]);
