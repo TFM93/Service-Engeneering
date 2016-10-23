@@ -1,0 +1,1 @@
+sudo pip2 install nfcpy RPi.GPIO RPLCD
