@@ -4,6 +4,7 @@ from celery import Celery
 import notifications
 # Import smtplib for the actual sending function
 import smtplib
+from twilio.rest import TwilioRestClient
 
 # Import the email modules we'll need
 from email.mime.text import MIMEText
@@ -13,6 +14,10 @@ me = 'engserv2016@gmail.com'
 #SMS credentials
 uname="tiagofm945@gmail.com"
 pwd="EngServ2016"
+
+account='AC576a64dd746861177d68db1d5cdd4470'
+token='ffe593d3a9f494cd4ee846f5250a6c58'
+
 
 app = Celery('notificators', backend='rpc://', broker='amqp://localhost')
 
@@ -53,3 +58,14 @@ def send_email(subject,text,dest):
     server.sendmail(me, dest, msg.as_string())
     server.quit()
 
+
+@app.task
+def send_sms_twilio(subject,text,dest):
+    if dest != '+351912928194' and dest != '+351919872373':
+        return send_sms(subject,text,dest)
+
+    client = TwilioRestClient(account, token)
+    text = subject + ' \n ' + text
+    message = client.messages.create(to=dest, from_="+12195953503",
+                                     body=text)
+    return 'message sent!'

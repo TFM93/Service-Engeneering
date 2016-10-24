@@ -1,7 +1,9 @@
-from flask import Flask
+from flask import Flask, request, jsonify
+from flask.ext.api import status
 import notificators
 from producer import *
 import time
+
 
 
 __author__ = 'tiagoferreiramagalhaes@ua.pt'
@@ -21,33 +23,30 @@ app.config.update(dict(
 def hello():
     return "Hello World!"
 
-@app.route("/getMethods")
+@app.route("/getMethods", methods=['GET'])
 def getNotMethods():
-    return ['SMS','EMAIL']
+    return jsonify(sms=True, email=True)
 
-@app.route("/notify")
-def notifications():
-    # method=request.form['method']
-    # subject=request.form['subject']
-    # content=request.form['content']
-    # contact=request.form['contact']
-    method='EMAIL'
-    subject='SmartTicket'
-    content="Esta e uma mensagem de teste"
-    contact='+351912928194'
-    contact_m= 'tiagoferreiramagalhaes@ua.pt'
+@app.route("/notify/<methodn>", methods=['POST'])
+def notifications(methodn):
+    #methods = ['POST']
+    methodn = str(methodn)
+    subject=str(request.form['subject'])
+    content=str(request.form['content'])
+    contact=str(request.form['contact'])
     ret=None
-    if method is "EMAIL":
+
+    if methodn == "EMAIL":
         #ret = message_producer.mail_request(subject,content,contact)#using rabbitmq
-        ret = notificators.send_email.delay(subject,content,contact_m)#using celery directly
-        #time.sleep(1)
-    elif method is 'SMS':
-        ret = notificators.send_sms.delay(subject,content,contact_m)#using celery directly
+        ret = notificators.send_email.delay(subject,content,contact)#using celery directly
+    elif methodn == "SMS":
+        ret = notificators.send_sms_twilio.delay(subject,content,contact)#using celery directly
     else:
-        return "invalid method"
+        content_error = "invalid notification method"
+        return content_error, status.HTTP_405_METHOD_NOT_ALLOWED
     while not ret.ready():
         time.sleep(1)
-    return "Notified"# test answer
+    return "Notified", status.HTTP_200_OK# test answer
     #return "Some error" #todo- write correct api responses
 
 
