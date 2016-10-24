@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from flask.ext.api import status
 import notificators
 from producer import *
 import time
@@ -43,10 +42,10 @@ def notifications(methodn):
         ret = notificators.send_sms_twilio.delay(subject,content,contact)#using celery directly
     else:
         content_error = "invalid notification method"
-        return content_error, status.HTTP_405_METHOD_NOT_ALLOWED
+        return content_error, 405
     while not ret.ready():
         time.sleep(1)
-    return "Notified", status.HTTP_200_OK# test answer
+    return "Notified", 200# test answer
     #return "Some error" #todo- write correct api responses
 
 
