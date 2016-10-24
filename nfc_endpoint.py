@@ -1,14 +1,43 @@
 import nfc
+import time
 #import nfc.ndef
 import requests
 
 current_ticket_type = 'A'
+current_tag = " "
+
+def set_current_tag(tag):
+    global current_tag
+    current_tag = tag
+
+def get_current_tag():
+    global current_tag
+    return current_tag
 
 def connected(tag):
+
+    if current_tag == str(tag):
+        print('please remove card')
+        print('waiting')
+        time.sleep(1)
+
+        return False
+        pass
+
     print('tag has been connected')
     print(tag)
 
-    tag_id = str(tag).split(' ')[4].split('=')[1]
+    set_current_tag(str(tag))
+
+    tag_split = str(tag).split(' ')#[4].split('=')[1]
+
+    for x in tag_split:
+        current_part = x.split('=')
+        if(current_part[0] == 'ID'):
+            tag_id = current_part[1]
+            break
+        pass
+
     print("tag id: " + tag_id)
     #print("tag message: " + tag.ndef.message)
 
@@ -21,7 +50,7 @@ def connected(tag):
 
     print(body)
 
-    resp = requests.post('http://192.168.1.78/client/requestTicket', json=body)
+    resp = requests.post('http://localhost/client/requestTicket', json=body)
 
     if resp.status_code == 200:
         print('done')
@@ -31,11 +60,31 @@ def connected(tag):
         print(result['ticket_number'])
 
     else:
-        print('this is bad')
+        result = resp.json()
 
-    return False
+        print('Error')
+        print('code: ' + str(result['code']) + ', message: ' + result['message'])
 
+
+    print('waiting')
+    time.sleep(1)
+
+
+    return tag
+
+
+
+print('\nwaiting for card')
 
 clf = nfc.ContactlessFrontend('usb')
-clf.connect(rdwr={'on-connect': connected})
+must_go_on = True
+
+while must_go_on == True:
+    clf.connect(rdwr={'on-connect': connected})
+    print('current_tag: ' + current_tag)
+    must_go_on = raw_input('go on?') == '1'
+
+    pass
+
+
 
