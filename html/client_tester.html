@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>MusicDB BackEnd</title>
+
+
+    <!-- Custom Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet"
+          type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Theme CSS -->
+    <link href="css/login.css" rel="stylesheet">
+
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+
+<!--
+    you can substitue the span of reauth email for a input with the email and
+    include the remember me checkbox
+    -->
+<div class="container">
+    <div class="card card-container">
+        <!-- <img class="profile-img-card" src="//lh3.googleusercontent.com/-6V8xOA6M7BA/AAAAAAAAAAI/AAAAAAAAAAA/rzlHcD0KYwo/photo.jpg?sz=120" alt="" /> -->
+        <img id="profile-img" class="profile-img-card" src="http://static4.businessinsider.com/image/56c640526e97c625048b822a-480/donald-trump.jpg"/>
+        <p id="profile-name" class="profile-name-card"></p>
+        <form class="form-signin">
+            <span id="reauth-email" class="reauth-email"></span>
+            <input type="number" id="inputTicketNumber" class="form-control" placeholder="ticket_number" autofocus>
+            <input type="text" id="inputTicketType" class="form-control" placeholder="ticket_type" required>
+
+            <select id="request" required>
+                <option value="nextTicket">nextTicket</option>
+                <option value="fullQueue">fullQueue</option>
+                <option value="remainingTime">remainingTime</option>
+                <option value="ticketAttended">ticketAttended</option>
+                <option value="makeNewType">makeNewType</option>
+                <option value="closeForTheDay">closeForTheDay</option>
+                <option value="newDay">newDay</option>
+                <!--<option value="requestTicket">requestTicket</option>-->
+                <option value="cancelTicket">cancelTicket</option>
+            </select>
+            <hr>
+
+            <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Make Request</button>
+        </form><!-- /form -->
+
+        <button id="get_result" class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Get Result (see on console)</button>
+
+    </div><!-- /card-container -->
+</div><!-- /container -->
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<!-- Plugin JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+
+
+<script src="js/client.js"></script>
+
+</body>
+
+</html>
