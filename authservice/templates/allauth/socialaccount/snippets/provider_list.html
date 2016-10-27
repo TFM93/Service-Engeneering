@@ -1,0 +1,13 @@
+
+{% load socialaccount %}
+{% get_providers as socialaccount_providers %}
+{% for provider in socialaccount_providers %}
+{% if provider.name == "Facebook" %}<a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" title="{{provider.name}}" class="col-md-3 normalFaColor hoverFacebook socialaccount_provider {{provider.id}}">
+  <div class="fa fa-facebook-square fa-4x"></div></a>{% endif %}
+{% if provider.name == "Google" %}<a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" title="{{provider.name}}" class="col-md-3 normalFaColor hoverGoogle socialaccount_provider {{provider.id}}">
+  <div class="fa fa-google-plus-official fa-4x"></div></a>{% endif %}
+{% if provider.name == "Twitter" %}<a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" title="{{provider.name}}" class="col-md-3 normalFaColor hoverTwitter socialaccount_provider {{provider.id}}">
+  <div class="fa fa-twitter-square fa-4x"></div></a>{% endif %}
+{% if provider.name == "LinkedIn" %}<a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" title="{{provider.name}}" class="col-md-3 normalFaColor hoverLinkedIn socialaccount_provider {{provider.id}}">
+  <div class="fa fa-linkedin-square fa-4x"></div></a>{% endif %}
+{% endfor %}
