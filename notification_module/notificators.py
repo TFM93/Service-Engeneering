@@ -28,9 +28,9 @@ def send_sms(subject,text,dest):
     text = subject + ' \n ' + text
     ret = gateway.sendMessageToNumber(dest,text,31298)
     if ret['status'] is 401:
-        return 'Wrong Credentials Maibe'
+        return ret
     elif ret['status'] is 200:
-        return 'Message Sent!'
+        return ret
     return 'Unknown Error'
 
 # @app.task
@@ -57,7 +57,7 @@ def send_email(subject,text,dest):
     server.login(me, 'engserv2016')
     server.sendmail(me, dest, msg.as_string())
     server.quit()
-
+    return "Sent!"
 
 @app.task
 def send_sms_twilio(subject,text,dest):
@@ -68,4 +68,4 @@ def send_sms_twilio(subject,text,dest):
     text = subject + ' \n ' + text
     message = client.messages.create(to=dest, from_="+12195953503",
                                      body=text)
-    return 'message sent!'
+    return message

@@ -11,7 +11,7 @@ r = requests.get('http://127.0.0.1:5000/')
 
 #ask to send an sms
 #payload ={'subject':'SmartTicket','content':'Mensagem de Teste','contact':'+351912928194'}
-payload ={'subject':'SmartTicket','content':'Mensagem de Teste','contact':'+351919872373'}
+payload ={'subject':'SmartTicket','content':'Mensagem de Teste','contact':'+351912928194'}
 r1 = requests.post('http://127.0.0.1:5000/notify/SMS', data = payload)
 
 #ask to send email

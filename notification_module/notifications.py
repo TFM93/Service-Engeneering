@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import notificators
-from producer import *
+#from producer import *
 import time
 
 
@@ -43,14 +43,20 @@ def notifications(methodn):
     else:
         content_error = "invalid notification method"
         return content_error, 405
+    count=0
     while not ret.ready():
+        if count > 6:
+            return "TimeOut- message not sent!", 504
+        count +=1
         time.sleep(1)
-    return "Notified", 200# test answer
-    #return "Some error" #todo- write correct api responses
+
+    if ret == 'Unknown Error':
+        return ret, 500
+    return "Message sent", 200
 
 
 if __name__ == "__main__":
-    message_producer = RpcClient()
+    #message_producer = RpcClient()
     app.run()
 
 
