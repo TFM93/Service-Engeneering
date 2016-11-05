@@ -77,19 +77,37 @@ class DashboardClient extends React.Component {
       )
     });
 
+
     //var aux = [];
     let myTickets = this.state.myTickets.map((ticket) => {
-
+      let avgTime = 0;
       for (let i = 0; i < ticket.queue.length; i++) {
-        if (ticket.queue[i]['ticket_UUID'] == '7') {
-          //aux.push({ 'nr': ticket.queue[i]['ticket_number'], type: ticket.type });
+        avgTime = avgTime + ticket['queue_average_time'];
+        console.log("pre if :" + avgTime);
+        if (ticket.queue[i]['ticket_UUID'] == '76') {
+          console.log(i);
+
+          //console.log((Math.ceil(avgTime)).toHHMMSS());
+
+          let dateTime = new Date(avgTime);
+
+
+
 
           return (
 
             <div key={ticket.type} className="col-lg-3">
               <div className="panel panel-default">
-                <div className="panel-heading">{ticket['type']}</div>
-                <div className="panel-body">{ticket.queue[i]['ticket_number']}</div>
+               <div className="panel-heading"><center>{ticket['type']}</center></div>
+                <div className="panel-body">
+                  <div className="row">
+                    <div className="col-lg-6">{ticket.queue[i]['ticket_number']}</div>
+                    <div className="col-lg-6">Tempo Estimado: {dateTime.getHours() + ':' + dateTime.getMinutes() + ':'+ dateTime.getSeconds()}</div>
+                  </div>
+                </div>
+
+
+
               </div>
               <center><button onClick={DashboardClientActions.test.bind(this, ticket['type'], ticket.queue[i]['ticket_number'])} className="btn btn-danger">Cancelar Senha</button></center>
             </div>

@@ -895,10 +895,16 @@ var DashboardClient = function (_React$Component) {
 
       //var aux = [];
       var myTickets = this.state.myTickets.map(function (ticket) {
-
+        var avgTime = 0;
         for (var i = 0; i < ticket.queue.length; i++) {
-          if (ticket.queue[i]['ticket_UUID'] == '7') {
-            //aux.push({ 'nr': ticket.queue[i]['ticket_number'], type: ticket.type });
+          avgTime = avgTime + ticket['queue_average_time'];
+          console.log("pre if :" + avgTime);
+          if (ticket.queue[i]['ticket_UUID'] == '76') {
+            console.log(i);
+
+            //console.log((Math.ceil(avgTime)).toHHMMSS());
+
+            var dateTime = new Date(avgTime);
 
             return _react2.default.createElement(
               'div',
@@ -909,12 +915,30 @@ var DashboardClient = function (_React$Component) {
                 _react2.default.createElement(
                   'div',
                   { className: 'panel-heading' },
-                  ticket['type']
+                  _react2.default.createElement(
+                    'center',
+                    null,
+                    ticket['type']
+                  )
                 ),
                 _react2.default.createElement(
                   'div',
                   { className: 'panel-body' },
-                  ticket.queue[i]['ticket_number']
+                  _react2.default.createElement(
+                    'div',
+                    { className: 'row' },
+                    _react2.default.createElement(
+                      'div',
+                      { className: 'col-lg-6' },
+                      ticket.queue[i]['ticket_number']
+                    ),
+                    _react2.default.createElement(
+                      'div',
+                      { className: 'col-lg-6' },
+                      'Tempo Estimado: ',
+                      dateTime.getHours() + ':' + dateTime.getMinutes() + ':' + dateTime.getSeconds()
+                    )
+                  )
                 )
               ),
               _react2.default.createElement(
