@@ -450,7 +450,7 @@ app.post('/employee/ticketAttended', function (req, res) {
                     console.error(err)
                 });
 
-                var result = '{"result":"success"}';
+                var result = JSON.parse('{"result":"success"}');
                 res.status(200).json(result);
 
             }
@@ -486,7 +486,7 @@ app.post('/employee/ticketAttended', function (req, res) {
 app.post('/employee/closeForTheDay', function (req, res) {
     console.log('employee closeForTheDay - entered');
 
-    var result = '{"result":"success"}';
+    var result = JSON.parse('{"result":"success"}');
     closed_for_requests = true;
 
     res.status(200).json(result);
@@ -496,7 +496,7 @@ app.post('/employee/closeForTheDay', function (req, res) {
 app.post('/employee/newDay', function (req, res) {
     console.log('employee newDay - entered');
 
-    var result = '{"result":"success"}';
+    var result = JSON.parse('{"result":"success"}');
 
     fs.writeFile(ticket_queue_path, JSON.stringify(everyThing_template), function (err) {
         console.error(err)
@@ -563,7 +563,7 @@ app.post('/employee/makeNewType', function (req, res) {
                         console.error(err)
                     });
 
-                    var result = '{"result":"success"}';
+                    var result = JSON.parse('{"result":"success"}');
                     res.status(200).json(result);
 
                 }
@@ -621,7 +621,7 @@ app.post('/client/requestTicket', function (req, res) {
             //console.log(data[0]['type'])
             var queues = JSON.parse(results[0]);
 
-            if (ticket_req != null && ticket_req.ticket_type != null && ticket_req.jsonpoint_id != null) {
+            if (ticket_req != null && ticket_req.ticket_type != null && ticket_req.endpoint_id != null) {
 
                 console.log('client requestTicket - searching ticket type (%s) queue', ticket_req.ticket_type);
 
@@ -636,14 +636,14 @@ app.post('/client/requestTicket', function (req, res) {
                 }
                 if (queue_pos != -1) {
 
-                    if (UUID_alreadyInQueue(queues[queue_pos]['queue'], ticket_req.jsonpoint_id) == false) {
+                    if (UUID_alreadyInQueue(queues[queue_pos]['queue'], ticket_req.endpoint_id) == false) {
                         //console.log(queues[queue_pos]);
                         var new_ticket = ticket_template;
 
                         console.log(JSON.stringify(new_ticket));
 
                         new_ticket['ticket_number'] = queues[queue_pos]['last_ticket'] + 1;
-                        new_ticket['ticket_UUID'] = ticket_req.jsonpoint_id;
+                        new_ticket['ticket_UUID'] = ticket_req.endpoint_id;
                         new_ticket['request_timestamp'] = new Date().getTime();
 
                         console.log(JSON.stringify(new_ticket));
@@ -661,7 +661,7 @@ app.post('/client/requestTicket', function (req, res) {
                         //...
 
 
-                        var result = '{"result":"success","ticket_number":' + new_ticket['ticket_number'] + '}';
+                        var result = JSON.parse('{"result":"success","ticket_number":' + new_ticket['ticket_number'] + '}');
                         res.status(200).json(result);
                     }
                     else {
@@ -756,7 +756,24 @@ app.post('/client/cancelTicket', function (req, res) {
                 });
 
                 var result = '{"result":"success"}';
-                res.status(200).json(result);
+
+
+                //var queues = JSON.parse(results[0]);
+                //var queues = data;
+
+                var dump_queues = JSON.parse("[]");
+
+                for (var i = 0; i < queues.length; i++) {
+                    console.log('everyQueue - queue ' + i + 'type ' + queues[i]["type"]);
+                    dump_queues[i] = JSON.parse("{}");
+                    dump_queues[i]['queue'] = queues[i]['queue'];
+                    dump_queues[i]['type'] = queues[i]['type'];
+
+
+                }
+                res.status(200).json(dump_queues);
+
+                //res.status(200).json(result);
 
             }
             else {
