@@ -47,15 +47,15 @@ class DashboardClient extends React.Component {
     console.log(this.state.myTickets);
 
 
-    this.state.myTickets.map((ticket) => {
-      for (let i = 0; i < this.state.myTickets.length; i++) {
-        if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
-          //aux.push({ 'nr': ticket.queue[i]['ticket_number'], type: ticket.type });  
-          console.log("ayy lmao that's spooky m8")
+    // this.state.myTickets.map((ticket) => {
+    //   for (let i = 0; i < this.state.myTickets.length; i++) {
+    //     if (ticket.queue[i]['ticket_UUID'] == '2') {
+    //       //aux.push({ 'nr': ticket.queue[i]['ticket_number'], type: ticket.type });  
+    //       console.log("ayy lmao that's spooky m8")
 
-        }
-      }
-    });
+    //     }
+    //   }
+    // });
 
   }
 
@@ -81,12 +81,12 @@ class DashboardClient extends React.Component {
     let myTickets = this.state.myTickets.map((ticket) => {
 
       for (let i = 0; i < ticket.queue.length; i++) {
-        if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
+        if (ticket.queue[i]['ticket_UUID'] == '7') {
           //aux.push({ 'nr': ticket.queue[i]['ticket_number'], type: ticket.type });
 
           return (
 
-            <div key={ticket.queue[i]['ticket_UUID']} className="col-lg-3">
+            <div key={ticket.type} className="col-lg-3">
               <div className="panel panel-default">
                 <div className="panel-heading">{ticket['type']}</div>
                 <div className="panel-body">{ticket.queue[i]['ticket_number']}</div>

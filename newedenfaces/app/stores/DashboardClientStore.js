@@ -29,6 +29,18 @@ class DashboardClientStore {
   }
 
 
+  onTestSuccess(data) {
+    console.log("on test success")
+    console.log(data);
+    this.myTickets = data;
+  }
+
+  onTestFail(jqXhr) {
+    toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+  }
+
+
+
 }
 
 export default alt.createStore(DashboardClientStore);

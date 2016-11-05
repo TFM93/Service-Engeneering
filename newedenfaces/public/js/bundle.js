@@ -122,56 +122,67 @@ var DashboardClientActions = function () {
   function DashboardClientActions() {
     _classCallCheck(this, DashboardClientActions);
 
-    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail');
+    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail');
   }
 
   _createClass(DashboardClientActions, [{
     key: 'test',
-    value: function test(nr, type) {
+    value: function test(type, nr) {
+      var _this = this;
+
       console.log(nr + type);
+      $.ajax({
+        type: 'POST',
+        url: 'http://192.168.1.78/client/cancelTicket',
+        data: { "ticket": { "ticket_number": nr, "ticket_type": type } }
+      }).done(function (data) {
+        _this.actions.testSuccess(data);
+      }).fail(function (jqXhr) {
+        _this.actions.testFail(jqXhr);
+      });
     }
   }, {
     key: 'getLastTickets',
     value: function getLastTickets() {
-      var _this = this;
+      var _this2 = this;
 
       $.ajax({
-        url: 'https://esmickettodule.herokuapp.com/lastTickets',
+        url: 'http://esmickettodule.herokuapp.com/lastTickets',
         //url: 'http://192.168.1.78/lastTickets',
         type: 'get'
       }).done(function (data) {
-        _this.actions.getLastTicketsSuccess(data);
+        _this2.actions.getLastTicketsSuccess(data);
       }).fail(function (jqXhr) {
-        _this.actions.getLastTicketsFail(jqXhr);
+        _this2.actions.getLastTicketsFail(jqXhr);
       });
     }
   }, {
     key: 'getMyTickets',
     value: function getMyTickets() {
-      var _this2 = this;
+      var _this3 = this;
 
       $.ajax({
-        url: 'https://esmickettodule.herokuapp.com/everyQueue',
+        url: 'http://192.168.1.78/everyQueue',
         type: 'get'
       }).done(function (data) {
-        _this2.actions.getMyTicketsSuccess(data);
+        _this3.actions.getMyTicketsSuccess(data);
       }).fail(function (jqXhr) {
-        _this2.actions.getMyTicketsFail(jqXhr);
+        _this3.actions.getMyTicketsFail(jqXhr);
       });
     }
   }, {
     key: 'report',
     value: function report(DashboardClientId) {
-      var _this3 = this;
+      var _this4 = this;
 
       $.ajax({
         type: 'POST',
         url: '/api/report',
         data: { DashboardClientId: DashboardClientId }
       }).done(function () {
-        _this3.actions.reportSuccess();
+        _this4.actions.reportSuccess();
       }).fail(function (jqXhr) {
-        _this3.actions.reportFail(jqXhr);
+        _this4.actions.reportFail(jqXhr);
       });
     }
   }]);
@@ -842,25 +853,24 @@ var DashboardClient = function (_React$Component) {
   }, {
     key: 'onChange',
     value: function onChange(state) {
-      var _this2 = this;
-
       this.setState(state);
       console.log("eoqlol");
       console.log(this.state.myTickets);
 
-      this.state.myTickets.map(function (ticket) {
-        for (var i = 0; i < _this2.state.myTickets.length; i++) {
-          if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
-            //aux.push({ 'nr': ticket.queue[i]['ticket_number'], type: ticket.type });  
-            console.log("ayy lmao that's spooky m8");
-          }
-        }
-      });
+      // this.state.myTickets.map((ticket) => {
+      //   for (let i = 0; i < this.state.myTickets.length; i++) {
+      //     if (ticket.queue[i]['ticket_UUID'] == '2') {
+      //       //aux.push({ 'nr': ticket.queue[i]['ticket_number'], type: ticket.type });  
+      //       console.log("ayy lmao that's spooky m8")
+
+      //     }
+      //   }
+      // });
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this2 = this;
 
       var lastTicketsBoard = this.state.lastTickets.map(function (ticket) {
         return _react2.default.createElement(
@@ -887,12 +897,12 @@ var DashboardClient = function (_React$Component) {
       var myTickets = this.state.myTickets.map(function (ticket) {
 
         for (var i = 0; i < ticket.queue.length; i++) {
-          if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
+          if (ticket.queue[i]['ticket_UUID'] == '7') {
             //aux.push({ 'nr': ticket.queue[i]['ticket_number'], type: ticket.type });
 
             return _react2.default.createElement(
               'div',
-              { key: ticket.queue[i]['ticket_UUID'], className: 'col-lg-3' },
+              { key: ticket.type, className: 'col-lg-3' },
               _react2.default.createElement(
                 'div',
                 { className: 'panel panel-default' },
@@ -912,7 +922,7 @@ var DashboardClient = function (_React$Component) {
                 null,
                 _react2.default.createElement(
                   'button',
-                  { onClick: _DashboardClientActions2.default.test.bind(_this3, ticket['type'], ticket.queue[i]['ticket_number']), className: 'btn btn-danger' },
+                  { onClick: _DashboardClientActions2.default.test.bind(_this2, ticket['type'], ticket.queue[i]['ticket_number']), className: 'btn btn-danger' },
                   'Cancelar Senha'
                 )
               )
@@ -1865,6 +1875,18 @@ var DashboardClientStore = function () {
     key: 'onGetMyTicketsFail',
     value: function onGetMyTicketsFail(jqXhr) {
       // Handle multiple response formats, fallback to HTTP status code number.
+      toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+    }
+  }, {
+    key: 'onTestSuccess',
+    value: function onTestSuccess(data) {
+      console.log("on test success");
+      console.log(data);
+      this.myTickets = data;
+    }
+  }, {
+    key: 'onTestFail',
+    value: function onTestFail(jqXhr) {
       toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
     }
   }]);

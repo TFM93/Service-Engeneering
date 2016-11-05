@@ -8,17 +8,30 @@ class DashboardClientActions {
       'getLastTicketsSuccess',
       'getLastTicketsFail',
       'getMyTicketsSuccess',
-      'getMyTicketsFail'
+      'getMyTicketsFail',
+      'testSuccess',
+      'testFail'
     );
   }
 
-  test(nr, type){
-    console.log(nr+type);
+  test(type, nr) {
+    console.log(nr+type)
+    $.ajax({
+      type: 'POST',
+      url: 'http://192.168.1.78/client/cancelTicket',
+      data: { "ticket":{"ticket_number":nr, "ticket_type":type} }
+    })
+      .done((data) => {
+        this.actions.testSuccess(data);
+      })
+      .fail((jqXhr) => {
+        this.actions.testFail(jqXhr);
+      });
   }
 
   getLastTickets() {
     $.ajax({
-      url: 'https://esmickettodule.herokuapp.com/lastTickets',
+      url: 'http://esmickettodule.herokuapp.com/lastTickets',
       //url: 'http://192.168.1.78/lastTickets',
       type: 'get'
     })
@@ -33,7 +46,7 @@ class DashboardClientActions {
 
   getMyTickets() {
     $.ajax({
-      url: 'https://esmickettodule.herokuapp.com/everyQueue',
+      url: 'http://192.168.1.78/everyQueue',
       type: 'get'
     })
       .done((data) => {
