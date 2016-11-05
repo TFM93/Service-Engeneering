@@ -126,6 +126,11 @@ var DashboardClientActions = function () {
   }
 
   _createClass(DashboardClientActions, [{
+    key: 'test',
+    value: function test(nr, type) {
+      console.log(nr + type);
+    }
+  }, {
     key: 'getLastTickets',
     value: function getLastTickets() {
       var _this = this;
@@ -837,11 +842,25 @@ var DashboardClient = function (_React$Component) {
   }, {
     key: 'onChange',
     value: function onChange(state) {
+      var _this2 = this;
+
       this.setState(state);
+      console.log("eoqlol");
+      console.log(this.state.myTickets);
+
+      this.state.myTickets.map(function (ticket) {
+        for (var i = 0; i < _this2.state.myTickets.length; i++) {
+          if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
+            //aux.push({ 'nr': ticket.queue[i]['ticket_number'], type: ticket.type });  
+            console.log("ayy lmao that's spooky m8");
+          }
+        }
+      });
     }
   }, {
     key: 'render',
     value: function render() {
+      var _this3 = this;
 
       var lastTicketsBoard = this.state.lastTickets.map(function (ticket) {
         return _react2.default.createElement(
@@ -886,6 +905,15 @@ var DashboardClient = function (_React$Component) {
                   'div',
                   { className: 'panel-body' },
                   ticket.queue[i]['ticket_number']
+                )
+              ),
+              _react2.default.createElement(
+                'center',
+                null,
+                _react2.default.createElement(
+                  'button',
+                  { onClick: _DashboardClientActions2.default.test.bind(_this3, ticket['type'], ticket.queue[i]['ticket_number']), className: 'btn btn-danger' },
+                  'Cancelar Senha'
                 )
               )
             );

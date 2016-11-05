@@ -2,6 +2,8 @@ import React from 'react';
 import DashboardClientStore from '../stores/DashboardClientStore';
 import DashboardClientActions from '../actions/DashboardClientActions'
 
+
+
 class DashboardClient extends React.Component {
   constructor(props) {
     super(props);
@@ -13,6 +15,7 @@ class DashboardClient extends React.Component {
     DashboardClientStore.listen(this.onChange);
     DashboardClientActions.getLastTickets();
     DashboardClientActions.getMyTickets();
+
 
     // $('.magnific-popup').magnificPopup({
     //   type: 'image',
@@ -40,12 +43,26 @@ class DashboardClient extends React.Component {
 
   onChange(state) {
     this.setState(state);
+    console.log("eoqlol")
+    console.log(this.state.myTickets);
+
+
+    this.state.myTickets.map((ticket) => {
+      for (let i = 0; i < this.state.myTickets.length; i++) {
+        if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
+          //aux.push({ 'nr': ticket.queue[i]['ticket_number'], type: ticket.type });  
+          console.log("ayy lmao that's spooky m8")
+
+        }
+      }
+    });
+
   }
 
   render() {
 
 
-    
+
 
     let lastTicketsBoard = this.state.lastTickets.map((ticket) => {
       return (
@@ -56,7 +73,7 @@ class DashboardClient extends React.Component {
           </div>
         </div>
 
-        
+
       )
     });
 
@@ -67,14 +84,15 @@ class DashboardClient extends React.Component {
         if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
           //aux.push({ 'nr': ticket.queue[i]['ticket_number'], type: ticket.type });
 
-          return(
+          return (
 
-          <div key={ticket.queue[i]['ticket_UUID']} className="col-lg-3">
-            <div className="panel panel-default">
-              <div className="panel-heading">{ticket['type']}</div>
-              <div className="panel-body">{ticket.queue[i]['ticket_number']}</div>
+            <div key={ticket.queue[i]['ticket_UUID']} className="col-lg-3">
+              <div className="panel panel-default">
+                <div className="panel-heading">{ticket['type']}</div>
+                <div className="panel-body">{ticket.queue[i]['ticket_number']}</div>
+              </div>
+              <center><button onClick={DashboardClientActions.test.bind(this, ticket['type'], ticket.queue[i]['ticket_number'])} className="btn btn-danger">Cancelar Senha</button></center>
             </div>
-          </div>
 
           );
 
@@ -114,10 +132,6 @@ class DashboardClient extends React.Component {
             </div>
           </div>
         </div>
-
-
-
-
       </div>
 
     );

@@ -12,6 +12,10 @@ class DashboardClientActions {
     );
   }
 
+  test(nr, type){
+    console.log(nr+type);
+  }
+
   getLastTickets() {
     $.ajax({
       url: 'https://esmickettodule.herokuapp.com/lastTickets',
