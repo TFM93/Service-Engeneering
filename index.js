@@ -65,7 +65,7 @@ function findTicketInQueue(queue, ticket_number) {
     if (ticket_number == queue[0]['ticket_number']) {
         console.log('findTicketInQueue - ticket is at the top of the queue - everything goes as planned');
         return 0;
-        //res.status(200).end("gold");
+        //res.status(200).json("gold");
     }
     else {
         console.log('findTicketInQueue - ticket is not at the top of the queue - check if bogus');
@@ -81,7 +81,7 @@ function findTicketInQueue(queue, ticket_number) {
             }
         }
         return -1;
-        //res.status(200).end("shit");
+        //res.status(200).json("shit");
     }
 }
 
@@ -132,7 +132,7 @@ function UUID_alreadyInQueue(queue, UUID) {
     }
 
     return false;
-    //res.status(200).end("shit");
+    //res.status(200).json("shit");
 }
 
 /**** GET METHODS ****/
@@ -140,7 +140,7 @@ function UUID_alreadyInQueue(queue, UUID) {
 /**** for everyone ****/
 app.get('/', function (req, res) {
     //console.log( data );
-    res.status(200).end("good evening...");
+    res.status(200).json("good evening...");
 
 });
 
@@ -177,7 +177,7 @@ app.get('/employee/nextTicket', function (req, res) {
 
             if (queue_pos != -1 && queues[queue_pos]['queue'].length > 0) {
                 next_ticket['ticket_number'] = queues[queue_pos]['queue'][0]['ticket_number'];
-                res.status(200).end(JSON.stringify(next_ticket));
+                res.status(200).json(next_ticket);
             }
             else {
                 console.log('employee nextTicket - bad request (no more tickets or wrong type)');
@@ -186,7 +186,7 @@ app.get('/employee/nextTicket', function (req, res) {
                 error_resp['message'] = "Gone - no more tickets or type non-existent";
                 error_resp['fields'] = "none";
                 console.log(error_resp);
-                res.status(400).end(JSON.stringify(error_resp));
+                res.status(400).json(error_resp);
             }
 
         }
@@ -197,7 +197,7 @@ app.get('/employee/nextTicket', function (req, res) {
             error_resp['message'] = "bad request";
             error_resp['fields'] = "ticket_type";
             console.log(error_resp);
-            res.status(400).end(JSON.stringify(error_resp));
+            res.status(400).json(error_resp);
 
         }
     });
@@ -228,7 +228,7 @@ app.get('/everyQueue', function (req, res) {
 
 
         }
-        res.status(200).end(JSON.stringify(dump_queues));
+        res.status(200).json(dump_queues);
 
     });
 
@@ -258,7 +258,7 @@ app.get('/employee/fullQueue', function (req, res) {
                     break;
                 }
             }
-            res.status(200).end(JSON.stringify(ticket_queue));
+            res.status(200).json(ticket_queue);
 
         }
         else {
@@ -268,7 +268,7 @@ app.get('/employee/fullQueue', function (req, res) {
             error_resp['message'] = "bad request";
             error_resp['fields'] = "ticket_type";
             console.log(error_resp);
-            res.status(400).end(JSON.stringify(error_resp));
+            res.status(400).json(error_resp);
 
         }
     });
@@ -303,7 +303,7 @@ app.get('/lastTickets', function (req, res) {
 
 
         }
-        res.status(200).end(JSON.stringify(ticketQueue));
+        res.status(200).json(ticketQueue);
 
 
     });
@@ -357,7 +357,7 @@ app.get('/client/remainingTime', function (req, res) {
                     result['remaining_time'] = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
                     //result['remaining_time'] = time_remaining.getHours();
                     //console.log(JSON.stringify(result));
-                    res.status(200).end(JSON.stringify(result));
+                    res.status(200).json(result);
                 }
                 else {
                     console.log('client remainingTime - bogus ticket number');
@@ -366,7 +366,7 @@ app.get('/client/remainingTime', function (req, res) {
                     error_resp['message'] = "bad request - wrong ticket number or type";
                     error_resp['fields'] = "ticket_type or ticket_number";
                     //console.log(error_resp);
-                    res.status(400).end(JSON.stringify(error_resp));
+                    res.status(400).json(error_resp);
                 }
 
             }
@@ -377,7 +377,7 @@ app.get('/client/remainingTime', function (req, res) {
                 error_resp['message'] = "bad request - queue not found or service not ready";
                 error_resp['fields'] = "ticket_type";
                 //console.log(error_resp);
-                res.status(400).end(JSON.stringify(error_resp));
+                res.status(400).json(error_resp);
             }
 
         }
@@ -388,7 +388,7 @@ app.get('/client/remainingTime', function (req, res) {
             error_resp['message'] = "bad request - missing ticket type";
             error_resp['fields'] = "ticket_type";
             //console.log(error_resp);
-            res.status(400).end(JSON.stringify(error_resp));
+            res.status(400).json(error_resp);
 
         }
 
@@ -451,7 +451,7 @@ app.post('/employee/ticketAttended', function (req, res) {
                 });
 
                 var result = '{"result":"success"}';
-                res.status(200).end(result);
+                res.status(200).json(result);
 
             }
             else {
@@ -461,7 +461,7 @@ app.post('/employee/ticketAttended', function (req, res) {
                 error_resp['message'] = "bad request - wrong ticket number or type";
                 error_resp['fields'] = "ticket_type or ticket_number";
                 //console.log(error_resp);
-                res.status(400).end(JSON.stringify(error_resp));
+                res.status(400).json(error_resp);
             }
 
 
@@ -473,12 +473,12 @@ app.post('/employee/ticketAttended', function (req, res) {
             error_resp['message'] = "bad request - missing ticket number or type";
             error_resp['fields'] = "ticket_type or ticket_number";
             //console.log(error_resp);
-            res.status(400).end(JSON.stringify(error_resp));
+            res.status(400).json(error_resp);
 
         }
 
     });
-    //res.status(200).end("employee/ticketAttended...");
+    //res.status(200).json("employee/ticketAttended...");
 
 });
 
@@ -489,7 +489,7 @@ app.post('/employee/closeForTheDay', function (req, res) {
     var result = '{"result":"success"}';
     closed_for_requests = true;
 
-    res.status(200).end(result);
+    res.status(200).json(result);
 
 });
 
@@ -510,7 +510,7 @@ app.post('/employee/newDay', function (req, res) {
     closed_for_requests = false;
 
 
-    res.status(200).end(result);
+    res.status(200).json(result);
 
 });
 
@@ -564,7 +564,7 @@ app.post('/employee/makeNewType', function (req, res) {
                     });
 
                     var result = '{"result":"success"}';
-                    res.status(200).end(result);
+                    res.status(200).json(result);
 
                 }
                 else {
@@ -574,7 +574,7 @@ app.post('/employee/makeNewType', function (req, res) {
                     error_resp['message'] = "bad request - type already exists";
                     error_resp['fields'] = "ticket_type";
                     //console.log(error_resp);
-                    res.status(400).end(JSON.stringify(error_resp));
+                    res.status(400).json(error_resp);
                 }
 
 
@@ -586,7 +586,7 @@ app.post('/employee/makeNewType', function (req, res) {
                 error_resp['message'] = "bad request - missing ticket type";
                 error_resp['fields'] = "ticket_type";
                 //console.log(error_resp);
-                res.status(400).end(JSON.stringify(error_resp));
+                res.status(400).json(error_resp);
 
             }
 
@@ -599,9 +599,9 @@ app.post('/employee/makeNewType', function (req, res) {
         error_resp['message'] = "Gone - service terminated for the day";
         error_resp['fields'] = "none";
         //console.log(error_resp);
-        res.status(410).end(JSON.stringify(error_resp));
+        res.status(410).json(error_resp);
     }
-    //res.status(200).end("employee/ticketAttended...");
+    //res.status(200).json("employee/ticketAttended...");
 
 });
 
@@ -621,7 +621,7 @@ app.post('/client/requestTicket', function (req, res) {
             //console.log(data[0]['type'])
             var queues = JSON.parse(results[0]);
 
-            if (ticket_req != null && ticket_req.ticket_type != null && ticket_req.endpoint_id != null) {
+            if (ticket_req != null && ticket_req.ticket_type != null && ticket_req.jsonpoint_id != null) {
 
                 console.log('client requestTicket - searching ticket type (%s) queue', ticket_req.ticket_type);
 
@@ -636,14 +636,14 @@ app.post('/client/requestTicket', function (req, res) {
                 }
                 if (queue_pos != -1) {
 
-                    if (UUID_alreadyInQueue(queues[queue_pos]['queue'], ticket_req.endpoint_id) == false) {
+                    if (UUID_alreadyInQueue(queues[queue_pos]['queue'], ticket_req.jsonpoint_id) == false) {
                         //console.log(queues[queue_pos]);
                         var new_ticket = ticket_template;
 
                         console.log(JSON.stringify(new_ticket));
 
                         new_ticket['ticket_number'] = queues[queue_pos]['last_ticket'] + 1;
-                        new_ticket['ticket_UUID'] = ticket_req.endpoint_id;
+                        new_ticket['ticket_UUID'] = ticket_req.jsonpoint_id;
                         new_ticket['request_timestamp'] = new Date().getTime();
 
                         console.log(JSON.stringify(new_ticket));
@@ -662,7 +662,7 @@ app.post('/client/requestTicket', function (req, res) {
 
 
                         var result = '{"result":"success","ticket_number":' + new_ticket['ticket_number'] + '}';
-                        res.status(200).end(result);
+                        res.status(200).json(result);
                     }
                     else {
                         console.log('client requestTicket - bad request (UUID already in queue)');
@@ -671,7 +671,7 @@ app.post('/client/requestTicket', function (req, res) {
                         error_resp['message'] = "bad request - UUID already in queue";
                         error_resp['fields'] = "ticket_type";
                         //console.log(error_resp);
-                        res.status(400).end(JSON.stringify(error_resp));
+                        res.status(400).json(error_resp);
                     }
 
 
@@ -683,7 +683,7 @@ app.post('/client/requestTicket', function (req, res) {
                     error_resp['message'] = "bad request - ticket type non-existent";
                     error_resp['fields'] = "ticket_type";
                     //console.log(error_resp);
-                    res.status(400).end(JSON.stringify(error_resp));
+                    res.status(400).json(error_resp);
                 }
 
             }
@@ -694,7 +694,7 @@ app.post('/client/requestTicket', function (req, res) {
                 error_resp['message'] = "bad request - missing ticket type";
                 error_resp['fields'] = "ticket_type";
                 //console.log(error_resp);
-                res.status(400).end(JSON.stringify(error_resp));
+                res.status(400).json(error_resp);
 
             }
 
@@ -707,7 +707,7 @@ app.post('/client/requestTicket', function (req, res) {
         error_resp['message'] = "Gone - service terminated for the day";
         error_resp['fields'] = "none";
         //console.log(error_resp);
-        res.status(410).end(JSON.stringify(error_resp));
+        res.status(410).json(error_resp);
     }
 
 });
@@ -756,7 +756,7 @@ app.post('/client/cancelTicket', function (req, res) {
                 });
 
                 var result = '{"result":"success"}';
-                res.status(200).end(result);
+                res.status(200).json(result);
 
             }
             else {
@@ -766,7 +766,7 @@ app.post('/client/cancelTicket', function (req, res) {
                 error_resp['message'] = "bad request - wrong ticket number or type";
                 error_resp['fields'] = "ticket_type or ticket_number";
                 //console.log(error_resp);
-                res.status(400).end(JSON.stringify(error_resp));
+                res.status(400).json(error_resp);
             }
 
 
@@ -778,12 +778,12 @@ app.post('/client/cancelTicket', function (req, res) {
             error_resp['message'] = "bad request - missing ticket number or type";
             error_resp['fields'] = "ticket_type or ticket_number";
             //console.log(error_resp);
-            res.status(400).end(JSON.stringify(error_resp));
+            res.status(400).json(error_resp);
 
         }
 
     });
-    //res.status(200).end("client/cancelTicket...");
+    //res.status(200).json("client/cancelTicket...");
 
 });
 
