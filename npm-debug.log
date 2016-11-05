@@ -24,7 +24,7 @@
 14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:226:5)
 15 verbose pkgid Ticket_module@1.0.0
 16 verbose cwd /home/rofler/D/Google Drive/ua/ES_Eng_serv/Service-Engeneering
-17 error Linux 4.8.2-1-ARCH
+17 error Linux 4.8.4-1-ARCH
 18 error argv "/usr/bin/node" "/usr/bin/npm" "start"
 19 error node v6.9.1
 20 error npm  v3.10.9

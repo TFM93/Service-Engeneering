@@ -15,6 +15,8 @@ var ticket_brief_template = JSON.parse('{"ticket_number":-1}');
 var error_template = JSON.parse('{"code":-1,"message":"A","fields":"a"}');
 var everyThing_template = JSON.parse('[{"type": "A","queue": [],"last_ticket": 0}]');
 var queue_template = JSON.parse('{"type": "a","queue": [],"last_ticket": 0}');
+var last_tickets_queue_template = JSON.parse('[{"ticket_type": "a","ticket_number": 0}]');
+var last_tickets_queue_ticket_template = JSON.parse('{"ticket_type": "a","ticket_number": 0}');
 var average_time_template = JSON.parse('[{"type": "A", "number_of_tickets": 0,"current_average_time": 0}]');
 var remaining_time_res_template = JSON.parse('{"remaining_time": 0}');
 
@@ -202,6 +204,36 @@ app.get('/employee/nextTicket', function (req, res) {
 
 });
 
+
+app.get('/everyQueue', function (req, res) {
+    console.log('everyQueue - entered');
+    //var ticket_type = req.query.ticket_type;
+    var filesPath = [ticket_queue_path];
+
+
+    async.map(filesPath, function (filePath, cb) { //reading files or dir
+        fs.readFile(filePath, 'utf8', cb);
+    }, function (err, results) {
+        //console.log(data[0]['type'])
+        var queues = JSON.parse(results[0]);
+        //var queues = data;
+
+        var dump_queues = JSON.parse("[]");
+
+        for (var i = 0; i < queues.length; i++) {
+                console.log('everyQueue - queue ' + i + 'type ' + queues[i]["type"]);
+                dump_queues[i] = JSON.parse("{}");
+                dump_queues[i]['queue'] = queues[i]['queue'];
+                dump_queues[i]['type'] = queues[i]['type'];
+
+
+        }
+        res.status(200).end(JSON.stringify(dump_queues));
+
+    });
+
+});
+
 app.get('/employee/fullQueue', function (req, res) {
     console.log('employee fullQueue - entered');
     var ticket_type = req.query.ticket_type;
@@ -243,6 +275,40 @@ app.get('/employee/fullQueue', function (req, res) {
 
 });
 
+
+app.get('/lastTickets', function (req, res) {
+    console.log('lastTickets - entered');
+    //var ticket_type = req.query.ticket_type;
+    var filesPath = [ticket_queue_path];
+
+
+    async.map(filesPath, function (filePath, cb) { //reading files or dir
+        fs.readFile(filePath, 'utf8', cb);
+    }, function (err, results) {
+        //console.log(data[0]['type'])
+        var queues = JSON.parse(results[0]);
+        //var queues = data;
+
+
+        var ticketQueue = last_tickets_queue_template;
+        console.log('lastTickets - searching queues');
+
+        for (var i = 0; i < queues.length; i++) {
+            console.log('lastTickets - queue ' + queues[i]['type'] + ' i: ' + i + ' number: ' + queues[i]['queue'][0]['ticket_number']);
+            ticketQueue[i] = JSON.parse('{"ticket_type": "a","ticket_number": 0}');//last_tickets_queue_ticket_template;
+            ticketQueue[i]['ticket_number'] = queues[i]['queue'][0]['ticket_number'] - 1;
+            ticketQueue[i]['ticket_type'] = queues[i]['type'];
+            console.log('last ticket template: ' + JSON.stringify(last_tickets_queue_ticket_template));
+            console.log(JSON.stringify(ticketQueue));
+
+
+        }
+        res.status(200).end(JSON.stringify(ticketQueue));
+
+
+    });
+
+});
 
 /**** for clients ****/
 

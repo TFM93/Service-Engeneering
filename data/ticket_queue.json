@@ -1,1 +1,24 @@
-[{"type":"A","queue":[{"ticket_number":5,"request_timestamp":1477263275550,"ticket_UUID":"25555"},{"ticket_number":8,"request_timestamp":1477263280722,"ticket_UUID":"25555555"}],"last_ticket":8},{"type":"B","queue":[],"last_ticket":0},{"type":"C","queue":[],"last_ticket":0}]
+[
+  {
+    "type": "A",
+    "queue": [
+      {
+        "ticket_number": 2,
+        "request_timestamp": 1478103427683,
+        "ticket_UUID": "C3C72F79"
+      }
+    ],
+    "last_ticket": 2
+  },
+  {
+    "type": "B",
+    "queue": [
+      {
+        "ticket_number": 1,
+        "request_timestamp": 1478104251002,
+        "ticket_UUID": "2"
+      }
+    ],
+    "last_ticket": 1
+  }
+]
