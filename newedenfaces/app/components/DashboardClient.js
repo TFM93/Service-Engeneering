@@ -84,7 +84,7 @@ class DashboardClient extends React.Component {
       for (let i = 0; i < ticket.queue.length; i++) {
         avgTime = avgTime + ticket['queue_average_time'];
         console.log("pre if :" + avgTime);
-        if (ticket.queue[i]['ticket_UUID'] == '76') {
+        if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
           console.log(i);
 
           //console.log((Math.ceil(avgTime)).toHHMMSS());
@@ -101,8 +101,8 @@ class DashboardClient extends React.Component {
                <div className="panel-heading"><center>{ticket['type']}</center></div>
                 <div className="panel-body">
                   <div className="row">
-                    <div className="col-lg-6">{ticket.queue[i]['ticket_number']}</div>
-                    <div className="col-lg-6">Tempo Estimado: {dateTime.getHours() + ':' + dateTime.getMinutes() + ':'+ dateTime.getSeconds()}</div>
+                    <div className="col-lg-6"><center>{ticket.queue[i]['ticket_number']}</center></div>
+                    <div className="col-lg-6"><center>Tempo Estimado: {dateTime.getHours() + ':' + dateTime.getMinutes() + ':'+ dateTime.getSeconds()}</center></div>
                   </div>
                 </div>
 

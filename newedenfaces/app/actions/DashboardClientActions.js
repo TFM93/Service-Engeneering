@@ -18,7 +18,7 @@ class DashboardClientActions {
     console.log(nr+type)
     $.ajax({
       type: 'POST',
-      url: 'http://192.168.1.78/client/cancelTicket',
+      url: 'http://esmickettodule.herokuapp.com/client/cancelTicket',
       data: { "ticket":{"ticket_number":nr, "ticket_type":type} }
     })
       .done((data) => {
@@ -46,7 +46,7 @@ class DashboardClientActions {
 
   getMyTickets() {
     $.ajax({
-      url: 'http://192.168.1.78/everyQueue',
+      url: 'http://esmickettodule.herokuapp.com/everyQueue',
       type: 'get'
     })
       .done((data) => {
