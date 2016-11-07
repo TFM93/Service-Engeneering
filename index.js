@@ -585,8 +585,40 @@ app.post('/employee/ticketAttended', function (req, res) {
                     console.error(err)
                 });
 
-                var result = JSON.parse('{"result":"success"}');
-                res.status(200).json(result);
+                //var result = JSON.parse('{"result":"success"}');
+                //res.status(200).json(result);
+
+
+                var dump_queues = JSON.parse("[]");
+                var next_ticket = ticket_brief_template;
+
+                for (var i = 0; i < queues.length; i++) {
+                    next_ticket = ticket_brief_template;
+
+                    if(queues[i]['queue'].length > 0)
+                    {
+                        dump_queues[i] = JSON.parse("{}");
+                        dump_queues[i]['ticket_number'] = queues[i]['queue'][0]['ticket_number'];
+                        dump_queues[i]['type'] = queues[i]['type'];
+
+                    }
+                }
+
+                if(dump_queues.length != 0)
+                {
+                    res.status(200).json(dump_queues);
+                }
+                else
+                {
+                    console.log('employee ticketAttended - no next tickets');
+                    var error_resp = error_template;
+                    error_resp['code'] = 410;
+                    error_resp['message'] = "Gone - no next ticket in any queue";
+                    error_resp['fields'] = "none";
+                    console.log(error_resp);
+                    res.status(400).json(error_resp);
+                }
+
 
             }
             else {
