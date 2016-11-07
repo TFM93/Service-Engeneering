@@ -65,15 +65,52 @@ class DashboardEmployee extends React.Component {
                 <div className="row">
                     <div className="col-lg-12">
                         <div className="panel panel-info">
-                            <div className="panel-heading"><h4>Dashboard employee</h4></div>
+                            <div className="panel-heading">
+                                <div className="row">
+                                    <div className="col-lg-8">
+                                        <h4>Gestão de Senhas</h4>
+                                    </div>
+                                    <div className="col-lg-2">
+                                        <button className="btn btn-info btn-block">Começar o Dia</button>
+                                    </div>
+
+                                    <div className="col-lg-2">
+                                        <button className="btn btn-info btn-block">Acabar o Dia</button>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                            <div className="panel-body">
+
+                                <div className="row">
+                                    {currentTickets}
+                                </div>
+                            </div>
+
                         </div>
+
+                        <div className="panel panel-info">
+                            <div className="panel-heading">
+                                <h4>Adicionar filas de espera</h4>
+                            </div>
+                            <div className="panel-body">
+
+                                <input type="text" placeholder="Introduza aqui o nome da nova fila" />
+                            </div>
+
+                        </div>
+
+
                     </div>
 
                 </div>
 
-                <div className="row">
-                    {currentTickets}
-                </div>
+
+                <br />
+
+
 
 
             </div>

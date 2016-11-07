@@ -133,7 +133,7 @@ var DashboardClientActions = function () {
       console.log(nr + type);
       $.ajax({
         type: 'POST',
-        url: 'http://esmickettodule.herokuapp.com/client/cancelTicket',
+        url: 'https://esmickettodule.herokuapp.com/client/cancelTicket',
         data: { "ticket": { "ticket_number": nr, "ticket_type": type } }
       }).done(function (data) {
         _this.actions.testSuccess(data);
@@ -147,7 +147,7 @@ var DashboardClientActions = function () {
       var _this2 = this;
 
       $.ajax({
-        url: 'http://esmickettodule.herokuapp.com/lastTickets',
+        url: 'https://esmickettodule.herokuapp.com/lastTickets',
         //url: 'http://192.168.1.78/lastTickets',
         type: 'get'
       }).done(function (data) {
@@ -162,7 +162,7 @@ var DashboardClientActions = function () {
       var _this3 = this;
 
       $.ajax({
-        url: 'http://esmickettodule.herokuapp.com/everyQueue',
+        url: 'https://esmickettodule.herokuapp.com/everyQueue',
         type: 'get'
       }).done(function (data) {
         _this3.actions.getMyTicketsSuccess(data);
@@ -1254,19 +1254,68 @@ var DashboardEmployee = function (_React$Component) {
                                 'div',
                                 { className: 'panel-heading' },
                                 _react2.default.createElement(
+                                    'div',
+                                    { className: 'row' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'col-lg-8' },
+                                        _react2.default.createElement(
+                                            'h4',
+                                            null,
+                                            'Gest\xE3o de Senhas'
+                                        )
+                                    ),
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'col-lg-2' },
+                                        _react2.default.createElement(
+                                            'button',
+                                            { className: 'btn btn-info btn-block' },
+                                            'Come\xE7ar o Dia'
+                                        )
+                                    ),
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'col-lg-2' },
+                                        _react2.default.createElement(
+                                            'button',
+                                            { className: 'btn btn-info btn-block' },
+                                            'Acabar o Dia'
+                                        )
+                                    )
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'panel-body' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'row' },
+                                    currentTickets
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'panel panel-info' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'panel-heading' },
+                                _react2.default.createElement(
                                     'h4',
                                     null,
-                                    'Dashboard employee'
+                                    'Adicionar filas de espera'
                                 )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'panel-body' },
+                                _react2.default.createElement('input', { type: 'text', placeholder: 'Introduza aqui o nome da nova fila' })
                             )
                         )
                     )
                 ),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'row' },
-                    currentTickets
-                )
+                _react2.default.createElement('br', null)
             );
         }
     }]);
