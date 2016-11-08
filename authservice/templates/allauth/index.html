@@ -43,8 +43,9 @@
       <div class="jumbotron">
         <div class="container-fluid"></div>
         <div class="row">
-          <div style="padding-top:25px;" class="col-md-3 col-xs-9"><img src="{% static 'web/img/auth_home.png' %}" width="100%"></div>
+          <div style="padding-top:25px;" class="col-md-3 col-xs-5"><img src="{% static 'web/img/auth_home.png' %}" width="100%"></div>
           <div class="col-md-9 col-xs-12">{% block content %}
+            <div style="padding-top:100px;" class="row"></div>
             <div class="row">
               <div class="col-md-12 col-xs-12">
                 <h1>Authentication Server</h1>
@@ -55,10 +56,12 @@
               <div class="col-md-8 col-xs-12">{% if user.is_authenticated %}
                 <div class="alert alert-dismissible alert-success text-center">
                   <h5><strong style="color:white;">You're successfully signed in.</strong></h5>
-                </div>{% else %}<a href="{% url 'account_login' %}">
-                  <div class="alert alert-dismissible alert-info text-center">
-                    <h5><strong style="color:white;">Login with different services in one place!!</strong></h5>
-                  </div></a>{% endif %}
+                </div>{% else %}
+                <!--a(href="{% url 'account_login' %}")
+                .alert.alert-dismissible.alert-info.text-center
+                  h5
+                    strong(style="color:white;") Login with different services in one place!!
+                -->{% endif %}
               </div>
               <div class="col-md-3 col-xs-12"></div>
             </div>

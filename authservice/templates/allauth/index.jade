@@ -52,10 +52,11 @@ html(lang="en")
       .jumbotron
         .container-fluid
         .row
-          .col-md-3.col-xs-9(style="padding-top:25px;")
+          .col-md-3.col-xs-5(style="padding-top:25px;")
             img(src="{% static 'web/img/auth_home.png' %}", width='100%')
           .col-md-9.col-xs-12
             | {% block content %}
+            .row(style="padding-top:100px;")
             .row
               .col-md-12.col-xs-12
                 h1 Authentication Server
@@ -67,7 +68,7 @@ html(lang="en")
                   h5
                     strong(style="color:white;") You're successfully signed in.
                 | {% else %}
-                a(href="{% url 'account_login' %}")
+                //a(href="{% url 'account_login' %}")
                   .alert.alert-dismissible.alert-info.text-center
                     h5
                       strong(style="color:white;") Login with different services in one place!!

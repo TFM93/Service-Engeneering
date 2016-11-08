@@ -37,12 +37,15 @@ form.email_list(action="{% url 'account_email' %}", method='post')
           button.btn.btn-md.btn-primary.secondaryAction(type='submit', name='action_send') {% trans 'Re-send Verification' %}
           button.btn.btn-md.btn-danger.primaryAction(type='submit', name='action_remove') {% trans 'Remove' %}
 | {% else %}
-p
-  strong {% trans 'Warning:'%}
-  | {% trans "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}
+.row
+  .col-md-1.col-xs-12
+    h6
+      strong {% trans 'Warning: '%}
+  .col-md-11.col-xs-12
+    | You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.
 | {% endif %}
 
-h3 {% trans "Add E-mail Address" %}
+h4 {% trans "Add E-mail Address" %}
 form.add_email(method='post', action="{% url 'account_email' %}")
   | {% csrf_token %}
   | {{ form.as_p }}
