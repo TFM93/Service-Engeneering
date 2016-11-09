@@ -188,7 +188,7 @@ REST_FRAMEWORK = {
 # Social Account Providers Configs
 SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
-        'METHOD': 'js_sdk',  # oauth2
+        'METHOD': 'oauth2',  # js_sdk
         'SCOPE': ['email', 'public_profile'],
         'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
         'FIELDS': [
