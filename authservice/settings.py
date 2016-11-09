@@ -61,7 +61,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.linkedin',
 )
 
-SITE_ID = 2
+SITE_ID = 3
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -188,7 +188,7 @@ REST_FRAMEWORK = {
 # Social Account Providers Configs
 SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
-        'METHOD': 'oauth2',  # js_sdk
+        'METHOD': 'js_sdk',  # oauth2
         'SCOPE': ['email', 'public_profile'],
         'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
         'FIELDS': [
