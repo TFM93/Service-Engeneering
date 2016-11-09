@@ -1,0 +1,70 @@
+| {% extends "account/base.html" %}
+| {% load i18n %}
+| {% block head_title %} - {% trans "Account" %}{% endblock %}
+| {% block content %}
+h1 {% trans "Manage Account" %}
+| {% if user.emailaddress_set.all %}
+p {% trans 'The following e-mail addresses are associated with your account:' %}
+form.email_list(action="{% url 'account_email' %}", method='post')
+  | {% csrf_token %}
+  fieldset.blockLabels
+    | {% for emailaddress in user.emailaddress_set.all %}
+    .row
+      .col-md-4.col-xs-6
+        label(for='email_radio_{{forloop.counter}}', class='{% if emailaddress.primary %}primary_email{%endif%}')
+          input(id='email_radio_{{forloop.counter}}', type='radio', name='email', checked='{% if emailaddress.primary or user.emailaddress_set.count == 1 %} checked {% endif %}', value='{{emailaddress.email}}')
+        | {{ emailaddress.email }}
+        |   {% if emailaddress.verified %}
+      .col-md-1.col-xs-2
+        span
+          .label.label-success.verified {% trans "Verified" %}
+        |   {% else %}
+      .col-md-1.col-xs-2
+        span
+          .label.label-warning.unverified {% trans "Unverified" %}
+        |   {% endif %}
+        |   {% if emailaddress.primary %}
+      .col-md-1.col-xs-2
+        span
+          .label.label-primary.primary {% trans "Primary" %}
+        | {% endif %}
+      .col-md-6.col-xs-12
+    | {% endfor %}
+    .row
+      .col-md-12
+        .buttonHolder
+          button.btn.btn-md.btn-success.secondaryAction(type='submit', name='action_primary') {% trans 'Make Primary' %}
+          button.btn.btn-md.btn-primary.secondaryAction(type='submit', name='action_send') {% trans 'Re-send Verification' %}
+          button.btn.btn-md.btn-danger.primaryAction(type='submit', name='action_remove') {% trans 'Remove' %}
+| {% else %}
+.row
+  .col-md-1.col-xs-12
+    h6
+      strong {% trans 'Warning: '%}
+  .col-md-11.col-xs-12
+    | You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.
+| {% endif %}
+
+h4 {% trans "Add E-mail Address" %}
+form.add_email(method='post', action="{% url 'account_email' %}")
+  | {% csrf_token %}
+  | {{ form.as_p }}
+  button(name='action_add', type='submit') {% trans "Add E-mail" %}
+
+| {% endblock %}
+
+
+| {% block extra_body %}
+script(type='text/javascript').
+  (function () {
+    var message = "{% trans 'Do you really want to remove the selected e-mail address?' %}";
+    var actions = document.getElementsByName('action_remove');
+    if (actions.length) {
+      actions[0].addEventListener("click", function (e) {
+        if (!confirm(message)) {
+          e.preventDefault();
+        }
+      });
+    }
+  })();
+| {% endblock %}
