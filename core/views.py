@@ -15,3 +15,7 @@ def about(request):
     # template = loader.get_template('core/about.html')
     # return HttpResponse(template.render({'loggedIn': request.session['loggedIn'], 'email': request.session['email']}))
     # return HttpResponse(template.render())
+
+
+def googleConfirm(request):
+    return render_to_response("core/googleff1931c407ddd6d6.html")

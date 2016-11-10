@@ -8,4 +8,6 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     # ex: /about/
     url(r'^about/$', views.about, name='about'),
+
+    url(r'^googleff1931c407ddd6d6.html$', views.googleConfirm),
 ]
