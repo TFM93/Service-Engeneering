@@ -7,26 +7,26 @@ from allauth.account.models import EmailAddress
 from serializers import EmailAddressSerializer
 
 
-class ListUsers(generics.ListAPIView):
-    queryset = EmailAddress.objects.all()
-    serializer_class = EmailAddressSerializer
-    allowed_methods = ['GET']
-
-    def get(self, request):
-        """
-        Gets list of users
-
-        <h3>Details</h3>
-
-        <b>METHODS:</b>
-            - GET
-
-        <b>RETURNS:</b>
-            - 200 OK
-
-        """
-        # result = [users for users in EmailAddress.objects.all()]
-        return self.list(request)
+# class ListUsers(generics.ListAPIView):
+#     queryset = EmailAddress.objects.all()
+#     serializer_class = EmailAddressSerializer
+#     allowed_methods = ['GET']
+#
+#     def get(self, request):
+#         """
+#         Gets list of users
+#
+#         <h3>Details</h3>
+#
+#         <b>METHODS:</b>
+#             - GET
+#
+#         <b>RETURNS:</b>
+#             - 200 OK
+#
+#         """
+#         # result = [users for users in EmailAddress.objects.all()]
+#         return self.list(request)
 
 
 class Login(APIView):
