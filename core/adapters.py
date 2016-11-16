@@ -1,10 +1,20 @@
+from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.socialaccount.models import SocialAccount
 from models import CustomSocialAccount
 
 import requests
-import tempfile
+# import tempfile
+from django.conf import settings
+from django.shortcuts import resolve_url
 from django.core import files
+
+
+# Redirect to specific url after login
+class AccountAdapter(DefaultAccountAdapter):
+    def get_login_redirect_url(self, request):
+        url = 'http://' + self.request.META['HTTP_HOST']
+        return resolve_url(url)
 
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
@@ -20,7 +30,6 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             customUser = CustomSocialAccount(account=new_user, logged=True,
                                              user_avatar='static/web/avatars/avatar%d.jpg' % user.pk)
             customUser.save()
-
         return user
 
 

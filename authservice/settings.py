@@ -111,6 +111,8 @@ SOCIALACCOUNT_QUERY_EMAIL = True
 
 SOCIALACCOUNT_ADAPTER = 'core.adapters.SocialAccountAdapter'
 
+ACCOUNT_ADAPTER = 'core.adapters.AccountAdapter'
+
 ACCOUNT_USERNAME_REQUIRED = False
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -186,6 +188,10 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
 
     'VIEW_DESCRIPTION_FUNCTION': 'rest_framework_swagger.views.get_restructuredtext',
+
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
 
 # Social Account Providers Configs
