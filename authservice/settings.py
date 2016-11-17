@@ -107,6 +107,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # auth and allauth settings
 LOGIN_REDIRECT_URL = '/'
 
+LOGOUT_URL = "/accounts/logout/"
+
 SOCIALACCOUNT_QUERY_EMAIL = True
 
 SOCIALACCOUNT_ADAPTER = 'core.adapters.SocialAccountAdapter'

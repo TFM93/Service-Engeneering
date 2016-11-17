@@ -18,4 +18,6 @@ urlpatterns = [
     # ex: /api/authentication/user/12F8T3J0DF/
     url(r'^authentication/user/(?P<uuid>[a-zA-Z0-9]+)/$', views.GetUserByUUID.as_view()),
 
+    # ex: /api/authentication/user/1/
+    url(r'^authentication/user/details/(?P<pk>[0-9]+)/$', views.UserDetails.as_view()),
 ]

@@ -5,8 +5,12 @@ from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.dispatch import receiver
 from allauth.socialaccount.signals import pre_social_login
+from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from allauth.socialaccount.models import SocialAccount
-from models import  CustomSocialAccount
+from models import CustomSocialAccount
+
+import os
 
 
 def index(request):
@@ -17,18 +21,26 @@ def about(request):
     return render_to_response("core/about.html", RequestContext(request))
 
 
-# def googleConfirm(request):
-#     return render_to_response("core/googleff1931c407ddd6d6.html")
+def account_delete(request):
+    try:
+        user = User.objects.get(pk=request.user.pk)
+        try:
+            path = 'static/web/avatars/avatar%s.jpg' % user.pk
+            os.remove(path)
+        except:
+            print 'Error deleting avatar.'
+            return render_to_response("index.html", RequestContext(request))
+        user.delete()
+        logout(request)
+    except:
+        print 'Error'
+    return render_to_response("index.html", RequestContext(request))
 
 
 @receiver(pre_social_login)
 def social_account_login(sender, **kwargs):
     sociallogin = kwargs['sociallogin']
-    provider = sociallogin.account.provider
     user_id = sociallogin.user.id
-    username = sociallogin.user.username
-    # print 'ID: {}, username: {}, provider: {}'.format(user_id, username, provider)
-
     try:
         account = SocialAccount.objects.get(user_id=user_id)
     except:
@@ -39,5 +51,6 @@ def social_account_login(sender, **kwargs):
     except:
         print 'Some error ocurred during login.'
 
-    # TODO redirect user to main page (composer)
-    return HttpResponse('www.google.com')
+
+# def googleConfirm(request):
+#     return render_to_response("core/googleff1931c407ddd6d6.html")

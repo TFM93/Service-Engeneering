@@ -45,16 +45,35 @@ form.email_list(action="{% url 'account_email' %}", method='post')
     | You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.
 | {% endif %}
 
+br
 h4 {% trans "Add E-mail Address" %}
 form.add_email(method='post', action="{% url 'account_email' %}")
   | {% csrf_token %}
   | {{ form.as_p }}
-  button(name='action_add', type='submit') {% trans "Add E-mail" %}
+  button.btn.btn-toolbar(name='action_add', type='submit') {% trans "Add E-mail" %}
+
+br
+form.add_email(method='post', action="/account/delete/")
+  | {% csrf_token %}
+  button.btn.btn-danger(name='delete_account', type='submit', onclick='confirmDelete();') Delete Account
 
 | {% endblock %}
 
 
 | {% block extra_body %}
+script(type='text/javascript').
+  (function () {
+    var message = "{% trans 'Do you really want to remove your account?' %}";
+    var actions = document.getElementsByName('delete_account');
+    if (actions.length) {
+      actions[0].addEventListener("click", function (e) {
+        if (!confirm(message)) {
+          e.preventDefault();
+        }
+      });
+    }
+  })();
+
 script(type='text/javascript').
   (function () {
     var message = "{% trans 'Do you really want to remove the selected e-mail address?' %}";
