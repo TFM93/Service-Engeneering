@@ -16,8 +16,74 @@ var async = require('async');
 var request = require('request');
 var xml2js = require('xml2js');
 var _ = require('underscore');
+var schedule = require('node-schedule');
+
+//var $ = require('jQuery');
+
+
 
 var app = express();
+
+// #ask to send an sms
+// payload ={'subject':'SmartTicket','content':'Mensagem de Teste','contact':'+351912928194'}
+// r1 = requests.post('http://nots.aws.atnog.av.it.pt:80/notify/SMS', data = payload)
+
+
+
+var date = new Date(2016, 10, 14, 10, 58, 0);
+
+
+
+
+
+var j = schedule.scheduleJob('10 * * * * *', function () {
+  console.log('The answer to life, the universe, and everything!');
+
+  // $.ajax({
+  //   type: 'POST',
+  //   url: 'http://nots.aws.atnog.av.it.pt:80/notify/SMS',
+  //   data: {'subject':'SmartTicket','content':'AHAHA','contact':'+351967983710'}
+  // })
+  //   .done(() => {
+  //     console.log("na boa")
+  //   })
+  //   .fail((jqXhr) => {
+
+  //   });
+
+
+  // var formData = { 'subject': 'SmartTicket', 'content': 'AHAHA', 'contact': '+351967983710' };
+
+
+  // request.post({ url: 'http://nots.aws.atnog.av.it.pt:80/notify/SMS', form: formData }, function (err, httpResponse, body) {
+  //   if (err) {
+  //     console.log(err);
+  //     return;
+  //   }
+
+
+
+  //   console.log(body);
+  //   console.log(httpResponse);
+
+
+  // })
+
+
+  var url = "http://nots.aws.atnog.av.it.pt/getMethods";
+  console.log(url);
+
+
+
+  request(url, function (err, resp, body) {
+    body = JSON.parse(body);
+    console.log(body);
+
+  });
+
+
+
+});
 
 
 
@@ -153,7 +219,7 @@ app.get('/api/characters', function (req, res, next) {
  * PUT /api/characters
  * Update winning and losing count for both characters.
  */
-app.put('/api/characters', function(req, res, next) {
+app.put('/api/characters', function (req, res, next) {
   var winner = req.body.winner;
   var loser = req.body.loser;
 
@@ -166,18 +232,18 @@ app.put('/api/characters', function(req, res, next) {
   }
 
   async.parallel([
-      function(callback) {
-        Character.findOne({ characterId: winner }, function(err, winner) {
-          callback(err, winner);
-        });
-      },
-      function(callback) {
-        Character.findOne({ characterId: loser }, function(err, loser) {
-          callback(err, loser);
-        });
-      }
-    ],
-    function(err, results) {
+    function (callback) {
+      Character.findOne({ characterId: winner }, function (err, winner) {
+        callback(err, winner);
+      });
+    },
+    function (callback) {
+      Character.findOne({ characterId: loser }, function (err, loser) {
+        callback(err, loser);
+      });
+    }
+  ],
+    function (err, results) {
       if (err) return next(err);
 
       var winner = results[0];
@@ -192,23 +258,23 @@ app.put('/api/characters', function(req, res, next) {
       }
 
       async.parallel([
-        function(callback) {
+        function (callback) {
           winner.wins++;
           winner.voted = true;
           winner.random = [Math.random(), 0];
-          winner.save(function(err) {
+          winner.save(function (err) {
             callback(err);
           });
         },
-        function(callback) {
+        function (callback) {
           loser.losses++;
           loser.voted = true;
           loser.random = [Math.random(), 0];
-          loser.save(function(err) {
+          loser.save(function (err) {
             callback(err);
           });
         }
-      ], function(err) {
+      ], function (err) {
         if (err) return next(err);
         res.status(200).end();
       });
@@ -221,8 +287,8 @@ app.put('/api/characters', function(req, res, next) {
  * GET /api/characters/count
  * Returns the total number of characters.
  */
-app.get('/api/characters/count', function(req, res, next) {
-  Character.count({}, function(err, count) {
+app.get('/api/characters/count', function (req, res, next) {
+  Character.count({}, function (err, count) {
     if (err) return next(err);
     res.send({ count: count });
   });
@@ -235,10 +301,10 @@ app.get('/api/characters/count', function(req, res, next) {
  * GET /api/characters/search
  * Looks up a character by name. (case-insensitive)
  */
-app.get('/api/characters/search', function(req, res, next) {
+app.get('/api/characters/search', function (req, res, next) {
   var characterName = new RegExp(req.query.name, 'i');
 
-  Character.findOne({ name: characterName }, function(err, character) {
+  Character.findOne({ name: characterName }, function (err, character) {
     if (err) return next(err);
 
     if (!character) {
@@ -255,11 +321,11 @@ app.get('/api/characters/search', function(req, res, next) {
  * GET /api/characters/top
  * Return 100 highest ranked characters. Filter by gender, race and bloodline.
  */
-app.get('/api/characters/top', function(req, res, next) {
+app.get('/api/characters/top', function (req, res, next) {
   var params = req.query;
   var conditions = {};
 
-  _.each(params, function(value, key) {
+  _.each(params, function (value, key) {
     conditions[key] = new RegExp('^' + value + '$', 'i');
   });
 
@@ -267,11 +333,11 @@ app.get('/api/characters/top', function(req, res, next) {
     .find(conditions)
     .sort('-wins') // Sort in descending order (highest wins on top)
     .limit(100)
-    .exec(function(err, characters) {
+    .exec(function (err, characters) {
       if (err) return next(err);
 
       // Sort by winning percentage
-      characters.sort(function(a, b) {
+      characters.sort(function (a, b) {
         if (a.wins / (a.wins + a.losses) < b.wins / (b.wins + b.losses)) { return 1; }
         if (a.wins / (a.wins + a.losses) > b.wins / (b.wins + b.losses)) { return -1; }
         return 0;
@@ -285,12 +351,12 @@ app.get('/api/characters/top', function(req, res, next) {
  * GET /api/characters/shame
  * Returns 100 lowest ranked characters.
  */
-app.get('/api/characters/shame', function(req, res, next) {
+app.get('/api/characters/shame', function (req, res, next) {
   Character
     .find()
     .sort('-losses')
     .limit(100)
-    .exec(function(err, characters) {
+    .exec(function (err, characters) {
       if (err) return next(err);
       res.send(characters);
     });
@@ -300,10 +366,10 @@ app.get('/api/characters/shame', function(req, res, next) {
  * GET /api/characters/:id
  * Returns detailed character information.
  */
-app.get('/api/characters/:id', function(req, res, next) {
+app.get('/api/characters/:id', function (req, res, next) {
   var id = req.params.id;
 
-  Character.findOne({ characterId: id }, function(err, character) {
+  Character.findOne({ characterId: id }, function (err, character) {
     if (err) return next(err);
 
     if (!character) {
@@ -319,10 +385,10 @@ app.get('/api/characters/:id', function(req, res, next) {
  * POST /api/report
  * Reports a character. Character is removed after 4 reports.
  */
-app.post('/api/report', function(req, res, next) {
+app.post('/api/report', function (req, res, next) {
   var characterId = req.body.characterId;
 
-  Character.findOne({ characterId: characterId }, function(err, character) {
+  Character.findOne({ characterId: characterId }, function (err, character) {
     if (err) return next(err);
 
     if (!character) {
@@ -336,7 +402,7 @@ app.post('/api/report', function(req, res, next) {
       return res.send({ message: character.name + ' has been deleted.' });
     }
 
-    character.save(function(err) {
+    character.save(function (err) {
       if (err) return next(err);
       res.send({ message: character.name + ' has been reported.' });
     });
@@ -349,88 +415,88 @@ app.post('/api/report', function(req, res, next) {
  * GET /api/stats
  * Returns characters statistics.
  */
-app.get('/api/stats', function(req, res, next) {
+app.get('/api/stats', function (req, res, next) {
   async.parallel([
-      function(callback) {
-        Character.count({}, function(err, count) {
-          callback(err, count);
-        });
-      },
-      function(callback) {
-        Character.count({ race: 'Amarr' }, function(err, amarrCount) {
-          callback(err, amarrCount);
-        });
-      },
-      function(callback) {
-        Character.count({ race: 'Caldari' }, function(err, caldariCount) {
-          callback(err, caldariCount);
-        });
-      },
-      function(callback) {
-        Character.count({ race: 'Gallente' }, function(err, gallenteCount) {
-          callback(err, gallenteCount);
-        });
-      },
-      function(callback) {
-        Character.count({ race: 'Minmatar' }, function(err, minmatarCount) {
-          callback(err, minmatarCount);
-        });
-      },
-      function(callback) {
-        Character.count({ gender: 'Male' }, function(err, maleCount) {
-          callback(err, maleCount);
-        });
-      },
-      function(callback) {
-        Character.count({ gender: 'Female' }, function(err, femaleCount) {
-          callback(err, femaleCount);
-        });
-      },
-      function(callback) {
-        Character.aggregate({ $group: { _id: null, total: { $sum: '$wins' } } }, function(err, totalVotes) {
-            var total = totalVotes.length ? totalVotes[0].total : 0;
-            callback(err, total);
-          }
-        );
-      },
-      function(callback) {
-        Character
-          .find()
-          .sort('-wins')
-          .limit(100)
-          .select('race')
-          .exec(function(err, characters) {
-            if (err) return next(err);
-
-            var raceCount = _.countBy(characters, function(character) { return character.race; });
-            var max = _.max(raceCount, function(race) { return race });
-            var inverted = _.invert(raceCount);
-            var topRace = inverted[max];
-            var topCount = raceCount[topRace];
-
-            callback(err, { race: topRace, count: topCount });
-          });
-      },
-      function(callback) {
-        Character
-          .find()
-          .sort('-wins')
-          .limit(100)
-          .select('bloodline')
-          .exec(function(err, characters) {
-            if (err) return next(err);
-
-            var bloodlineCount = _.countBy(characters, function(character) { return character.bloodline; });
-            var max = _.max(bloodlineCount, function(bloodline) { return bloodline });
-            var inverted = _.invert(bloodlineCount);
-            var topBloodline = inverted[max];
-            var topCount = bloodlineCount[topBloodline];
-
-            callback(err, { bloodline: topBloodline, count: topCount });
-          });
+    function (callback) {
+      Character.count({}, function (err, count) {
+        callback(err, count);
+      });
+    },
+    function (callback) {
+      Character.count({ race: 'Amarr' }, function (err, amarrCount) {
+        callback(err, amarrCount);
+      });
+    },
+    function (callback) {
+      Character.count({ race: 'Caldari' }, function (err, caldariCount) {
+        callback(err, caldariCount);
+      });
+    },
+    function (callback) {
+      Character.count({ race: 'Gallente' }, function (err, gallenteCount) {
+        callback(err, gallenteCount);
+      });
+    },
+    function (callback) {
+      Character.count({ race: 'Minmatar' }, function (err, minmatarCount) {
+        callback(err, minmatarCount);
+      });
+    },
+    function (callback) {
+      Character.count({ gender: 'Male' }, function (err, maleCount) {
+        callback(err, maleCount);
+      });
+    },
+    function (callback) {
+      Character.count({ gender: 'Female' }, function (err, femaleCount) {
+        callback(err, femaleCount);
+      });
+    },
+    function (callback) {
+      Character.aggregate({ $group: { _id: null, total: { $sum: '$wins' } } }, function (err, totalVotes) {
+        var total = totalVotes.length ? totalVotes[0].total : 0;
+        callback(err, total);
       }
-    ],
-    function(err, results) {
+      );
+    },
+    function (callback) {
+      Character
+        .find()
+        .sort('-wins')
+        .limit(100)
+        .select('race')
+        .exec(function (err, characters) {
+          if (err) return next(err);
+
+          var raceCount = _.countBy(characters, function (character) { return character.race; });
+          var max = _.max(raceCount, function (race) { return race });
+          var inverted = _.invert(raceCount);
+          var topRace = inverted[max];
+          var topCount = raceCount[topRace];
+
+          callback(err, { race: topRace, count: topCount });
+        });
+    },
+    function (callback) {
+      Character
+        .find()
+        .sort('-wins')
+        .limit(100)
+        .select('bloodline')
+        .exec(function (err, characters) {
+          if (err) return next(err);
+
+          var bloodlineCount = _.countBy(characters, function (character) { return character.bloodline; });
+          var max = _.max(bloodlineCount, function (bloodline) { return bloodline });
+          var inverted = _.invert(bloodlineCount);
+          var topBloodline = inverted[max];
+          var topCount = bloodlineCount[topBloodline];
+
+          callback(err, { bloodline: topBloodline, count: topCount });
+        });
+    }
+  ],
+    function (err, results) {
       if (err) return next(err);
 
       res.send({
@@ -440,7 +506,7 @@ app.get('/api/stats', function(req, res, next) {
         gallenteCount: results[3],
         minmatarCount: results[4],
         maleCount: results[5],
-        femaleCount: results[6], 
+        femaleCount: results[6],
         totalVotes: results[7],
         leadingRace: results[8],
         leadingBloodline: results[9]

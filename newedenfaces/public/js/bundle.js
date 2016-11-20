@@ -231,9 +231,23 @@ var DashboardEmployeeActions = function () {
       });
     }
   }, {
+    key: 'openDay',
+    value: function openDay() {
+      var _this2 = this;
+
+      $.ajax({
+        type: 'GET',
+        url: 'https://esmickettodule.herokuapp.com/employee/everyNextTicket'
+      }).done(function (data) {
+        _this2.actions.nextTicketSuccess(data);
+      }).fail(function (jqXhr) {
+        _this2.actions.nextTicketFail(jqXhr);
+      });
+    }
+  }, {
     key: 'attendTicket',
     value: function attendTicket(type, nr) {
-      var _this2 = this;
+      var _this3 = this;
 
       console.log(nr + type);
       $.ajax({
@@ -241,24 +255,24 @@ var DashboardEmployeeActions = function () {
         url: 'http://esmickettodule.herokuapp.com/employee/ticketAttended',
         data: { "ticket": { "ticket_number": nr, "ticket_type": type } }
       }).done(function (data) {
-        _this2.actions.attendTicketSuccess(data);
+        _this3.actions.attendTicketSuccess(data);
       }).fail(function (jqXhr) {
-        _this2.actions.attendTicketFail(jqXhr);
+        _this3.actions.attendTicketFail(jqXhr);
       });
     }
   }, {
     key: 'report',
     value: function report(DashboardEmployeeId) {
-      var _this3 = this;
+      var _this4 = this;
 
       $.ajax({
         type: 'POST',
         url: '/api/report',
         data: { DashboardEmployeeId: DashboardEmployeeId }
       }).done(function () {
-        _this3.actions.reportSuccess();
+        _this4.actions.reportSuccess();
       }).fail(function (jqXhr) {
-        _this3.actions.reportFail(jqXhr);
+        _this4.actions.reportFail(jqXhr);
       });
     }
   }]);
