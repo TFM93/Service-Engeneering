@@ -75,17 +75,26 @@ function sendToServer(ticket, ticketType, cb) {
         },
         body: ticket
     }, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            console.log("private method sendToServer: compositor code = " + body.code)
-            cb(JSON.stringify(body.code));
+        if(response!=null)
+        {
+            if (!error && response.statusCode === 200) {
+                console.log("private method sendToServer: compositor code = " + body.code)
+                cb(JSON.stringify(body.code));
+            }
+            else {
+
+                console.log("error: " + error);
+                console.log("response.statusCode: " + response.statusCode);
+                console.log("response.statusText: " + response.statusText);
+                cb(JSON.stringify("no_ack"));
+            }
         }
         else {
 
-            console.log("error: " + error);
-            console.log("response.statusCode: " + response.statusCode);
-            console.log("response.statusText: " + response.statusText);
-            cb("no_ack");
+            console.log("no res");
+            cb(JSON.stringify("no_ack"));
         }
+
     })
 }
 
