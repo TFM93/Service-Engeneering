@@ -213,7 +213,7 @@ var DashboardEmployeeActions = function () {
   function DashboardEmployeeActions() {
     _classCallCheck(this, DashboardEmployeeActions);
 
-    this.generateActions('reportSuccess', 'reportFail', 'nextTicketSuccess', 'nextTicketFail', 'attendTicketSuccess', 'attendTicketFail', 'newDaySuccess', 'newDayFail', 'closeDaySuccess', 'closeDayFail');
+    this.generateActions('reportSuccess', 'reportFail', 'updateNewQueueName', 'nextTicketSuccess', 'nextTicketFail', 'attendTicketSuccess', 'attendTicketFail', 'newDaySuccess', 'newDayFail', 'closeDaySuccess', 'closeDayFail', 'newQueueSuccess', 'newQueueFail');
   }
 
   _createClass(DashboardEmployeeActions, [{
@@ -231,37 +231,55 @@ var DashboardEmployeeActions = function () {
       });
     }
   }, {
+    key: 'newQueue',
+    value: function newQueue(payload) {
+      var _this2 = this;
+
+      console.log(payload.newQueueName);
+
+      $.ajax({
+        method: 'POST',
+        url: 'https://esmickettodule.herokuapp.com/employee/makeNewType',
+        data: { "ticket_type": { "ticket_type": payload.newQueueName } }
+      }).done(function (data) {
+        //assign(payload, data);
+        _this2.actions.newQueueSuccess(payload);
+      }).fail(function (jqXhr) {
+        _this2.actions.newQueueFail(jqXhr);
+      });
+    }
+  }, {
     key: 'newDay',
     value: function newDay() {
-      var _this2 = this;
+      var _this3 = this;
 
       $.ajax({
         type: 'POST',
         url: 'https://esmickettodule.herokuapp.com/employee/newDay'
       }).done(function (data) {
-        _this2.actions.newDaySuccess(data);
+        _this3.actions.newDaySuccess(data);
       }).fail(function (jqXhr) {
-        _this2.actions.newDayFail(jqXhr);
+        _this3.actions.newDayFail(jqXhr);
       });
     }
   }, {
     key: 'closeDay',
     value: function closeDay() {
-      var _this3 = this;
+      var _this4 = this;
 
       $.ajax({
         type: 'POST',
         url: 'https://esmickettodule.herokuapp.com/employee/closeForTheDay'
       }).done(function (data) {
-        _this3.actions.closeDaySuccess(data);
+        _this4.actions.closeDaySuccess(data);
       }).fail(function (jqXhr) {
-        _this3.actions.closeDayFail(jqXhr);
+        _this4.actions.closeDayFail(jqXhr);
       });
     }
   }, {
     key: 'attendTicket',
     value: function attendTicket(type, nr) {
-      var _this4 = this;
+      var _this5 = this;
 
       console.log(nr + type);
       $.ajax({
@@ -269,24 +287,24 @@ var DashboardEmployeeActions = function () {
         url: 'http://esmickettodule.herokuapp.com/employee/ticketAttended',
         data: { "ticket": { "ticket_number": nr, "ticket_type": type } }
       }).done(function (data) {
-        _this4.actions.attendTicketSuccess(data);
+        _this5.actions.attendTicketSuccess(data);
       }).fail(function (jqXhr) {
-        _this4.actions.attendTicketFail(jqXhr);
+        _this5.actions.attendTicketFail(jqXhr);
       });
     }
   }, {
     key: 'report',
     value: function report(DashboardEmployeeId) {
-      var _this5 = this;
+      var _this6 = this;
 
       $.ajax({
         type: 'POST',
         url: '/api/report',
         data: { DashboardEmployeeId: DashboardEmployeeId }
       }).done(function () {
-        _this5.actions.reportSuccess();
+        _this6.actions.reportSuccess();
       }).fail(function (jqXhr) {
-        _this5.actions.reportFail(jqXhr);
+        _this6.actions.reportFail(jqXhr);
       });
     }
   }]);
@@ -1227,11 +1245,26 @@ var DashboardEmployee = function (_React$Component) {
             this.setState(state);
         }
     }, {
+        key: 'handleSubmit',
+        value: function handleSubmit(event) {
+            event.preventDefault();
+
+            var newQueueName = this.state.newQueueName.trim();
+
+            if (newQueueName) {
+                _DashboardEmployeeActions2.default.newQueue({
+                    newQueueName: newQueueName,
+                    searchForm: this.refs.searchForm,
+                    history: this.props.history
+                });
+            }
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
 
-            console.log(this.state.currentTickets);
+            //console.log(this.state.currentTickets);
 
             var currentTickets = this.state.currentTickets.map(function (ticket) {
 
@@ -1338,7 +1371,24 @@ var DashboardEmployee = function (_React$Component) {
                             _react2.default.createElement(
                                 'div',
                                 { className: 'panel-body' },
-                                _react2.default.createElement('input', { type: 'text', placeholder: 'Introduza aqui o nome da nova fila' })
+                                _react2.default.createElement(
+                                    'form',
+                                    { ref: 'searchForm', className: 'navbar-form navbar-left animated', onSubmit: this.handleSubmit.bind(this) },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'input-group' },
+                                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Novo nome', value: this.state.newQueueName, onChange: _DashboardEmployeeActions2.default.updateNewQueueName }),
+                                        _react2.default.createElement(
+                                            'span',
+                                            { className: 'input-group-btn' },
+                                            _react2.default.createElement(
+                                                'button',
+                                                { className: 'btn btn-default', onClick: this.handleSubmit.bind(this) },
+                                                _react2.default.createElement('span', { className: 'glyphicon glyphicon-search' })
+                                            )
+                                        )
+                                    )
+                                )
                             )
                         )
                     )
@@ -1352,6 +1402,9 @@ var DashboardEmployee = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = DashboardEmployee;
+
+//<input type="text" placeholder="Introduza aqui o nome da nova fila" />
+
 
 // <div className="col-lg-6">
 //     <center>
@@ -2287,6 +2340,7 @@ var DashboardEmployeeStore = function () {
 
         this.bindActions(_DashboardEmployeeActions2.default);
         this.currentTickets = [];
+        this.newQueueName = '';
     }
 
     _createClass(DashboardEmployeeStore, [{
@@ -2297,10 +2351,26 @@ var DashboardEmployeeStore = function () {
             this.currentTickets = data;
         }
     }, {
+        key: 'onUpdateNewQueueName',
+        value: function onUpdateNewQueueName(event) {
+            this.newQueueName = event.target.value;
+        }
+    }, {
         key: 'onNewDaySuccess',
         value: function onNewDaySuccess(data) {
             console.log(data);
             this.currentTickets = [];
+        }
+    }, {
+        key: 'onNewQueueSuccess',
+        value: function onNewQueueSuccess(data) {
+            console.log("on new queue success");
+            console.log(data);
+        }
+    }, {
+        key: 'onNewQueueFail',
+        value: function onNewQueueFail(data) {
+            console.log(data);
         }
     }, {
         key: 'onCloseDaySuccess',

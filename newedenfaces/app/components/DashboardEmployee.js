@@ -35,10 +35,25 @@ class DashboardEmployee extends React.Component {
 
     }
 
+
+    handleSubmit(event) {
+        event.preventDefault();
+
+        let newQueueName = this.state.newQueueName.trim();
+
+        if (newQueueName) {
+            DashboardEmployeeActions.newQueue({
+                newQueueName: newQueueName,
+                searchForm: this.refs.searchForm,
+                history: this.props.history
+            });
+        }
+    }
+
     render() {
 
 
-        console.log(this.state.currentTickets);
+        //console.log(this.state.currentTickets);
 
         var currentTickets = this.state.currentTickets.map((ticket) => {
 
@@ -97,7 +112,15 @@ class DashboardEmployee extends React.Component {
                             </div>
                             <div className="panel-body">
 
-                                <input type="text" placeholder="Introduza aqui o nome da nova fila" />
+                                <form ref='searchForm' className='navbar-form navbar-left animated' onSubmit={this.handleSubmit.bind(this)}>
+                                    <div className='input-group'>
+                                        <input type='text' className='form-control' placeholder="Novo nome" value={this.state.newQueueName} onChange={DashboardEmployeeActions.updateNewQueueName} />
+                                        <span className='input-group-btn'>
+                                            <button className='btn btn-default' onClick={this.handleSubmit.bind(this)}><span className='glyphicon glyphicon-search'></span></button>
+                                        </span>
+                                    </div>
+                                </form>
+
                             </div>
 
                         </div>
@@ -120,6 +143,10 @@ class DashboardEmployee extends React.Component {
 }
 
 export default DashboardEmployee;
+
+//<input type="text" placeholder="Introduza aqui o nome da nova fila" />
+
+
 
                     // <div className="col-lg-6">
                     //     <center>
@@ -148,3 +175,4 @@ export default DashboardEmployee;
                   //     <div className="panel-body">54</div>
                   //   </div>
                   // </div>
+

@@ -6,6 +6,7 @@ class DashboardEmployeeStore {
     constructor() {
         this.bindActions(DashboardEmployeeActions);
         this.currentTickets = [];
+        this.newQueueName = '';
     }
 
     onNextTicketSuccess(data) {
@@ -15,9 +16,22 @@ class DashboardEmployeeStore {
 
     }
 
+    onUpdateNewQueueName(event) {
+        this.newQueueName = event.target.value;
+    }
+
     onNewDaySuccess(data) {
         console.log(data);
         this.currentTickets = [];
+    }
+
+    onNewQueueSuccess(data) {
+        console.log("on new queue success")
+        console.log(data);
+    }
+
+    onNewQueueFail(data) {
+        console.log(data);
     }
 
     onCloseDaySuccess(data) {

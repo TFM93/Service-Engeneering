@@ -5,6 +5,7 @@ class DashboardEmployeeActions {
     this.generateActions(
       'reportSuccess',
       'reportFail',
+      'updateNewQueueName',
       'nextTicketSuccess',
       'nextTicketFail',
       'attendTicketSuccess',
@@ -12,7 +13,9 @@ class DashboardEmployeeActions {
       'newDaySuccess',
       'newDayFail',
       'closeDaySuccess',
-      'closeDayFail'
+      'closeDayFail',
+      'newQueueSuccess',
+      'newQueueFail'
     );
   }
 
@@ -26,6 +29,24 @@ class DashboardEmployeeActions {
       })
       .fail((jqXhr) => {
         this.actions.nextTicketFail(jqXhr);
+      });
+  }
+
+  newQueue(payload) {
+
+    console.log(payload.newQueueName)
+
+    $.ajax({
+      method:'POST',
+      url: 'https://esmickettodule.herokuapp.com/employee/makeNewType',
+      data: {"ticket_type":{"ticket_type":payload.newQueueName}}
+    })
+      .done((data) => {
+        //assign(payload, data);
+        this.actions.newQueueSuccess(payload);
+      })
+      .fail((jqXhr) => {
+        this.actions.newQueueFail(jqXhr);
       });
   }
 
