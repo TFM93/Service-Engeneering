@@ -71,11 +71,11 @@ class DashboardEmployee extends React.Component {
                                         <h4>Gestão de Senhas</h4>
                                     </div>
                                     <div className="col-lg-2">
-                                        <button className="btn btn-info btn-block">Começar o Dia</button>
+                                        <button onClick={DashboardEmployeeActions.newDay.bind(this)} className="btn btn-info btn-block">Começar o Dia</button>
                                     </div>
 
                                     <div className="col-lg-2">
-                                        <button className="btn btn-info btn-block">Acabar o Dia</button>
+                                        <button onClick={DashboardEmployeeActions.closeDay.bind(this)} className="btn btn-info btn-block">Acabar o Dia</button>
                                     </div>
                                 </div>
 

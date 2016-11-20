@@ -8,7 +8,11 @@ class DashboardEmployeeActions {
       'nextTicketSuccess',
       'nextTicketFail',
       'attendTicketSuccess',
-      'attendTicketFail'
+      'attendTicketFail',
+      'newDaySuccess',
+      'newDayFail',
+      'closeDaySuccess',
+      'closeDayFail'
     );
   }
 
@@ -25,16 +29,30 @@ class DashboardEmployeeActions {
       });
   }
 
-  openDay() {
+
+  newDay() {
     $.ajax({
-      type: 'GET',
-      url: 'https://esmickettodule.herokuapp.com/employee/everyNextTicket'
+      type: 'POST',
+      url: 'https://esmickettodule.herokuapp.com/employee/newDay'
     })
       .done((data) => {
-        this.actions.nextTicketSuccess(data);
+        this.actions.newDaySuccess(data);
       })
       .fail((jqXhr) => {
-        this.actions.nextTicketFail(jqXhr);
+        this.actions.newDayFail(jqXhr);
+      });
+  }
+
+  closeDay() {
+    $.ajax({
+      type: 'POST',
+      url: 'https://esmickettodule.herokuapp.com/employee/closeForTheDay'
+    })
+      .done((data) => {
+        this.actions.closeDaySuccess(data);
+      })
+      .fail((jqXhr) => {
+        this.actions.closeDayFail(jqXhr);
       });
   }
 

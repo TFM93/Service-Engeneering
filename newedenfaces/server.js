@@ -37,19 +37,6 @@ var date = new Date(2016, 10, 14, 10, 58, 0);
 
 
 var j = schedule.scheduleJob('10 * * * * *', function () {
-  console.log('The answer to life, the universe, and everything!');
-
-  // $.ajax({
-  //   type: 'POST',
-  //   url: 'http://nots.aws.atnog.av.it.pt:80/notify/SMS',
-  //   data: {'subject':'SmartTicket','content':'AHAHA','contact':'+351967983710'}
-  // })
-  //   .done(() => {
-  //     console.log("na boa")
-  //   })
-  //   .fail((jqXhr) => {
-
-  //   });
 
 
   // var formData = { 'subject': 'SmartTicket', 'content': 'AHAHA', 'contact': '+351967983710' };

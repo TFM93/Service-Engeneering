@@ -213,7 +213,7 @@ var DashboardEmployeeActions = function () {
   function DashboardEmployeeActions() {
     _classCallCheck(this, DashboardEmployeeActions);
 
-    this.generateActions('reportSuccess', 'reportFail', 'nextTicketSuccess', 'nextTicketFail', 'attendTicketSuccess', 'attendTicketFail');
+    this.generateActions('reportSuccess', 'reportFail', 'nextTicketSuccess', 'nextTicketFail', 'attendTicketSuccess', 'attendTicketFail', 'newDaySuccess', 'newDayFail', 'closeDaySuccess', 'closeDayFail');
   }
 
   _createClass(DashboardEmployeeActions, [{
@@ -231,23 +231,37 @@ var DashboardEmployeeActions = function () {
       });
     }
   }, {
-    key: 'openDay',
-    value: function openDay() {
+    key: 'newDay',
+    value: function newDay() {
       var _this2 = this;
 
       $.ajax({
-        type: 'GET',
-        url: 'https://esmickettodule.herokuapp.com/employee/everyNextTicket'
+        type: 'POST',
+        url: 'https://esmickettodule.herokuapp.com/employee/newDay'
       }).done(function (data) {
-        _this2.actions.nextTicketSuccess(data);
+        _this2.actions.newDaySuccess(data);
       }).fail(function (jqXhr) {
-        _this2.actions.nextTicketFail(jqXhr);
+        _this2.actions.newDayFail(jqXhr);
+      });
+    }
+  }, {
+    key: 'closeDay',
+    value: function closeDay() {
+      var _this3 = this;
+
+      $.ajax({
+        type: 'POST',
+        url: 'https://esmickettodule.herokuapp.com/employee/closeForTheDay'
+      }).done(function (data) {
+        _this3.actions.closeDaySuccess(data);
+      }).fail(function (jqXhr) {
+        _this3.actions.closeDayFail(jqXhr);
       });
     }
   }, {
     key: 'attendTicket',
     value: function attendTicket(type, nr) {
-      var _this3 = this;
+      var _this4 = this;
 
       console.log(nr + type);
       $.ajax({
@@ -255,24 +269,24 @@ var DashboardEmployeeActions = function () {
         url: 'http://esmickettodule.herokuapp.com/employee/ticketAttended',
         data: { "ticket": { "ticket_number": nr, "ticket_type": type } }
       }).done(function (data) {
-        _this3.actions.attendTicketSuccess(data);
+        _this4.actions.attendTicketSuccess(data);
       }).fail(function (jqXhr) {
-        _this3.actions.attendTicketFail(jqXhr);
+        _this4.actions.attendTicketFail(jqXhr);
       });
     }
   }, {
     key: 'report',
     value: function report(DashboardEmployeeId) {
-      var _this4 = this;
+      var _this5 = this;
 
       $.ajax({
         type: 'POST',
         url: '/api/report',
         data: { DashboardEmployeeId: DashboardEmployeeId }
       }).done(function () {
-        _this4.actions.reportSuccess();
+        _this5.actions.reportSuccess();
       }).fail(function (jqXhr) {
-        _this4.actions.reportFail(jqXhr);
+        _this5.actions.reportFail(jqXhr);
       });
     }
   }]);
@@ -1284,7 +1298,7 @@ var DashboardEmployee = function (_React$Component) {
                                         { className: 'col-lg-2' },
                                         _react2.default.createElement(
                                             'button',
-                                            { className: 'btn btn-info btn-block' },
+                                            { onClick: _DashboardEmployeeActions2.default.newDay.bind(this), className: 'btn btn-info btn-block' },
                                             'Come\xE7ar o Dia'
                                         )
                                     ),
@@ -1293,7 +1307,7 @@ var DashboardEmployee = function (_React$Component) {
                                         { className: 'col-lg-2' },
                                         _react2.default.createElement(
                                             'button',
-                                            { className: 'btn btn-info btn-block' },
+                                            { onClick: _DashboardEmployeeActions2.default.closeDay.bind(this), className: 'btn btn-info btn-block' },
                                             'Acabar o Dia'
                                         )
                                     )
@@ -2281,6 +2295,27 @@ var DashboardEmployeeStore = function () {
             console.log("on next success");
             console.log(data);
             this.currentTickets = data;
+        }
+    }, {
+        key: 'onNewDaySuccess',
+        value: function onNewDaySuccess(data) {
+            console.log(data);
+            this.currentTickets = [];
+        }
+    }, {
+        key: 'onCloseDaySuccess',
+        value: function onCloseDaySuccess(data) {
+            console.log(data);
+        }
+    }, {
+        key: 'onCloseDayFail',
+        value: function onCloseDayFail(jqXhr) {
+            toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+        }
+    }, {
+        key: 'onNewDayFail',
+        value: function onNewDayFail(jqXhr) {
+            toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
         }
     }, {
         key: 'onNextTicketFail',

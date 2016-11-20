@@ -15,6 +15,25 @@ class DashboardEmployeeStore {
 
     }
 
+    onNewDaySuccess(data) {
+        console.log(data);
+        this.currentTickets = [];
+    }
+
+    onCloseDaySuccess(data) {
+        console.log(data);
+
+    }
+
+    onCloseDayFail(jqXhr) {
+        toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+    }
+
+
+    onNewDayFail(jqXhr) {
+        toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+    }
+
     onNextTicketFail(jqXhr) {
         toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
     }
