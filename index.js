@@ -5,8 +5,12 @@ var app = express();
 var fs = require("fs");
 var async = require("async");
 
+var request = require("request");
+
 
 /**** Final Variables & Templates ****/
+var compositor_url = "http://localhost:5000/";
+
 var ticket_queue_path = __dirname + "/data/ticket_queue.json";
 var average_time_path = __dirname + "/data/average_time.json";
 
@@ -52,6 +56,38 @@ app.use(bodyParser.urlencoded({
 
 
 /**** Private functions ****/
+
+function sendToServer(ticket, ticketType, cb) {
+
+    console.log("private method sendToServer entered");
+    ticket['ticket_type'] = ticketType;
+    console.log("private method sendToServer sending: " + JSON.stringify(ticket));
+    var host_url = compositor_url + "newTicket";
+    console.log("private method sendToServer host url: " + host_url);
+
+
+    request({
+        url: host_url,
+        method: "POST",
+        json: true,
+        headers: {
+            "content-type": "application/json"
+        },
+        body: ticket
+    }, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            console.log("private method sendToServer: compositor code = " + body.code)
+            cb(JSON.stringify(body.code));
+        }
+        else {
+
+            console.log("error: " + error);
+            console.log("response.statusCode: " + response.statusCode);
+            console.log("response.statusText: " + response.statusText);
+            cb("no_ack");
+        }
+    })
+}
 
 function findTicketInQueue(queue, ticket_number) {
 
@@ -222,8 +258,7 @@ app.get('/employee/everyNextTicket', function (req, res) {
         for (var i = 0; i < queues.length; i++) {
             next_ticket = ticket_brief_template;
 
-            if(queues[i]['queue'].length > 0)
-            {
+            if (queues[i]['queue'].length > 0) {
                 dump_queues[i] = JSON.parse("{}");
                 dump_queues[i]['ticket_number'] = queues[i]['queue'][0]['ticket_number'];
                 dump_queues[i]['type'] = queues[i]['type'];
@@ -231,12 +266,10 @@ app.get('/employee/everyNextTicket', function (req, res) {
             }
         }
 
-        if(dump_queues.length != 0)
-        {
+        if (dump_queues.length != 0) {
             res.status(200).json(dump_queues);
         }
-        else
-        {
+        else {
             console.log('employee everyNextTicket - no next tickets');
             var error_resp = error_template;
             error_resp['code'] = 410;
@@ -595,8 +628,7 @@ app.post('/employee/ticketAttended', function (req, res) {
                 for (var i = 0; i < queues.length; i++) {
                     next_ticket = ticket_brief_template;
 
-                    if(queues[i]['queue'].length > 0)
-                    {
+                    if (queues[i]['queue'].length > 0) {
                         dump_queues[i] = JSON.parse("{}");
                         dump_queues[i]['ticket_number'] = queues[i]['queue'][0]['ticket_number'];
                         dump_queues[i]['type'] = queues[i]['type'];
@@ -604,12 +636,10 @@ app.post('/employee/ticketAttended', function (req, res) {
                     }
                 }
 
-                if(dump_queues.length != 0)
-                {
+                if (dump_queues.length != 0) {
                     res.status(200).json(dump_queues);
                 }
-                else
-                {
+                else {
                     console.log('employee ticketAttended - no next tickets');
                     var error_resp = error_template;
                     error_resp['code'] = 410;
@@ -826,10 +856,18 @@ app.post('/client/requestTicket', function (req, res) {
 
                         //TO DO - alert composer (Rui Monteiro)
                         //...
+                        var codeToSend = 'no_ack';
+                        codeToSend = sendToServer(new_ticket, ticket_req.ticket_type, function (code) {
+                            codeToSend = code;
+                            //var result = JSON.parse('{"result":"success","ticket_number":' + new_ticket['ticket_number'] + ',"code":"ack"}');
+                            var result = JSON.parse('{"result":"success","ticket_number":' + new_ticket['ticket_number'] + ',"code":' + codeToSend + '}');
+                            res.status(200).json(result);
+
+                        });
 
 
-                        var result = JSON.parse('{"result":"success","ticket_number":' + new_ticket['ticket_number'] + '}');
-                        res.status(200).json(result);
+
+
                     }
                     else {
                         console.log('client requestTicket - bad request (UUID already in queue)');
