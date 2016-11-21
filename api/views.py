@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
 from django.contrib.auth.models import User
+from core.models import CustomSocialAccount
 from allauth.socialaccount.models import SocialAccount
 
 import os
@@ -95,6 +96,10 @@ class RegisterUserUUID(APIView):
                 int_id = int(request['id'])
                 uuid = request['uuid']
                 print str(int_id) + uuid
+                account = SocialAccount.objects.get(user=int_id)
+                c_user = CustomSocialAccount.objects.get(account=account)
+                c_user.uuid = uuid
+                c_user.save()
             except:
                 return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})

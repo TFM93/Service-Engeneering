@@ -47,7 +47,8 @@ def social_account_login(sender, **kwargs):
         return
     try:
         c_user = CustomSocialAccount.objects.get(account=account)
-        c_user.save(logged=True)
+        c_user.login_counter += 1
+        c_user.save()
     except:
         print 'Some error ocurred during login.'
 

@@ -12,8 +12,8 @@ class CustomSocialAccount(models.Model):
     account = models.ForeignKey(SocialAccount)
     uuid = models.CharField(max_length=100, blank=True)
     # user_credit = models.CharField(max_length=150, default='0')
-    credit_id = models.IntegerField(auto_created=True)
     user_avatar = models.CharField(max_length=300, blank=True)
+    login_counter = models.IntegerField(default=0)
 
     def delete(self, using=None):
         try:
@@ -23,7 +23,7 @@ class CustomSocialAccount(models.Model):
             print 'Error deleting avatar.'
 
     def __unicode__(self):
-        return '{0} - {1} - {2}'.format(self.account, self.uuid, self.credit_id)
+        return '{0} - {1}'.format(self.account, self.uuid)
 
 
 @receiver(post_save, sender=User)

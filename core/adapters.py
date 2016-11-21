@@ -32,8 +32,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
 
         if avatar:
             # profile = SocialAccount.objects.get(user=user)  # access your profile from user by correct name
-            customUser = CustomSocialAccount(account=new_user, logged=True,
-                                             user_avatar='static/web/avatars/avatar%d.jpg' % user.pk)
+            customUser = CustomSocialAccount(account=new_user, user_avatar='static/web/avatars/avatar%d.jpg' % user.pk)
             customUser.save()
         return user
 
