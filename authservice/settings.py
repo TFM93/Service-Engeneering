@@ -63,7 +63,7 @@ INSTALLED_APPS = (
 )
 
 SITE_ID = 3
-# SITE_URL = 'https://authservice-es-2016.herokuapp.com'
+SITE_URL = 'https://authservice-es-2016.herokuapp.com'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

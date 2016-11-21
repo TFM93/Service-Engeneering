@@ -4,19 +4,19 @@ from allauth.socialaccount.models import SocialAccount
 from models import CustomSocialAccount
 from rest_framework.authtoken.models import Token
 from django.http import HttpResponse
-
-import requests
+from django.conf import settings
 from django.shortcuts import resolve_url
 from django.core import files
+import requests
 
 
 # Redirect to specific url after login
 class AccountAdapter(DefaultAccountAdapter):
     def get_login_redirect_url(self, request):
-        token = Token.objects.get(user=self.request.user)
-        host = self.request.META['SERVER_NAME']
-        url = 'http://' + host + ':8000/?id=' + str(self.request.user.id) + '&token=' + str(token.key)
-        data = {'id': str(self.request.user.id), 'token': token.key}
+        token = Token.objects.get(user=request.user)
+        # host = request.META['SERVER_NAME']
+        url = settings.SITE_URL + '/?id=' + str(request.user.id) + '&token=' + str(token.key)
+        data = {'id': str(request.user.id), 'token': token.key}
 
         return resolve_url(url, data)
 
