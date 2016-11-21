@@ -30,6 +30,7 @@
             <li><a href="/about">About</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">{% if user.is_authenticated %}
+            <li><img src="{% static 'web/avatars/avatar' %}{{user.pk}}.jpg" width="42px" style="margin-top:10px;" class="img-thumbnail img-responsive"></li>
             <li><a href="{% url 'account_email' %}" title="Manage your account">My Account</a></li>
             <li><a href="{% url 'account_logout' %}">Log out</a></li>{% else %}
             <li><a href="{% url 'account_login' %}">Sign In</a></li>

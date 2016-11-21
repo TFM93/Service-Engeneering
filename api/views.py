@@ -3,7 +3,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
 from django.contrib.auth.models import User
-from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount
 
 import os
@@ -41,7 +40,7 @@ class GetUserByUUID(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
 
 
-class UserDetails(APIView):
+class GetUserByID(APIView):
     permission_classes = (IsAuthenticated,)
     allowed_methods = ['GET']
 
@@ -70,6 +69,34 @@ class UserDetails(APIView):
                 return Response(status=status.HTTP_200_OK, data=social_user.extra_data)
             except:
                 return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
+
+
+class RegisterUserUUID(APIView):
+    permission_classes = (IsAuthenticated,)
+    allowed_methods = ['POST']
+
+    def post(self, request):
+        """
+        Register new UUID to given user ID
+
+        <h3>Details</h3>
+
+        <b>METHODS:</b>
+            - POST
+
+        <b>RETURNS:</b>
+            - 200 OK
+            - 404 NOT FOUND
+            - 400 BAD REQUEST
+        """
+        if 'id' in request and 'uuid' in request:
+            try:
+                int_id = int(request['id'])
+                uuid = request['uuid']
+                print str(int_id) + uuid
+            except:
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
 
 

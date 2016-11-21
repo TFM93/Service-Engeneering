@@ -12,12 +12,12 @@ urlpatterns = [
     # url(r'^authentication/isLogged/(?P<pk>[0-9]+)/$', views.IsLogged.as_view()),
     # ex: /api/authentication/logout/1/
     # url(r'^authentication/logout/(?P<pk>[0-9]+)/$', views.Logout.as_view()),
-    # ex: /api/authentication/delete/1/
-    url(r'^authentication/delete/(?P<pk>[0-9]+)/$', views.DeleteUser.as_view()),
-
+    # ex: /api/authentication/user/delete/1/
+    url(r'^authentication/user/delete/(?P<pk>[0-9]+)/$', views.DeleteUser.as_view()),
     # ex: /api/authentication/user/12F8T3J0DF/
     url(r'^authentication/user/(?P<uuid>[a-zA-Z0-9]+)/$', views.GetUserByUUID.as_view()),
-
     # ex: /api/authentication/user/1/
-    url(r'^authentication/user/details/(?P<pk>[0-9]+)/$', views.UserDetails.as_view()),
+    url(r'^authentication/user/details/(?P<pk>[0-9]+)/$', views.GetUserByID.as_view()),
+    # ex: /api/authentication/user/register/uuid/
+    url(r'^authentication/user/register/uuid/$', views.RegisterUserUUID.as_view()),
 ]

@@ -38,6 +38,8 @@ html(lang="en")
           ul.nav.navbar-nav.navbar-right
             | {% if user.is_authenticated %}
             li
+              img.img-thumbnail.img-responsive(src="{% static 'web/avatars/avatar' %}{{user.pk}}.jpg", width='42px', style='margin-top:10px;')
+            li
               a(href="{% url 'account_email' %}" title="Manage your account") My Account
             li
               a(href="{% url 'account_logout' %}") Log out

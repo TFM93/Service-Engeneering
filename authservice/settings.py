@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     # Rest Framework and Swagger
     'rest_framework',
     'rest_framework_swagger',
+    'rest_framework.authtoken',
 
     # Apps
     'core',
