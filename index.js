@@ -9,7 +9,7 @@ var request = require("request");
 
 
 /**** Final Variables & Templates ****/
-var compositor_url = "http://localhost:5000/";
+var compositor_url = "http://localhost:8090/";
 
 var ticket_queue_path = __dirname + "/data/ticket_queue.json";
 var average_time_path = __dirname + "/data/average_time.json";
@@ -57,6 +57,44 @@ app.use(bodyParser.urlencoded({
 
 /**** Private functions ****/
 
+function jumpInQueue(queue, ticket_UUID, numberOfJumps) {
+
+    var newQueue = queue;
+    var ticket_pos = findTicketByUUID(queue, ticket_UUID);
+
+    if (ticket_pos != -1 && queue != null && ticket_UUID != null && numberOfJumps != null && numberOfJumps > 0) {
+
+        var newTicket = newQueue[ticket_pos];
+
+        var newPlace = (ticket_pos - numberOfJumps) > 0 ? ticket_pos - numberOfJumps : 0;
+        console.log('newPlace: ' + newPlace + '  ticketPos: ' + ticket_pos + 'numberJ: ' + numberOfJumps);
+
+        for (var i = ticket_pos; i > newPlace; i--) {
+            newQueue[i] = newQueue[i - 1];
+        }
+        newQueue[newPlace] = newTicket;
+    }
+
+    return newQueue;
+}
+
+function findTicketByUUID(queue, ticket_UUID) {
+
+    var ticketPos = -1;
+
+    if (queue != null && queue.length > 0 && ticket_UUID != null) {
+        for (var i = 0; i < queue.length; i++) {
+            if (queue[i].ticket_UUID == ticket_UUID) {
+                ticketPos = i;
+                break;
+            }
+        }
+    }
+
+    return ticketPos;
+
+}
+
 function sendToServer(ticket, ticketType, cb) {
 
     console.log("private method sendToServer entered");
@@ -75,8 +113,7 @@ function sendToServer(ticket, ticketType, cb) {
         },
         body: ticket
     }, function (error, response, body) {
-        if(response!=null)
-        {
+        if (response != null) {
             if (!error && response.statusCode === 200) {
                 console.log("private method sendToServer: compositor code = " + body.code)
                 cb(JSON.stringify(body.code));
@@ -814,6 +851,73 @@ app.post('/employee/makeNewType', function (req, res) {
 
 /**** for clients *****/
 
+app.post('/client/jumpInQueue', function (req, res) {
+    console.log('client jumpInQueue - entered');
+
+    var ticket_type = req.body.ticket_type;
+    var ticket_uuid = req.body.ticket_uuid;
+    var number_of_jumps = req.body.number_of_jumps;
+    var filesPath = [ticket_queue_path];
+
+
+    if (ticket_type != null && ticket_uuid != null && number_of_jumps!=null && number_of_jumps>0) {
+
+        async.map(filesPath, function (filePath, cb) { //reading files or dir
+            fs.readFile(filePath, 'utf8', cb);
+        }, function (err, results) {
+            //console.log(data[0]['type'])
+            var queues = JSON.parse(results[0]);
+
+            console.log('employee jumpInQueue - searching ticket type (%s) queue', ticket_type);
+
+            queue_pos = -1;
+
+            for (var i = 0; i < queues.length; i++) {
+                if (queues[i]['type'] == ticket_type) {
+                    console.log('client jumpInQueue - found ticket type queue');
+                    var queue_pos = i;
+                    break;
+                }
+            }
+
+            if (queue_pos != -1) {
+
+                queues[queue_pos].queue = jumpInQueue(queues[queue_pos].queue, ticket_uuid, number_of_jumps);
+
+                fs.writeFile(ticket_queue_path, JSON.stringify(queues), function (err) {
+                    console.error(err)
+                });
+
+                var result = JSON.parse('{"result":"success"}');
+                res.status(200).json(result);
+            }
+            else {
+                console.log('client jumpInQueue - bogus ticket type');
+                var error_resp = error_template;
+                error_resp['code'] = 400;
+                error_resp['message'] = "bad request - wrong ticket type";
+                error_resp['fields'] = "ticket_type";
+                //console.log(error_resp);
+                res.status(400).json(error_resp);
+            }
+
+
+        });
+
+    }
+    else {
+        console.log('client jumpInQueue - bad request');
+        var error_resp = error_template;
+        error_resp['code'] = 400;
+        error_resp['message'] = "bad request - fields missing or number of jumps <= 0";
+        error_resp['fields'] = "some";
+        //console.log(error_resp);
+        res.status(400).json(error_resp);
+    }
+
+});
+
+
 app.post('/client/requestTicket', function (req, res) {
     console.log('client requestTicket - entered');
 
@@ -873,8 +977,6 @@ app.post('/client/requestTicket', function (req, res) {
                             res.status(200).json(result);
 
                         });
-
-
 
 
                     }
