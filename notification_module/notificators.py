@@ -26,7 +26,7 @@ def send_sms(subject,text,dest):
     # send the sms
     gateway = smsGateway(uname,pwd)
     text = subject + ' \n ' + text
-    ret = gateway.sendMessageToNumber(dest,text,31298)
+    ret = gateway.sendMessageToNumber(dest,text,33557)
     if ret['status'] is 401:
         return ret
     elif ret['status'] is 200:
