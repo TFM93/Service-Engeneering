@@ -15,7 +15,11 @@ class AccountAdapter(DefaultAccountAdapter):
     def get_login_redirect_url(self, request):
         token = Token.objects.get(user=request.user)
         # host = request.META['SERVER_NAME']
-        url = settings.SITE_URL + '/?id=' + str(request.user.id) + '&token=' + str(token.key)
+        if settings.SITE_URL == 'http://localhost:8000':
+            host_composer = settings.SITE_URL
+        else:
+            host_composer = 'http://localhost:3000/dashboardClient'
+        url = host_composer + '/?id=' + str(request.user.id) + '&token=' + str(token.key)
         data = {'id': str(request.user.id), 'token': token.key}
 
         return resolve_url(url, data)
