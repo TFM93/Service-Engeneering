@@ -55,3 +55,7 @@ def social_account_login(sender, **kwargs):
 
 # def googleConfirm(request):
 #     return render_to_response("core/googleff1931c407ddd6d6.html")
+
+
+def test(request):
+    return "<h1>Boa</h1>"

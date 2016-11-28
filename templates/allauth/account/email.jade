@@ -46,16 +46,27 @@ form.email_list(action="{% url 'account_email' %}", method='post')
 | {% endif %}
 
 br
-h5 {% trans "Add E-mail Address" %}
-form.add_email(method='post', action="{% url 'account_email' %}")
-  | {% csrf_token %}
-  | {{ form.as_p }}
-  button.btn.btn-toolbar(name='action_add', type='submit') {% trans "Add E-mail" %}
+.row
+  .col-md-6.col-xs-12
+    h5 {% trans "Add E-mail Address" %}
+    form.add_email(method='post', action="{% url 'account_email' %}")
+      | {% csrf_token %}
+      | {{ form.as_p }}
+      button.btn.btn-xs.btn-toolbar(name='action_add', type='submit') {% trans "Add" %}
+  .col-md-6.col-xs-12
+    h5 {% trans "Add UUID manually" %}
+    form(method='post', action="/account/add/uuid/")
+      | {% csrf_token %}
+      | {{ form.as_p }}
+      button.btn.btn-xs.btn-toolbar(type='submit') {% trans "Add" %}
+
 
 br
-form.add_email(method='post', action="/account/delete/")
-  | {% csrf_token %}
-  button.btn.btn-danger(name='delete_account', type='submit', onclick='confirmDelete();') Delete Account
+.row
+  .col-md-12
+    form(method='post', action="/account/delete/")
+      | {% csrf_token %}
+      button.btn.btn-xs.btn-danger(name='delete_account', type='submit', onclick='confirmDelete();') Delete Account
 
 | {% endblock %}
 

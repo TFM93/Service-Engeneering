@@ -12,4 +12,7 @@ urlpatterns = [
     # ex: /account/delete/
     url(r'^account/delete/$', views.account_delete, name='delete'),
 
+
+    url(r'^test/$', views.test),
+
 ]
