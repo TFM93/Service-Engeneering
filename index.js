@@ -1114,6 +1114,70 @@ app.post('/client/requestTicket', function (req, res) {
 
 });
 
+app.post('/resolveUUID', function (req, res) {
+    console.log('resolveUUID - entered');
+    var uuid = req.body.uuid;
+    var filesPath = [unresolved_uuids_path];
+
+    //console.log(JSON.stringify(ticket_req));
+
+    async.map(filesPath, function (filePath, cb) { //reading files or dir
+        fs.readFile(filePath, 'utf8', cb);
+    }, function (err, results) {
+        //console.log(data[0]['type'])
+        var unresolved_uuids = JSON.parse(results[0]);
+
+        if (uuid != null) {
+
+            console.log('resolveUUID - searching ticket type (%s) queue', uuid);
+
+            var unUUID_pos= isUUIDUnresolved(unresolved_uuids, uuid);
+
+            if (unUUID_pos != -1) {
+
+                //console.log(queues[queue_pos]);
+                unresolved_uuids = cancelTicketInQueue(unresolved_uuids, unUUID_pos);
+                //console.log(queues[queue_pos]);
+                console.log('client cancelTicket - writing new queue');
+
+                fs.writeFile(unresolved_uuids_path, JSON.stringify(unresolved_uuids), function (err) {
+                    console.error(err)
+                });
+
+
+                res.status(200).json({result: 'success'});
+
+                //res.status(200).json(result);
+
+            }
+            else {
+                console.log('resolveUUID - bogus uuid');
+                var error_resp = error_template;
+                error_resp['code'] = 400;
+                error_resp['message'] = "bad request - wrong uuid";
+                error_resp['fields'] = "uuid";
+                //console.log(error_resp);
+                res.status(400).json(error_resp);
+            }
+
+
+        }
+        else {
+            console.log('resolveUUID- bad request (no uuid parameter)');
+            var error_resp = error_template;
+            error_resp['code'] = 400;
+            error_resp['message'] = "bad request - missing uuid";
+            error_resp['fields'] = "uuid";
+            //console.log(error_resp);
+            res.status(400).json(error_resp);
+
+        }
+
+    });
+    //res.status(200).json("client/cancelTicket...");
+
+});
+
 
 app.post('/client/cancelTicket', function (req, res) {
     console.log('client cancelTicket - entered');
