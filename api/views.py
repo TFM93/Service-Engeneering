@@ -73,6 +73,41 @@ class GetUserByID(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
 
 
+class GetUserUUIDbyID(APIView):
+    permission_classes = (IsAuthenticated,)
+    allowed_methods = ['GET']
+
+    def get(self, request, pk=None):
+        """
+        Get user UUID by given user ID
+
+        <h3>Details</h3>
+
+        <b>METHODS:</b>
+            - GET
+
+        <b>RETURNS:</b>
+            - 200 OK
+            - 404 NOT FOUND
+            - 400 BAD REQUEST
+        """
+        if pk is not None:
+            try:
+                int_id = int(pk)
+                try:
+                    user = User.objects.get(pk=int_id)
+                    social_user = SocialAccount.objects.get(user=user)
+                    custom_social_user = CustomSocialAccount.objects.get(account=social_user)
+                    if custom_social_user.uuid == "":
+                        return Response(status=status.HTTP_200_OK, data={'detail': 'This user does not have uuid yet.'})
+                except:
+                    raise Exception
+                return Response(status=status.HTTP_200_OK, data={'uuid': custom_social_user.uuid})
+            except:
+                return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
+
+
 class RegisterUserUUID(APIView):
     permission_classes = (IsAuthenticated,)
     allowed_methods = ['POST']

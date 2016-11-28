@@ -18,6 +18,8 @@ urlpatterns = [
     url(r'^authentication/user/(?P<uuid>[a-zA-Z0-9]+)/$', views.GetUserByUUID.as_view()),
     # ex: /api/authentication/user/1/
     url(r'^authentication/user/details/(?P<pk>[0-9]+)/$', views.GetUserByID.as_view()),
+    # ex: /api/authentication/user/uuid/1/
+    url(r'^authentication/user/uuid/(?P<pk>[0-9]+)/$', views.GetUserUUIDbyID.as_view()),
     # ex: /api/authentication/user/register/uuid/
     url(r'^authentication/user/register/uuid/$', views.RegisterUserUUID.as_view()),
 ]
