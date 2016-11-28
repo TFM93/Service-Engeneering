@@ -59,7 +59,9 @@ app.use(bodyParser.urlencoded({
 
 function jumpInQueue(queue, ticket_UUID, numberOfJumps) {
 
+    var result = JSON.parse('{}');
     var newQueue = queue;
+    var passedQueue = [];
     var ticket_pos = findTicketByUUID(queue, ticket_UUID);
 
     if (ticket_pos != -1 && queue != null && ticket_UUID != null && numberOfJumps != null && numberOfJumps > 0) {
@@ -71,11 +73,14 @@ function jumpInQueue(queue, ticket_UUID, numberOfJumps) {
 
         for (var i = ticket_pos; i > newPlace; i--) {
             newQueue[i] = newQueue[i - 1];
+            passedQueue[passedQueue.length] = newQueue[i].ticket_UUID;
         }
         newQueue[newPlace] = newTicket;
     }
 
-    return newQueue;
+    result.queue = newQueue;
+    result.passed = passedQueue;
+    return result;
 }
 
 function findTicketByUUID(queue, ticket_UUID) {
@@ -882,13 +887,15 @@ app.post('/client/jumpInQueue', function (req, res) {
 
             if (queue_pos != -1) {
 
-                queues[queue_pos].queue = jumpInQueue(queues[queue_pos].queue, ticket_uuid, number_of_jumps);
+                var jumpRes = jumpInQueue(queues[queue_pos].queue, ticket_uuid, number_of_jumps);
+                queues[queue_pos].queue = jumpRes.queue//jumpInQueue(queues[queue_pos].queue, ticket_uuid, number_of_jumps);
 
                 fs.writeFile(ticket_queue_path, JSON.stringify(queues), function (err) {
                     console.error(err)
                 });
 
                 var result = JSON.parse('{"result":"success"}');
+                result.passedQueue = jumpRes.passed;
                 res.status(200).json(result);
             }
             else {
