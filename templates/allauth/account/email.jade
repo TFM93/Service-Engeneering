@@ -33,9 +33,9 @@ form.email_list(action="{% url 'account_email' %}", method='post')
     .row
       .col-md-12
         .buttonHolder
-          button.btn.btn-md.btn-success.secondaryAction(type='submit', name='action_primary') {% trans 'Make Primary' %}
-          button.btn.btn-md.btn-primary.secondaryAction(type='submit', name='action_send') {% trans 'Re-send Verification' %}
-          button.btn.btn-md.btn-danger.primaryAction(type='submit', name='action_remove') {% trans 'Remove' %}
+          button.btn.btn-xs.btn-success.secondaryAction(type='submit', name='action_primary') {% trans 'Make Primary' %}
+          button.btn.btn-xs.btn-primary.secondaryAction(type='submit', name='action_send') {% trans 'Re-send Verification' %}
+          button.btn.btn-xs.btn-danger.primaryAction(type='submit', name='action_remove') {% trans 'Remove' %}
 | {% else %}
 .row
   .col-md-1.col-xs-12
@@ -46,7 +46,7 @@ form.email_list(action="{% url 'account_email' %}", method='post')
 | {% endif %}
 
 br
-h4 {% trans "Add E-mail Address" %}
+h5 {% trans "Add E-mail Address" %}
 form.add_email(method='post', action="{% url 'account_email' %}")
   | {% csrf_token %}
   | {{ form.as_p }}

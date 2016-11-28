@@ -81,7 +81,14 @@ class RegisterUserUUID(APIView):
         """
         Register new UUID to given user ID
 
-        <h3>Details</h3>
+        <h3>Details</h3> Example:
+
+            {
+
+                "id": "1",
+                "uuid": "A73B0CF79"
+
+            }
 
         <b>METHODS:</b>
             - POST
@@ -96,6 +103,7 @@ class RegisterUserUUID(APIView):
                 int_id = int(request['id'])
                 uuid = request['uuid']
                 print str(int_id) + uuid
+                # TODO validar o uuid do cartao no ricardo
                 account = SocialAccount.objects.get(user=int_id)
                 c_user = CustomSocialAccount.objects.get(account=account)
                 c_user.uuid = uuid
