@@ -56,15 +56,57 @@ var j = schedule.scheduleJob('10 * * * * *', function () {
 
   // })
 
+  function compare(a, b) {
+    if (a.ticket_number < b.ticket_number)
+      return -1;
+    if (a.ticket_number > b.ticket_number)
+      return 1;
+    return 0;
+  }
 
-  var url = "http://nots.aws.atnog.av.it.pt/getMethods";
+  //objs.sort(compare);
+
+
+  var url = "https://esmickettodule.herokuapp.com/everyQueue";
   console.log(url);
 
 
 
   request(url, function (err, resp, body) {
     body = JSON.parse(body);
-    console.log(body);
+    console.log(body.sort(compare));
+
+    for (var i = 0; i < body.length; i++) {
+
+      var avgTimeNextTicket = body[i]['queue_average_time'];
+      var dateTime = new Date(avgTimeNextTicket);
+      console.log(dateTime.getMinutes());
+
+      if (dateTime.getHours() < 1 && dateTime.getMinutes() < 5) {
+        // var formData = { 'subject': 'SmartTicket', 'content': 'AHAHA', 'contact': '+351967983710' };
+
+
+        // request.post({ url: 'http://nots.aws.atnog.av.it.pt:80/notify/SMS', form: formData }, function (err, httpResponse, body) {
+        //   if (err) {
+        //     console.log(err);
+        //     return;
+        //   }
+
+
+
+        //   console.log(body);
+        //   console.log(httpResponse);
+
+
+        // })
+
+
+
+      }
+
+
+    }
+
 
   });
 

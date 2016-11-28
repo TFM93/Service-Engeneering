@@ -7,6 +7,14 @@ class DashboardEmployeeStore {
         this.bindActions(DashboardEmployeeActions);
         this.currentTickets = [];
         this.newQueueName = '';
+        this.user = { id: '', token: '' }
+    }
+
+    login(usr) {
+        this.user.id = usr.id;
+        this.user.token = usr.token;
+
+
     }
 
     onNextTicketSuccess(data) {
@@ -26,7 +34,7 @@ class DashboardEmployeeStore {
     }
 
     onNewQueueSuccess(data) {
-        console.log("on new queue success")
+        //console.log("on new queue success")
         console.log(data);
     }
 

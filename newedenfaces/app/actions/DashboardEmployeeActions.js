@@ -15,7 +15,8 @@ class DashboardEmployeeActions {
       'closeDaySuccess',
       'closeDayFail',
       'newQueueSuccess',
-      'newQueueFail'
+      'newQueueFail',
+      'login'
     );
   }
 
@@ -75,6 +76,10 @@ class DashboardEmployeeActions {
       .fail((jqXhr) => {
         this.actions.closeDayFail(jqXhr);
       });
+  }
+
+  logUser(usr){
+    this.actions.login({id:usr.id, token:usr.token});
   }
 
 

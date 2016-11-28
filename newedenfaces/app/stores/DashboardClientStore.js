@@ -7,6 +7,17 @@ class DashboardClientStore {
     this.bindActions(DashboardClientActions);
     this.lastTickets = [];
     this.myTickets = [];
+    this.user = { id: '', token: '' }
+  }
+
+  login(usr){
+    this.user.id = usr.id;
+    this.user.token = usr.token;
+
+    console.log("apos login")
+    console.log(this.user)
+
+
   }
 
 

@@ -15,6 +15,7 @@ class DashboardClient extends React.Component {
     DashboardClientStore.listen(this.onChange);
     DashboardClientActions.getLastTickets();
     DashboardClientActions.getMyTickets();
+    DashboardClientActions.logUser({id: this.props.location.query.id, token:this.props.location.query.token});
 
 
     // $('.magnific-popup').magnificPopup({
@@ -61,7 +62,8 @@ class DashboardClient extends React.Component {
 
   render() {
 
-
+    console.log("AFFA")
+    console.log(this.props.location);
 
 
     let lastTicketsBoard = this.state.lastTickets.map((ticket) => {

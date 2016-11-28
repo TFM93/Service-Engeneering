@@ -10,16 +10,17 @@ class DashboardClientActions {
       'getMyTicketsSuccess',
       'getMyTicketsFail',
       'testSuccess',
-      'testFail'
+      'testFail',
+      'login'
     );
   }
 
   test(type, nr) {
-    console.log(nr+type)
+    console.log(nr + type)
     $.ajax({
       type: 'POST',
       url: 'https://esmickettodule.herokuapp.com/client/cancelTicket',
-      data: { "ticket":{"ticket_number":nr, "ticket_type":type} }
+      data: { "ticket": { "ticket_number": nr, "ticket_type": type } }
     })
       .done((data) => {
         this.actions.testSuccess(data);
@@ -42,6 +43,11 @@ class DashboardClientActions {
         this.actions.getLastTicketsFail(jqXhr);
       });
   }
+
+  logUser(usr) {
+    this.actions.login({id:usr.id, token:usr.token});
+  }
+
 
 
   getMyTickets() {

@@ -1,4 +1,49 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var AuthService = function () {
+    function AuthService() {
+        _classCallCheck(this, AuthService);
+    }
+
+    _createClass(AuthService, [{
+        key: "login",
+        value: function login() {
+            // We call the server to log the user in.
+            console.log("dfs");
+            // return when(request({
+            //     url: 'http://localhost:3001/sessions/create',
+            //     method: 'POST',
+            //     crossOrigin: true,
+            //     type: 'json',
+            //     data: {
+            //         username, password
+            //     }
+            // }))
+            //     .then(function (response) {
+            //         // We get a JWT back.
+            //         let jwt = response.id_token;
+            //         // We trigger the LoginAction with that JWT.
+            //         LoginActions.loginUser(jwt);
+            //         return true;
+            //     });
+        }
+    }]);
+
+    return AuthService;
+}();
+
+exports.default = new AuthService();
+
+},{}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -44,7 +89,7 @@ var AddCharacterActions = function () {
 
 exports.default = _alt2.default.createActions(AddCharacterActions);
 
-},{"../alt":8}],2:[function(require,module,exports){
+},{"../alt":9}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -101,7 +146,7 @@ var CharacterActions = function () {
 
 exports.default = _alt2.default.createActions(CharacterActions);
 
-},{"../alt":8}],3:[function(require,module,exports){
+},{"../alt":9}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -122,7 +167,7 @@ var DashboardClientActions = function () {
   function DashboardClientActions() {
     _classCallCheck(this, DashboardClientActions);
 
-    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail');
+    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'login');
   }
 
   _createClass(DashboardClientActions, [{
@@ -155,6 +200,11 @@ var DashboardClientActions = function () {
       }).fail(function (jqXhr) {
         _this2.actions.getLastTicketsFail(jqXhr);
       });
+    }
+  }, {
+    key: 'logUser',
+    value: function logUser(usr) {
+      this.actions.login({ id: usr.id, token: usr.token });
     }
   }, {
     key: 'getMyTickets',
@@ -192,7 +242,7 @@ var DashboardClientActions = function () {
 
 exports.default = _alt2.default.createActions(DashboardClientActions);
 
-},{"../alt":8}],4:[function(require,module,exports){
+},{"../alt":9}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -213,7 +263,7 @@ var DashboardEmployeeActions = function () {
   function DashboardEmployeeActions() {
     _classCallCheck(this, DashboardEmployeeActions);
 
-    this.generateActions('reportSuccess', 'reportFail', 'updateNewQueueName', 'nextTicketSuccess', 'nextTicketFail', 'attendTicketSuccess', 'attendTicketFail', 'newDaySuccess', 'newDayFail', 'closeDaySuccess', 'closeDayFail', 'newQueueSuccess', 'newQueueFail');
+    this.generateActions('reportSuccess', 'reportFail', 'updateNewQueueName', 'nextTicketSuccess', 'nextTicketFail', 'attendTicketSuccess', 'attendTicketFail', 'newDaySuccess', 'newDayFail', 'closeDaySuccess', 'closeDayFail', 'newQueueSuccess', 'newQueueFail', 'login');
   }
 
   _createClass(DashboardEmployeeActions, [{
@@ -277,6 +327,11 @@ var DashboardEmployeeActions = function () {
       });
     }
   }, {
+    key: 'logUser',
+    value: function logUser(usr) {
+      this.actions.login({ id: usr.id, token: usr.token });
+    }
+  }, {
     key: 'attendTicket',
     value: function attendTicket(type, nr) {
       var _this5 = this;
@@ -314,7 +369,7 @@ var DashboardEmployeeActions = function () {
 
 exports.default = _alt2.default.createActions(DashboardEmployeeActions);
 
-},{"../alt":8}],5:[function(require,module,exports){
+},{"../alt":9}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -356,7 +411,7 @@ var FooterActions = function () {
 
 exports.default = _alt2.default.createActions(FooterActions);
 
-},{"../alt":8}],6:[function(require,module,exports){
+},{"../alt":9}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -413,7 +468,7 @@ var HomeActions = function () {
 
 exports.default = _alt2.default.createActions(HomeActions);
 
-},{"../alt":8}],7:[function(require,module,exports){
+},{"../alt":9}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -472,7 +527,7 @@ var NavbarActions = function () {
 
 exports.default = _alt2.default.createActions(NavbarActions);
 
-},{"../alt":8,"underscore":"underscore"}],8:[function(require,module,exports){
+},{"../alt":9,"underscore":"underscore"}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -487,7 +542,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = new _alt2.default();
 
-},{"alt":"alt"}],9:[function(require,module,exports){
+},{"alt":"alt"}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -652,7 +707,7 @@ var AddCharacter = function (_React$Component) {
 
 exports.default = AddCharacter;
 
-},{"../actions/AddCharacterActions":1,"../stores/AddCharacterStore":19,"react":"react"}],10:[function(require,module,exports){
+},{"../actions/AddCharacterActions":2,"../stores/AddCharacterStore":20,"react":"react"}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -708,7 +763,7 @@ var App = function (_React$Component) {
 
 exports.default = App;
 
-},{"./Footer":14,"./Navbar":16,"react":"react"}],11:[function(require,module,exports){
+},{"./Footer":15,"./Navbar":17,"react":"react"}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -898,7 +953,7 @@ var Character = function (_React$Component) {
 
 exports.default = Character;
 
-},{"../actions/CharacterActions":2,"../stores/CharacterStore":20,"react":"react"}],12:[function(require,module,exports){
+},{"../actions/CharacterActions":3,"../stores/CharacterStore":21,"react":"react"}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -946,6 +1001,7 @@ var DashboardClient = function (_React$Component) {
       _DashboardClientStore2.default.listen(this.onChange);
       _DashboardClientActions2.default.getLastTickets();
       _DashboardClientActions2.default.getMyTickets();
+      _DashboardClientActions2.default.logUser({ id: this.props.location.query.id, token: this.props.location.query.token });
 
       // $('.magnific-popup').magnificPopup({
       //   type: 'image',
@@ -993,6 +1049,9 @@ var DashboardClient = function (_React$Component) {
     key: 'render',
     value: function render() {
       var _this2 = this;
+
+      console.log("AFFA");
+      console.log(this.props.location);
 
       var lastTicketsBoard = this.state.lastTickets.map(function (ticket) {
         return _react2.default.createElement(
@@ -1177,7 +1236,7 @@ exports.default = DashboardClient;
 //   </div>
 // </div>
 
-},{"../actions/DashboardClientActions":3,"../stores/DashboardClientStore":21,"react":"react"}],13:[function(require,module,exports){
+},{"../actions/DashboardClientActions":4,"../stores/DashboardClientStore":22,"react":"react"}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1224,6 +1283,7 @@ var DashboardEmployee = function (_React$Component) {
         value: function componentDidMount() {
             _DashboardEmployeeStore2.default.listen(this.onChange);
             _DashboardEmployeeActions2.default.nextTicket();
+            DashboardmEmployeeActions.logUser(this.props.location.query.id, this.props.location.query.token);
         }
     }, {
         key: 'componentWillUnmount',
@@ -1433,7 +1493,7 @@ exports.default = DashboardEmployee;
 //   </div>
 // </div>
 
-},{"../actions/DashboardEmployeeActions":4,"../stores/DashboardEmployeeStore":22,"react":"react"}],14:[function(require,module,exports){
+},{"../actions/DashboardEmployeeActions":5,"../stores/DashboardEmployeeStore":23,"react":"react"}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1570,7 +1630,7 @@ var Footer = function (_React$Component) {
 
 exports.default = Footer;
 
-},{"../actions/FooterActions":5,"../stores/FooterStore":23,"react":"react","react-router":"react-router"}],15:[function(require,module,exports){
+},{"../actions/FooterActions":6,"../stores/FooterStore":24,"react":"react","react-router":"react-router"}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1594,6 +1654,10 @@ var _HomeActions = require('../actions/HomeActions');
 var _HomeActions2 = _interopRequireDefault(_HomeActions);
 
 var _underscore = require('underscore');
+
+var _AuthService = require('../AuthService');
+
+var _AuthService2 = _interopRequireDefault(_AuthService);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1619,6 +1683,7 @@ var Home = function (_React$Component) {
   _createClass(Home, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      _AuthService2.default.login();
       _HomeStore2.default.listen(this.onChange);
       _HomeActions2.default.getTwoCharacters();
       $("#login-form").delay(100).fadeIn(100);
@@ -1710,103 +1775,9 @@ var Home = function (_React$Component) {
                     'div',
                     { className: 'col-lg-12' },
                     _react2.default.createElement(
-                      'form',
-                      { id: 'login-form', action: 'http://phpoll.com/login/process', method: 'post', role: 'form', styles: 'display: block;' },
-                      _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
-                        _react2.default.createElement('input', { type: 'text', name: 'username', id: 'username', tabindex: '1', className: 'form-control', placeholder: 'Username', value: '' })
-                      ),
-                      _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
-                        _react2.default.createElement('input', { type: 'password', name: 'password', id: 'password', tabindex: '2', className: 'form-control', placeholder: 'Password' })
-                      ),
-                      _react2.default.createElement(
-                        'div',
-                        { className: 'form-group text-center' },
-                        _react2.default.createElement('input', { type: 'checkbox', tabindex: '3', className: '', name: 'remember', id: 'remember' }),
-                        _react2.default.createElement(
-                          'label',
-                          { 'for': 'remember' },
-                          ' Remember Me'
-                        )
-                      ),
-                      _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
-                        _react2.default.createElement(
-                          'div',
-                          { className: 'row' },
-                          _react2.default.createElement(
-                            'div',
-                            { className: 'col-sm-6 col-sm-offset-3' },
-                            _react2.default.createElement(
-                              _reactRouter.Link,
-                              { to: '/dashboardClient' },
-                              _react2.default.createElement('input', { type: 'submit', name: 'login-submit', id: 'login-submit', tabindex: '4', className: 'form-control btn btn-login', value: 'Log In' })
-                            )
-                          )
-                        )
-                      ),
-                      _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
-                        _react2.default.createElement(
-                          'div',
-                          { className: 'row' },
-                          _react2.default.createElement(
-                            'div',
-                            { className: 'col-lg-12' },
-                            _react2.default.createElement(
-                              'div',
-                              { className: 'text-center' },
-                              _react2.default.createElement(
-                                'a',
-                                { href: 'http://phpoll.com/recover', tabindex: '5', className: 'forgot-password' },
-                                'Forgot Password?'
-                              )
-                            )
-                          )
-                        )
-                      )
-                    ),
-                    _react2.default.createElement(
-                      'form',
-                      { id: 'register-form', action: 'http://phpoll.com/register/process', method: 'post', role: 'form', styles: 'display: none;' },
-                      _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
-                        _react2.default.createElement('input', { type: 'text', name: 'username', id: 'username', tabindex: '1', className: 'form-control', placeholder: 'Username', value: '' })
-                      ),
-                      _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
-                        _react2.default.createElement('input', { type: 'email', name: 'email', id: 'email', tabindex: '1', className: 'form-control', placeholder: 'Email Address', value: '' })
-                      ),
-                      _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
-                        _react2.default.createElement('input', { type: 'password', name: 'password', id: 'password', tabindex: '2', className: 'form-control', placeholder: 'Password' })
-                      ),
-                      _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
-                        _react2.default.createElement('input', { type: 'password', name: 'confirm-password', id: 'confirm-password', tabindex: '2', className: 'form-control', placeholder: 'Confirm Password' })
-                      ),
-                      _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
-                        _react2.default.createElement(
-                          'div',
-                          { className: 'row' },
-                          _react2.default.createElement(
-                            'div',
-                            { className: 'col-sm-6 col-sm-offset-3' },
-                            _react2.default.createElement('input', { type: 'submit', name: 'register-submit', id: 'register-submit', tabindex: '4', className: 'form-control btn btn-register', value: 'Register Now' })
-                          )
-                        )
-                      )
+                      'a',
+                      { href: 'https://authservice-es-2016.heroku.com/accounts/login/' },
+                      'Autenticar'
                     )
                   )
                 )
@@ -1823,7 +1794,57 @@ var Home = function (_React$Component) {
 
 exports.default = Home;
 
-},{"../actions/HomeActions":6,"../stores/HomeStore":24,"react":"react","react-router":"react-router","underscore":"underscore"}],16:[function(require,module,exports){
+// <form id="login-form" action="http://phpoll.com/login/process" method="post" role="form" styles="display: block;">
+//   <div className="form-group">
+//     <input type="text" name="username" id="username" tabindex="1" className="form-control" placeholder="Username" value="" />
+//   </div>
+//   <div className="form-group">
+//     <input type="password" name="password" id="password" tabindex="2" className="form-control" placeholder="Password" />
+//   </div>
+//   <div className="form-group text-center">
+//     <input type="checkbox" tabindex="3" className="" name="remember" id="remember" />
+//     <label for="remember"> Remember Me</label>
+//   </div>
+//   <div className="form-group">
+//     <div className="row">
+//       <div className="col-sm-6 col-sm-offset-3">
+//         <Link to='/dashboardClient'><input type="submit" name="login-submit" id="login-submit" tabindex="4" className="form-control btn btn-login" value="Log In" /></Link>
+//       </div>
+//     </div>
+//   </div>
+//   <div className="form-group">
+//     <div className="row">
+//       <div className="col-lg-12">
+//         <div className="text-center">
+//           <a href="http://phpoll.com/recover" tabindex="5" className="forgot-password">Forgot Password?</a>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// </form>
+// <form id="register-form" action="http://phpoll.com/register/process" method="post" role="form" styles="display: none;">
+//   <div className="form-group">
+//     <input type="text" name="username" id="username" tabindex="1" className="form-control" placeholder="Username" value="" />
+//   </div>
+//   <div className="form-group">
+//     <input type="email" name="email" id="email" tabindex="1" className="form-control" placeholder="Email Address" value="" />
+//   </div>
+//   <div className="form-group">
+//     <input type="password" name="password" id="password" tabindex="2" className="form-control" placeholder="Password" />
+//   </div>
+//   <div className="form-group">
+//     <input type="password" name="confirm-password" id="confirm-password" tabindex="2" className="form-control" placeholder="Confirm Password" />
+//   </div>
+//   <div className="form-group">
+//     <div className="row">
+//       <div className="col-sm-6 col-sm-offset-3">
+//         <input type="submit" name="register-submit" id="register-submit" tabindex="4" className="form-control btn btn-register" value="Register Now" />
+//       </div>
+//     </div>
+//   </div>
+// </form>
+
+},{"../AuthService":1,"../actions/HomeActions":7,"../stores/HomeStore":25,"react":"react","react-router":"react-router","underscore":"underscore"}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2003,7 +2024,7 @@ exports.default = Navbar;
 //   </div>
 // </form>
 
-},{"../actions/NavbarActions":7,"../stores/NavbarStore":25,"react":"react","react-router":"react-router"}],17:[function(require,module,exports){
+},{"../actions/NavbarActions":8,"../stores/NavbarStore":26,"react":"react","react-router":"react-router"}],18:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -2036,7 +2057,7 @@ _reactDom2.default.render(_react2.default.createElement(
   _routes2.default
 ), document.getElementById('app'));
 
-},{"./routes":18,"history/lib/createBrowserHistory":34,"react":"react","react-dom":"react-dom","react-router":"react-router"}],18:[function(require,module,exports){
+},{"./routes":19,"history/lib/createBrowserHistory":35,"react":"react","react-dom":"react-dom","react-router":"react-router"}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2085,7 +2106,7 @@ exports.default = _react2.default.createElement(
     _react2.default.createElement(_reactRouter.Route, { path: '/dashboardEmployee', component: _DashboardEmployee2.default })
 );
 
-},{"./components/AddCharacter":9,"./components/App":10,"./components/Character":11,"./components/DashboardClient":12,"./components/DashboardEmployee":13,"./components/Home":15,"react":"react","react-router":"react-router"}],19:[function(require,module,exports){
+},{"./components/AddCharacter":10,"./components/App":11,"./components/Character":12,"./components/DashboardClient":13,"./components/DashboardEmployee":14,"./components/Home":16,"react":"react","react-router":"react-router"}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2161,7 +2182,7 @@ var AddCharacterStore = function () {
 
 exports.default = _alt2.default.createStore(AddCharacterStore);
 
-},{"../actions/AddCharacterActions":1,"../alt":8}],20:[function(require,module,exports){
+},{"../actions/AddCharacterActions":2,"../alt":9}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2238,7 +2259,7 @@ var CharacterStore = function () {
 
 exports.default = _alt2.default.createStore(CharacterStore);
 
-},{"../actions/CharacterActions":2,"../alt":8,"underscore":"underscore"}],21:[function(require,module,exports){
+},{"../actions/CharacterActions":3,"../alt":9,"underscore":"underscore"}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2268,9 +2289,19 @@ var DashboardClientStore = function () {
     this.bindActions(_DashboardClientActions2.default);
     this.lastTickets = [];
     this.myTickets = [];
+    this.user = { id: '', token: '' };
   }
 
   _createClass(DashboardClientStore, [{
+    key: 'login',
+    value: function login(usr) {
+      this.user.id = usr.id;
+      this.user.token = usr.token;
+
+      console.log("apos login");
+      console.log(this.user);
+    }
+  }, {
     key: 'onGetLastTicketsSuccess',
     value: function onGetLastTicketsSuccess(data) {
       this.lastTickets = data;
@@ -2311,7 +2342,7 @@ var DashboardClientStore = function () {
 
 exports.default = _alt2.default.createStore(DashboardClientStore);
 
-},{"../actions/DashboardClientActions":3,"../alt":8,"underscore":"underscore"}],22:[function(require,module,exports){
+},{"../actions/DashboardClientActions":4,"../alt":9,"underscore":"underscore"}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2341,9 +2372,16 @@ var DashboardEmployeeStore = function () {
         this.bindActions(_DashboardEmployeeActions2.default);
         this.currentTickets = [];
         this.newQueueName = '';
+        this.user = { id: '', token: '' };
     }
 
     _createClass(DashboardEmployeeStore, [{
+        key: 'login',
+        value: function login(usr) {
+            this.user.id = usr.id;
+            this.user.token = usr.token;
+        }
+    }, {
         key: 'onNextTicketSuccess',
         value: function onNextTicketSuccess(data) {
             console.log("on next success");
@@ -2364,7 +2402,7 @@ var DashboardEmployeeStore = function () {
     }, {
         key: 'onNewQueueSuccess',
         value: function onNewQueueSuccess(data) {
-            console.log("on new queue success");
+            //console.log("on new queue success")
             console.log(data);
         }
     }, {
@@ -2410,7 +2448,7 @@ var DashboardEmployeeStore = function () {
 
 exports.default = _alt2.default.createStore(DashboardEmployeeStore);
 
-},{"../actions/DashboardEmployeeActions":4,"../alt":8,"underscore":"underscore"}],23:[function(require,module,exports){
+},{"../actions/DashboardEmployeeActions":5,"../alt":9,"underscore":"underscore"}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2457,7 +2495,7 @@ var FooterStore = function () {
 
 exports.default = _alt2.default.createStore(FooterStore);
 
-},{"../actions/FooterActions":5,"../alt":8}],24:[function(require,module,exports){
+},{"../actions/FooterActions":6,"../alt":9}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2508,7 +2546,7 @@ var HomeStore = function () {
 
 exports.default = _alt2.default.createStore(HomeStore);
 
-},{"../actions/HomeActions":6,"../alt":8}],25:[function(require,module,exports){
+},{"../actions/HomeActions":7,"../alt":9}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2585,7 +2623,7 @@ var NavbarStore = function () {
 
 exports.default = _alt2.default.createStore(NavbarStore);
 
-},{"../actions/NavbarActions":7,"../alt":8}],26:[function(require,module,exports){
+},{"../actions/NavbarActions":8,"../alt":9}],27:[function(require,module,exports){
 var pSlice = Array.prototype.slice;
 var objectKeys = require('./lib/keys.js');
 var isArguments = require('./lib/is_arguments.js');
@@ -2681,7 +2719,7 @@ function objEquiv(a, b, opts) {
   return typeof a === typeof b;
 }
 
-},{"./lib/is_arguments.js":27,"./lib/keys.js":28}],27:[function(require,module,exports){
+},{"./lib/is_arguments.js":28,"./lib/keys.js":29}],28:[function(require,module,exports){
 var supportsArgumentsClass = (function(){
   return Object.prototype.toString.call(arguments)
 })() == '[object Arguments]';
@@ -2703,7 +2741,7 @@ function unsupported(object){
     false;
 };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 exports = module.exports = typeof Object.keys === 'function'
   ? Object.keys : shim;
 
@@ -2714,7 +2752,7 @@ function shim (obj) {
   return keys;
 }
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /**
  * Indicates that navigation was caused by a call to history.push.
  */
@@ -2746,7 +2784,7 @@ exports['default'] = {
   REPLACE: REPLACE,
   POP: POP
 };
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -2773,7 +2811,7 @@ function loopAsync(turns, work, callback) {
 
   next();
 }
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (process){
 /*eslint-disable no-empty */
 'use strict';
@@ -2845,7 +2883,7 @@ function readState(key) {
 }
 }).call(this,require('_process'))
 
-},{"_process":43,"warning":44}],32:[function(require,module,exports){
+},{"_process":44,"warning":45}],33:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2926,13 +2964,13 @@ function supportsGoWithoutReloadUsingHash() {
   var ua = navigator.userAgent;
   return ua.indexOf('Firefox') === -1;
 }
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
 var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
 exports.canUseDOM = canUseDOM;
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3114,7 +3152,7 @@ exports['default'] = createBrowserHistory;
 module.exports = exports['default'];
 }).call(this,require('_process'))
 
-},{"./Actions":29,"./DOMStateStorage":31,"./DOMUtils":32,"./ExecutionEnvironment":33,"./createDOMHistory":35,"./parsePath":40,"_process":43,"invariant":42}],35:[function(require,module,exports){
+},{"./Actions":30,"./DOMStateStorage":32,"./DOMUtils":33,"./ExecutionEnvironment":34,"./createDOMHistory":36,"./parsePath":41,"_process":44,"invariant":43}],36:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3158,7 +3196,7 @@ exports['default'] = createDOMHistory;
 module.exports = exports['default'];
 }).call(this,require('_process'))
 
-},{"./DOMUtils":32,"./ExecutionEnvironment":33,"./createHistory":36,"_process":43,"invariant":42}],36:[function(require,module,exports){
+},{"./DOMUtils":33,"./ExecutionEnvironment":34,"./createHistory":37,"_process":44,"invariant":43}],37:[function(require,module,exports){
 //import warning from 'warning'
 'use strict';
 
@@ -3450,7 +3488,7 @@ function createHistory() {
 
 exports['default'] = createHistory;
 module.exports = exports['default'];
-},{"./Actions":29,"./AsyncUtils":30,"./createLocation":37,"./deprecate":38,"./parsePath":40,"./runTransitionHook":41,"deep-equal":26}],37:[function(require,module,exports){
+},{"./Actions":30,"./AsyncUtils":31,"./createLocation":38,"./deprecate":39,"./parsePath":41,"./runTransitionHook":42,"deep-equal":27}],38:[function(require,module,exports){
 //import warning from 'warning'
 'use strict';
 
@@ -3505,7 +3543,7 @@ function createLocation() {
 
 exports['default'] = createLocation;
 module.exports = exports['default'];
-},{"./Actions":29,"./parsePath":40}],38:[function(require,module,exports){
+},{"./Actions":30,"./parsePath":41}],39:[function(require,module,exports){
 //import warning from 'warning'
 
 "use strict";
@@ -3521,7 +3559,7 @@ function deprecate(fn) {
 
 exports["default"] = deprecate;
 module.exports = exports["default"];
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -3535,7 +3573,7 @@ function extractPath(string) {
 
 exports["default"] = extractPath;
 module.exports = exports["default"];
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3583,7 +3621,7 @@ exports['default'] = parsePath;
 module.exports = exports['default'];
 }).call(this,require('_process'))
 
-},{"./extractPath":39,"_process":43,"warning":44}],41:[function(require,module,exports){
+},{"./extractPath":40,"_process":44,"warning":45}],42:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3611,7 +3649,7 @@ exports['default'] = runTransitionHook;
 module.exports = exports['default'];
 }).call(this,require('_process'))
 
-},{"_process":43,"warning":44}],42:[function(require,module,exports){
+},{"_process":44,"warning":45}],43:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -3667,7 +3705,7 @@ module.exports = invariant;
 
 }).call(this,require('_process'))
 
-},{"_process":43}],43:[function(require,module,exports){
+},{"_process":44}],44:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -3849,7 +3887,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -3914,7 +3952,7 @@ module.exports = warning;
 
 }).call(this,require('_process'))
 
-},{"_process":43}]},{},[17])
+},{"_process":44}]},{},[18])
 
 
 //# sourceMappingURL=bundle.js.map
