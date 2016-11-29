@@ -18,7 +18,7 @@ class AccountAdapter(DefaultAccountAdapter):
         if settings.SITE_URL == 'http://localhost:8000':
             host_composer = settings.SITE_URL
         else:
-            host_composer = 'http://localhost:3000/dashboardClient'
+            host_composer = 'http://localhost/dashboardClient'
         url = host_composer + '/?id=' + str(request.user.id) + '&token=' + str(token.key)
         data = {'id': str(request.user.id), 'token': token.key}
 

@@ -11,6 +11,7 @@ from allauth.socialaccount.models import SocialAccount
 from models import CustomSocialAccount
 
 import os
+import requests
 
 
 def index(request):
@@ -60,18 +61,34 @@ def social_account_login(sender, **kwargs):
 def add_uuid(request):
     template = loader.get_template('index.html')
     context = RequestContext(request)
+    msg = 'Some error occurred!'
+    className = 'alert-danger'
     try:
-        # TODO validate the given uuid
-        user = User.objects.get(pk=request.user.pk)
-        account = SocialAccount.objects.get(user=user)
-        c_user = CustomSocialAccount.objects.get(account=account)
-        c_user.uuid = request.POST['uuid']
-        c_user.save()
-        msg = '%s added with success to your account.' % (request.POST['uuid'])
-        context = RequestContext(request, {
-            'hasMessage': True,
-            'message': msg,
-        })
+        uuid = str(request.POST['uuid'])
+        res = requests.get('https://esmickettodule.herokuapp.com/didUUIDPass?uuid=' + uuid)
+        if res.status_code == 200:
+            json = res.json()
+            if json['exists']:
+                print json['code']
+
+                user = User.objects.get(pk=request.user.pk)
+                account = SocialAccount.objects.get(user=user)
+                c_user = CustomSocialAccount.objects.get(account=account)
+                c_user.uuid = uuid
+                c_user.save()
+
+                res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': uuid})
+                if res.status_code == 200:
+                    className = ''
+                    msg = 'UUID %s added with success to your account.' % (request.POST['uuid'])
+            else:
+                msg = 'Invalid UUID, do you know what are you doing?'
     except:
         print 'Error'
+        pass
+    context = RequestContext(request, {
+        'hasMessage': True,
+        'message': msg,
+        'className': className,
+    })
     return HttpResponse(template.render(context))
