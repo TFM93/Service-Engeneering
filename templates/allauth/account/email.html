@@ -52,15 +52,26 @@
   </div>
   <div class="col-md-6 col-xs-12">
     <h5>{% trans "Add UUID manually" %}</h5>
-    <form method="post" action="/account/add/uuid/">{% csrf_token %}<b><span>UUID:</span></b>
-      <input type="text" name="uuid" id="uuid" placeholder="Add the UUID"/><br/><br/>
-      <button name="add_uuid" type="submit" class="btn btn-xs btn-toolbar">Add</button>
+    <form method="post" action="/accounts/add/uuid/">
+      {% csrf_token %}
+      {{ uuid_form.as_p }}
+      <!--p
+      label(for="uuid") UUID:
+      | {{form.uuid}}
+      //input(type="text", name="uuid", id="uuid", placeholder="UUID")
+      -->
+      <!--p
+      label(for="code_uuid") Code:
+      | {{form.code}}
+      //input(type="text", name="code_uuid", id="code_uuid", placeholder="Code for UUID")
+      -->
+      <button name="action_add_uuid" type="submit" class="btn btn-xs btn-toolbar">Add</button>
     </form>
   </div>
 </div><br/>
 <div class="row">
   <div class="col-md-12">
-    <form method="post" action="/account/delete/">{% csrf_token %}
+    <form method="post" action="/accounts/delete/">{% csrf_token %}
       <button name="delete_account" type="submit" onclick="confirmDelete();" class="btn btn-xs btn-danger">Delete Account</button>
     </form>
   </div>

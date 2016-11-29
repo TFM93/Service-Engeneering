@@ -9,6 +9,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from allauth.socialaccount.models import SocialAccount
 from models import CustomSocialAccount
+from forms import add_uuid_form
+from allauth.account.views import EmailView
 
 import os
 import requests
@@ -60,35 +62,66 @@ def social_account_login(sender, **kwargs):
 
 def add_uuid(request):
     template = loader.get_template('index.html')
-    context = RequestContext(request)
+    # context = RequestContext(request)
     msg = 'Some error occurred!'
-    className = 'alert-danger'
-    try:
-        uuid = str(request.POST['uuid'])
-        res = requests.get('https://esmickettodule.herokuapp.com/didUUIDPass?uuid=' + uuid)
-        if res.status_code == 200:
-            json = res.json()
-            if json['exists']:
-                print json['code']
+    class_name = 'alert-danger'
 
-                user = User.objects.get(pk=request.user.pk)
-                account = SocialAccount.objects.get(user=user)
-                c_user = CustomSocialAccount.objects.get(account=account)
-                c_user.uuid = uuid
-                c_user.save()
+    if request.method == 'POST':
+        form = add_uuid_form(request.POST)
+        if form.is_valid:
+            print 'Form valid!'
+    else:
+        form = add_uuid_form()
 
-                res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': uuid})
-                if res.status_code == 200:
-                    className = ''
-                    msg = 'UUID %s added with success to your account.' % (request.POST['uuid'])
-            else:
-                msg = 'Invalid UUID, do you know what are you doing?'
-    except:
-        print 'Error'
-        pass
+    # try:
+    #     uuid = str(request.POST['uuid'])
+    #     res = requests.get('https://esmickettodule.herokuapp.com/didUUIDPass?uuid=' + uuid)
+    #     if res.status_code == 200:
+    #         json = res.json()
+    #         if json['exists']:
+    #             code = json['code']
+    #
+    #             user = User.objects.get(pk=request.user.pk)
+    #             account = SocialAccount.objects.get(user=user)
+    #             c_user = CustomSocialAccount.objects.get(account=account)
+    #             c_user.uuid = uuid
+    #             c_user.save()
+    #
+    #             res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': uuid})
+    #             if res.status_code == 200:
+    #                 class_name = ''
+    #                 msg = 'UUID %s added with success to your account.' % (request.POST['uuid'])
+    #         else:
+    #             msg = 'Invalid UUID, do you know what are you doing?'
+    # except:
+    #     print 'Error'
+    #     pass
     context = RequestContext(request, {
         'hasMessage': True,
         'message': msg,
-        'className': className,
+        'className': class_name,
+        'uuid_form': form,
     })
-    return HttpResponse(template.render(context))
+    dados = {
+        'hasMessage': True,
+        'message': msg,
+        'className': class_name,
+        'uuid_form': form,
+    }
+    # return HttpResponse(template.render(context))
+    return render(request, 'index.html', dados)
+
+
+# class CustomEmailView(EmailView):
+#     # add some context to the already existing context
+#     def get_context_data(self, **kwargs):
+#         # get context data from original view
+#         context = super(CustomEmailView, self).get_context_data(**kwargs)
+#         # add for to context
+#         context['uuid_form'] = add_uuid_form()
+#
+#         return context
+
+# def CustomEmailView(self, request, *args, **kwargs):
+#
+#     return EmailView(request, *args, **kwargs)

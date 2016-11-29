@@ -1,4 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
@@ -10,7 +12,7 @@ import os
 
 
 class GetUserByUUID(APIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     allowed_methods = ['GET']
 
     def get(self, request, uuid=None):
@@ -42,7 +44,7 @@ class GetUserByUUID(APIView):
 
 
 class GetUserByID(APIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     allowed_methods = ['GET']
 
     def get(self, request, pk=None):
@@ -74,7 +76,8 @@ class GetUserByID(APIView):
 
 
 class GetUserUUIDbyID(APIView):
-    permission_classes = (IsAuthenticated,)
+    # authentication_classes = (SessionAuthentication, BasicAuthentication)
+    # permission_classes = (IsAuthenticated,)
     allowed_methods = ['GET']
 
     def get(self, request, pk=None):
@@ -109,7 +112,7 @@ class GetUserUUIDbyID(APIView):
 
 
 class RegisterUserUUID(APIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     allowed_methods = ['POST']
 
     def post(self, request):
@@ -149,7 +152,7 @@ class RegisterUserUUID(APIView):
 
 
 class DeleteUser(APIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     # queryset = User.objects.all()
     # serializer_class = UserSerializer
     allowed_methods = ['DELETE']

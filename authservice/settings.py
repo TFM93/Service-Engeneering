@@ -45,7 +45,7 @@ INSTALLED_APPS = (
     'rest_framework_swagger',
     'rest_framework.authtoken',
 
-    # Apps
+    # My Apps
     'core',
     'api',
 
@@ -192,8 +192,13 @@ REST_FRAMEWORK = {
 
     'VIEW_DESCRIPTION_FUNCTION': 'rest_framework_swagger.views.get_restructuredtext',
 
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.IsAuthenticated',
     ),
 
     'DEFAULT_RENDERER_CLASSES': (

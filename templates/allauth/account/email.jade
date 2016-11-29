@@ -55,19 +55,23 @@ br
       button.btn.btn-xs.btn-toolbar(name='action_add', type='submit') Add
   .col-md-6.col-xs-12
     h5 {% trans "Add UUID manually" %}
-    form(method='post', action="/account/add/uuid/")
+    form(method='post', action="/accounts/add/uuid/")
       | {% csrf_token %}
-      b
-        span UUID:
-      input(type="text", name="uuid", id="uuid", placeholder="Add the UUID")
-      br
-      br
-      button.btn.btn-xs.btn-toolbar(name='add_uuid', type='submit') Add
+      | {{ uuid_form.as_p }}
+      //p
+        label(for="uuid") UUID:
+        | {{form.uuid}}
+        //input(type="text", name="uuid", id="uuid", placeholder="UUID")
+      //p
+        label(for="code_uuid") Code:
+        | {{form.code}}
+        //input(type="text", name="code_uuid", id="code_uuid", placeholder="Code for UUID")
+      button.btn.btn-xs.btn-toolbar(name='action_add_uuid', type='submit') Add
 
 br
 .row
   .col-md-12
-    form(method='post', action="/account/delete/")
+    form(method='post', action="/accounts/delete/")
       | {% csrf_token %}
       button.btn.btn-xs.btn-danger(name='delete_account', type='submit', onclick='confirmDelete();') Delete Account
 
