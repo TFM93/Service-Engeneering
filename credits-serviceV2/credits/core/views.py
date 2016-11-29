@@ -69,7 +69,7 @@ def paypal_status(request,token,uid=None):
         # Here you would update a database record.
         if not check_token(token):
             update_token(token,1)
-            nrcredits = convert(checkout_response['AMT'])
+            nrcredits = convert(float(checkout_response['AMT']))
             add_credits(uid,nrcredits)
             template = loader.get_template('core/ok.html')
         else:
