@@ -52,14 +52,17 @@ br
     form.add_email(method='post', action="{% url 'account_email' %}")
       | {% csrf_token %}
       | {{ form.as_p }}
-      button.btn.btn-xs.btn-toolbar(name='action_add', type='submit') {% trans "Add" %}
+      button.btn.btn-xs.btn-toolbar(name='action_add', type='submit') Add
   .col-md-6.col-xs-12
     h5 {% trans "Add UUID manually" %}
     form(method='post', action="/account/add/uuid/")
       | {% csrf_token %}
-      | {{ form.as_p }}
-      button.btn.btn-xs.btn-toolbar(type='submit') {% trans "Add" %}
-
+      b
+        span UUID:
+      input(type="text", name="uuid", id="uuid", placeholder="Add the UUID")
+      br
+      br
+      button.btn.btn-xs.btn-toolbar(name='add_uuid', type='submit') Add
 
 br
 .row

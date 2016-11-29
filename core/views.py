@@ -57,5 +57,21 @@ def social_account_login(sender, **kwargs):
 #     return render_to_response("core/googleff1931c407ddd6d6.html")
 
 
-def test(request):
-    return "<h1>Boa</h1>"
+def add_uuid(request):
+    template = loader.get_template('index.html')
+    context = RequestContext(request)
+    try:
+        # TODO validate the given uuid
+        user = User.objects.get(pk=request.user.pk)
+        account = SocialAccount.objects.get(user=user)
+        c_user = CustomSocialAccount.objects.get(account=account)
+        c_user.uuid = request.POST['uuid']
+        c_user.save()
+        msg = '%s added with success to your account.' % (request.POST['uuid'])
+        context = RequestContext(request, {
+            'hasMessage': True,
+            'message': msg,
+        })
+    except:
+        print 'Error'
+    return HttpResponse(template.render(context))

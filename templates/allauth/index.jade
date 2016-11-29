@@ -68,7 +68,11 @@ html(lang="en")
                 | {% if user.is_authenticated %}
                 .alert.alert-dismissible.alert-success.text-center
                   h5
-                    strong(style="color:white;") You're successfully signed in.
+                    | {% if not hasMessage %}
+                    strong(style="color:white;") You're signed in.
+                    | {% else %}
+                    span(style="color:white;") {{message}}
+                    | {% endif %}
                 | {% else %}
                 //a(href="{% url 'account_login' %}")
                   .alert.alert-dismissible.alert-info.text-center

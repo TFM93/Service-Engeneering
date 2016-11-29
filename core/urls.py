@@ -12,7 +12,7 @@ urlpatterns = [
     # ex: /account/delete/
     url(r'^account/delete/$', views.account_delete, name='delete'),
 
-
-    url(r'^test/$', views.test),
+    # ex: /account/add/uuid/
+    url(r'^account/add/uuid/$', views.add_uuid, name='add_uuid'),
 
 ]
