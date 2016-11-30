@@ -4,6 +4,11 @@ import requests
 
 s = requests.session()
 
+url = 'https://esmickettodule.herokuapp.com/client/requestTicket'
+res = s.post(url=url, data={"endpoint_id": "", "ticket_type": ""})
+print res.status_code
+print res.text
+
 # url = 'http://localhost:8000/accounts/twitter/login/?process=login'
 # res = s.get(url=url)
 # print res.status_code

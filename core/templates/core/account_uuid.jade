@@ -8,12 +8,11 @@ div
   .row
     .col-md-2.col-xs-12
     .col-md-7.col-xs-12
-      .alert.alert-dismissible.alert-success.text-center(class="{{className}}")
-        h5
+      .alert.alert-dismissible.text-center(class="{{className}}")
         | {% if not hasMessage %}
         strong(style="color:white;") Something was supposed to be in here!
         | {% else %}
-        span(style="color:white;") {{message}}
+        h6(style="color:white;") {{message}}
         | {% endif %}
     .col-md-2.col-xs-12
   .row

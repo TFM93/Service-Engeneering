@@ -10,7 +10,7 @@ import os
 
 class CustomSocialAccount(models.Model):
     account = models.ForeignKey(SocialAccount)
-    uuid = models.CharField(max_length=100, blank=True)
+    uuid = models.CharField(max_length=100, default='')
     # user_credit = models.CharField(max_length=150, default='0')
     user_avatar = models.CharField(max_length=300, blank=True)
     login_counter = models.IntegerField(default=0)

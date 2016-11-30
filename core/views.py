@@ -64,25 +64,17 @@ def add_uuid(request):
     msg = 'Some error occurred!'
     class_name = 'alert-danger'
     existent_uuid = None
-    # try getting an existing uuid
+
     try:
+        # get the user and an existing uuid
         user = User.objects.get(pk=request.user.pk)
         account = SocialAccount.objects.get(user=user)
         c_user = CustomSocialAccount.objects.get(account=account)
         existent_uuid = c_user.uuid
-    except:
-        template = loader.get_template('index.html')
-        context = RequestContext(request, {
-            'hasMessage': True,
-            'message': msg,
-            'className': class_name,
-        })
-        return HttpResponse(template.render(context))
 
-    if request.method == 'POST':
-        form = add_uuid_form(request.POST)
-        if form.is_valid():
-            try:
+        if request.method == 'POST':
+            form = add_uuid_form(request.POST)
+            if form.is_valid():
                 form_uuid = form.cleaned_data['uuid']
                 form_code = form.cleaned_data['code']
 
@@ -94,24 +86,31 @@ def add_uuid(request):
                         if res_code == form_code:
                             res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': form_uuid})
                             if res.status_code == 200:
-                                user = User.objects.get(pk=request.user.pk)
-                                account = SocialAccount.objects.get(user=user)
-                                c_user = CustomSocialAccount.objects.get(account=account)
                                 c_user.uuid = form_uuid
                                 c_user.save()
 
-                                class_name = ''
-                                msg = 'UUID %s added with success to your account.' % (request.POST['uuid'])
+                                class_name = 'alert-success'
+                                msg = 'UUID %s added with success to your account.' % form_uuid
                         else:  # wrong code for uuid
                             msg = 'Wrong code! Better know it, or you\'re screwed'
                     else:  # uuid does not exists
                         msg = 'Invalid UUID, do you know what you\'re doing?'
-            except:
-                pass
-    else:
-        msg = 'You have currently this uuid: %s' % (existent_uuid)
-        class_name = ''
-        form = add_uuid_form()
+        else:
+            if existent_uuid is not None and existent_uuid is not unicode(''):
+                msg = 'You have currently this uuid: %s' % existent_uuid
+                class_name = 'alert-info'
+            else:
+                msg = 'You don\'t have any associated uuid.'
+                class_name = 'alert-warning'
+            form = add_uuid_form()
+    except:
+        template = loader.get_template('index.html')
+        context = RequestContext(request, {
+            'hasMessage': True,
+            'message': 'Some error occurred! Contact the administrator.',
+            'className': 'alert-danger',
+        })
+        return HttpResponse(template.render(context))
 
     template = loader.get_template('core/account_uuid.html')
     context = RequestContext(request, {
