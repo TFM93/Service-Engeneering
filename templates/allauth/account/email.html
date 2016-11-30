@@ -42,7 +42,7 @@
   <div class="col-md-11 col-xs-12">You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.</div>
 </div>{% endif %}<br/>
 <div class="row">
-  <div class="col-md-6 col-xs-12">
+  <div class="col-md-12 col-xs-12">
     <h5>{% trans "Add E-mail Address" %}</h5>
     <form method="post" action="{% url 'account_email' %}" class="add_email">
       {% csrf_token %}
@@ -50,24 +50,9 @@
       <button name="action_add" type="submit" class="btn btn-xs btn-toolbar">Add</button>
     </form>
   </div>
-  <div class="col-md-6 col-xs-12">
-    <h5>{% trans "Add UUID manually" %}</h5>
-    <form method="post" action="/accounts/add/uuid/">
-      {% csrf_token %}
-      {{ uuid_form.as_p }}
-      <!--p
-      label(for="uuid") UUID:
-      | {{form.uuid}}
-      //input(type="text", name="uuid", id="uuid", placeholder="UUID")
-      -->
-      <!--p
-      label(for="code_uuid") Code:
-      | {{form.code}}
-      //input(type="text", name="code_uuid", id="code_uuid", placeholder="Code for UUID")
-      -->
-      <button name="action_add_uuid" type="submit" class="btn btn-xs btn-toolbar">Add</button>
-    </form>
-  </div>
+</div><br/>
+<div class="row">
+  <div class="col-md-12"><a href="/accounts/add/uuid/" class="btn btn-xs btn-success">Manage UUID manually</a></div>
 </div><br/>
 <div class="row">
   <div class="col-md-12">

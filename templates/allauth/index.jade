@@ -69,15 +69,12 @@ html(lang="en")
                 .alert.alert-dismissible.alert-success.text-center(class="{{className}}")
                   h5
                     | {% if not hasMessage %}
-                    strong(style="color:white;") You're signed in.
+                    strong(style="color:white;") Welcome {{user.first_name}}
                     | {% else %}
                     span(style="color:white;") {{message}}
                     | {% endif %}
                 | {% else %}
-                //a(href="{% url 'account_login' %}")
-                  .alert.alert-dismissible.alert-info.text-center
-                    h5
-                      strong(style="color:white;") Login with different services in one place!!
+                h5 Service Engineering class of MIECT @ UA 2016
                 | {% endif %}
               .col-md-3.col-xs-12
             //.row

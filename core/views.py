@@ -61,55 +61,66 @@ def social_account_login(sender, **kwargs):
 
 
 def add_uuid(request):
-    template = loader.get_template('index.html')
-    # context = RequestContext(request)
     msg = 'Some error occurred!'
     class_name = 'alert-danger'
+    existent_uuid = None
+    # try getting an existing uuid
+    try:
+        user = User.objects.get(pk=request.user.pk)
+        account = SocialAccount.objects.get(user=user)
+        c_user = CustomSocialAccount.objects.get(account=account)
+        existent_uuid = c_user.uuid
+    except:
+        template = loader.get_template('index.html')
+        context = RequestContext(request, {
+            'hasMessage': True,
+            'message': msg,
+            'className': class_name,
+        })
+        return HttpResponse(template.render(context))
 
     if request.method == 'POST':
         form = add_uuid_form(request.POST)
-        if form.is_valid:
-            print 'Form valid!'
+        if form.is_valid():
+            try:
+                form_uuid = form.cleaned_data['uuid']
+                form_code = form.cleaned_data['code']
+
+                res = requests.get('https://esmickettodule.herokuapp.com/didUUIDPass?uuid=' + form_uuid)
+                if res.status_code == 200:
+                    json = res.json()
+                    if json['exists']:
+                        res_code = json['code']
+                        if res_code == form_code:
+                            res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': form_uuid})
+                            if res.status_code == 200:
+                                user = User.objects.get(pk=request.user.pk)
+                                account = SocialAccount.objects.get(user=user)
+                                c_user = CustomSocialAccount.objects.get(account=account)
+                                c_user.uuid = form_uuid
+                                c_user.save()
+
+                                class_name = ''
+                                msg = 'UUID %s added with success to your account.' % (request.POST['uuid'])
+                        else:  # wrong code for uuid
+                            msg = 'Wrong code! Better know it, or you\'re screwed'
+                    else:  # uuid does not exists
+                        msg = 'Invalid UUID, do you know what you\'re doing?'
+            except:
+                pass
     else:
+        msg = 'You have currently this uuid: %s' % (existent_uuid)
+        class_name = ''
         form = add_uuid_form()
 
-    # try:
-    #     uuid = str(request.POST['uuid'])
-    #     res = requests.get('https://esmickettodule.herokuapp.com/didUUIDPass?uuid=' + uuid)
-    #     if res.status_code == 200:
-    #         json = res.json()
-    #         if json['exists']:
-    #             code = json['code']
-    #
-    #             user = User.objects.get(pk=request.user.pk)
-    #             account = SocialAccount.objects.get(user=user)
-    #             c_user = CustomSocialAccount.objects.get(account=account)
-    #             c_user.uuid = uuid
-    #             c_user.save()
-    #
-    #             res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': uuid})
-    #             if res.status_code == 200:
-    #                 class_name = ''
-    #                 msg = 'UUID %s added with success to your account.' % (request.POST['uuid'])
-    #         else:
-    #             msg = 'Invalid UUID, do you know what are you doing?'
-    # except:
-    #     print 'Error'
-    #     pass
+    template = loader.get_template('core/account_uuid.html')
     context = RequestContext(request, {
         'hasMessage': True,
         'message': msg,
         'className': class_name,
         'uuid_form': form,
     })
-    dados = {
-        'hasMessage': True,
-        'message': msg,
-        'className': class_name,
-        'uuid_form': form,
-    }
-    # return HttpResponse(template.render(context))
-    return render(request, 'index.html', dados)
+    return HttpResponse(template.render(context))
 
 
 # class CustomEmailView(EmailView):

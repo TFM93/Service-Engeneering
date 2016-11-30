@@ -47,26 +47,17 @@ form.email_list(action="{% url 'account_email' %}", method='post')
 
 br
 .row
-  .col-md-6.col-xs-12
+  .col-md-12.col-xs-12
     h5 {% trans "Add E-mail Address" %}
     form.add_email(method='post', action="{% url 'account_email' %}")
       | {% csrf_token %}
       | {{ form.as_p }}
       button.btn.btn-xs.btn-toolbar(name='action_add', type='submit') Add
-  .col-md-6.col-xs-12
-    h5 {% trans "Add UUID manually" %}
-    form(method='post', action="/accounts/add/uuid/")
-      | {% csrf_token %}
-      | {{ uuid_form.as_p }}
-      //p
-        label(for="uuid") UUID:
-        | {{form.uuid}}
-        //input(type="text", name="uuid", id="uuid", placeholder="UUID")
-      //p
-        label(for="code_uuid") Code:
-        | {{form.code}}
-        //input(type="text", name="code_uuid", id="code_uuid", placeholder="Code for UUID")
-      button.btn.btn-xs.btn-toolbar(name='action_add_uuid', type='submit') Add
+
+br
+.row
+  .col-md-12
+    a.btn.btn-xs.btn-success(href="/accounts/add/uuid/") Manage UUID manually
 
 br
 .row
