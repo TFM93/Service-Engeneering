@@ -84,7 +84,9 @@ class GetUserUUIDbyID(APIView):
 
     def get(self, request, pk=None):
         """
-        Get user UUID by given user ID
+        Check and get user UUID by given user ID
+
+        Informs if user does not have uuid yet
 
         <h3>Details</h3>
 
@@ -104,12 +106,12 @@ class GetUserUUIDbyID(APIView):
                     social_user = SocialAccount.objects.get(user=user)
                     custom_social_user = CustomSocialAccount.objects.get(account=social_user)
                     if custom_social_user.uuid == "":
-                        return Response(status=status.HTTP_200_OK, data={'detail': 'This user does not have uuid yet.'})
+                        return Response(status=status.HTTP_200_OK, data={'detail': 'This user does not have uuid yet.', 'uuid': ''})
                 except:
-                    raise Exception
+                    return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'User not found.'})
                 return Response(status=status.HTTP_200_OK, data={'uuid': custom_social_user.uuid})
             except:
-                return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
+                return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Invalid request.'})
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
 
 
