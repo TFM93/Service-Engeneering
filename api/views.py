@@ -14,7 +14,7 @@ import requests
 import uuid
 
 
-class GetUserByUUID(APIView):
+class GetUserInfoByUUID(APIView):
     # permission_classes = (IsAuthenticated,)
     allowed_methods = ['GET']
 
@@ -32,21 +32,21 @@ class GetUserByUUID(APIView):
             - 404 NOT FOUND
             - 400 BAD REQUEST
         """
-        if uuid is not None:
-            try:
-                int_uuid = int(uuid)
+        try:
+            if uuid is not None:
                 try:
-                    user = User.objects.get(pk=int_uuid)
-                    social_user = SocialAccount.objects.get(user=user)
+                    c_user = CustomSocialAccount.objects.get(uuid=str(uuid))
+                    user = c_user.account.user
                 except:
-                    raise Exception
-                return Response(status=status.HTTP_200_OK, data=social_user.extra_data)
-            except:
-                return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
+                    return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'UUID not found.'})
+                return Response(status=status.HTTP_200_OK, data=c_user.account.extra_data)
+        except:
+            # return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
+            pass
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
 
 
-class GetUserByID(APIView):
+class GetUserInfoByID(APIView):
     # permission_classes = (IsAuthenticated,)
     allowed_methods = ['GET']
 
