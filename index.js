@@ -101,6 +101,21 @@ function isUUIDUnresolved(queue, ticket_UUID) {
     return ticketPos;
 
 }
+function isCodeUnresolved(queue, code) {
+
+    var ticketPos = -1;
+
+    if (queue != null && queue.length > 0 && code != null) {
+        //console.log('qUUID: ' + )
+        for (var i = 0; i < queue.length; i++) {
+            if (queue[i].code == code) {
+                ticketPos = i;
+                break;
+            }
+        }
+    }
+    return ticketPos;
+}
 
 function findTicketByUUID(queue, ticket_UUID) {
 
@@ -419,6 +434,47 @@ app.get('/didUUIDPass', function (req, res) {
             error_resp['code'] = 400;
             error_resp['message'] = "bad request - null uuid";
             error_resp['fields'] = "uuid";
+            console.log(error_resp);
+            res.status(400).json(error_resp);
+        }
+    });
+
+});
+
+app.get('/UUIDByCode', function (req, res) {
+    console.log('UUIDByCode - entered');
+    var code = req.query.code;
+    var filesPath = [unresolved_uuids_path];
+
+
+    async.map(filesPath, function (filePath, cb) { //reading files or dir
+        fs.readFile(filePath, 'utf8', cb);
+    }, function (err, results) {
+        //console.log(data[0]['type'])
+        var unresolved_uuids = JSON.parse(results[0]);
+        //var queues = data;
+
+        if (code != null) {
+
+            console.log('UUIDByCode - searching (%s) in unresolved queue', code);
+
+            var unUUID = isCodeUnresolved(unresolved_uuids, code);
+
+            if(unUUID!=-1)
+            {
+                res.status(200).json({exists: true, uuid:unresolved_uuids[unUUID].uuid});
+            }
+            else
+            {
+                res.status(200).json({exists: false});
+            }
+        }
+        else {
+            console.log('UUIDByCode - bad code');
+            var error_resp = error_template;
+            error_resp['code'] = 400;
+            error_resp['message'] = "bad request - null code";
+            error_resp['fields'] = "code";
             console.log(error_resp);
             res.status(400).json(error_resp);
         }
