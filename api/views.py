@@ -110,13 +110,13 @@ class GetUserUUIDbyID(APIView):
                     return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'User not found.'})
 
                 if custom_social_user.uuid == "":
-                    code = genCode(user.username)
-                    custom_social_user.uuid_code = code
-                    custom_social_user.save()
+                    # code = genCode(user.username)
+                    # custom_social_user.uuid_code = code
+                    # custom_social_user.save()
                     payload = {
                         'detail': 'This user does not have uuid yet.',
-                        'uuid': '',
-                        'code': code
+                        'uuid': None,
+                        # 'code': code
                     }
                     return Response(status=status.HTTP_200_OK, data=payload)
                 return Response(status=status.HTTP_200_OK, data={'uuid': custom_social_user.uuid})
