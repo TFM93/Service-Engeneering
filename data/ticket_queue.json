@@ -1,1 +1,1 @@
-[{"type":"A","queue":[{"ticket_number":1,"request_timestamp":1480634286107,"ticket_UUID":"2w22432"},{"ticket_number":2,"request_timestamp":1480634291300,"ticket_UUID":"2w224332"},{"ticket_number":3,"request_timestamp":1480634484397,"ticket_UUID":"2w2242"}],"last_ticket":3}]
+[{"type":"A","queue":[{"ticket_number":1,"request_timestamp":1480635430298,"ticket_UUID":"aaab"},{"ticket_number":2,"request_timestamp":1480635447354,"ticket_UUID":"aaa"},{"ticket_number":3,"request_timestamp":1480635533440,"ticket_UUID":"2w224332"}],"last_ticket":3}]

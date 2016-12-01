@@ -11,7 +11,7 @@ var randomstring = require("randomstring");
 
 /**** Final Variables & Templates ****/
 var compositor_url = "http://localhost:8090/";
-var auth_url = "https://authservice-es-2016.herokuapp.com/api/authentication/user/";//242/";
+var auth_url = "https://authservice-es-2016.herokuapp.com/api/authentication/user/uuid/";//242/";
 
 var ticket_queue_path = __dirname + "/data/ticket_queue.json";
 var average_time_path = __dirname + "/data/average_time.json";
