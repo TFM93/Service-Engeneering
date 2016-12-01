@@ -6,10 +6,12 @@ var fs = require("fs");
 var async = require("async");
 
 var request = require("request");
+var randomstring = require("randomstring");
 
 
 /**** Final Variables & Templates ****/
 var compositor_url = "http://localhost:8090/";
+var auth_url = "https://authservice-es-2016.herokuapp.com/api/authentication/user/";//242/";
 
 var ticket_queue_path = __dirname + "/data/ticket_queue.json";
 var average_time_path = __dirname + "/data/average_time.json";
@@ -156,6 +158,45 @@ function sendToServer(ticket, ticketType, cb) {
             if (!error && response.statusCode === 200) {
                 console.log("private method sendToServer: compositor code = " + body.code)
                 cb(body.code);
+            }
+            else {
+
+                console.log("error: " + error);
+                console.log("response.statusCode: " + response.statusCode);
+                console.log("response.statusText: " + response.statusText);
+                cb("no_ack");
+            }
+        }
+        else {
+
+            console.log("no res");
+            cb("no_ack");
+        }
+
+    })
+}
+
+function sendToAuthServer(uuid, cb) {
+
+    console.log("private method sendToAuthServer entered");
+    //ticket['ticket_type'] = ticketType;
+    console.log("private method sendToAuthServer sending: " + uuid);
+    var host_url = auth_url + uuid;
+    console.log("private method sendToAuthServer host url: " + host_url);
+
+
+    request({
+        url: host_url,
+        method: "GET",
+        json: true
+    }, function (error, response, body) {
+        if (response != null) {
+            if (!error && response.statusCode === 200) {
+                console.log("private method sendToServer: compositor code = " + body.code)
+                if (body.detail == "Not found.")
+                    cb("no_ack");
+                else
+                    cb("ack");
             }
             else {
 
@@ -419,12 +460,10 @@ app.get('/didUUIDPass', function (req, res) {
 
             var unUUID = isUUIDUnresolved(unresolved_uuids, uuid);
 
-            if(unUUID!=-1)
-            {
-                res.status(200).json({exists: true, code:unresolved_uuids[unUUID].code});
+            if (unUUID != -1) {
+                res.status(200).json({exists: true, code: unresolved_uuids[unUUID].code});
             }
-            else
-            {
+            else {
                 res.status(200).json({exists: false});
             }
         }
@@ -460,12 +499,10 @@ app.get('/UUIDByCode', function (req, res) {
 
             var unUUID = isCodeUnresolved(unresolved_uuids, code);
 
-            if(unUUID!=-1)
-            {
-                res.status(200).json({exists: true, uuid:unresolved_uuids[unUUID].uuid});
+            if (unUUID != -1) {
+                res.status(200).json({exists: true, uuid: unresolved_uuids[unUUID].uuid});
             }
-            else
-            {
+            else {
                 res.status(200).json({exists: false});
             }
         }
@@ -1090,35 +1127,68 @@ app.post('/client/requestTicket', function (req, res) {
                             console.error(err)
                         });
 
+                        var unUUID_pos = isUUIDUnresolved(unresolved_uuids, ticket_req.endpoint_id);
 
-                        var codeToSend = 'no_ack';
-                        codeToSend = sendToServer(new_ticket, ticket_req.ticket_type, function (code) {
-                            console.log('code to send: ' + code);
-                            codeToSend = code;
+                        console.log('client requestTicket - unUUID_pos: ' + unUUID_pos);
+                        if (unUUID_pos != -1) {
+                            console.log('client requestTicket - uuid is unresolved ');
+                            var result = {
+                                result: "success",
+                                ticket_number: new_ticket.ticket_number,
+                                code: unresolved_uuids[unUUID_pos].code
+                            };
+                            //var result = JSON.parse('{"result":"success","ticket_number":' + new_ticket['ticket_number'] + ',"code":' + codeToSend.toString() + '}');
+                            res.status(200).json(result);
 
-                            if (codeToSend != 'ack') {
-                                var unUUID_pos = isUUIDUnresolved(unresolved_uuids, ticket_req.endpoint_id);
+                        }
+                        else {
 
-                                console.log('client requestTicket - unUUID_pos: ' + unUUID_pos);
-                                if (unUUID_pos == -1) {
+                            console.log('client requestTicket - unsure if uuid is unresolved ');
+                            var codeToSend = 'no_ack';
+                            //codeToSend = sendToServer(new_ticket, ticket_req.ticket_type, function (code) {
+                            codeToSend = sendToAuthServer(ticket_req.endpoint_id, function (code) {
+                                console.log('code to send: ' + code);
+                                codeToSend = code;
+
+                                if (codeToSend != 'ack') {
+
+                                    var genCode = randomstring.generate(7);
+
                                     unresolved_uuids[unresolved_uuids.length] = {
                                         uuid: ticket_req.endpoint_id,
-                                        code: codeToSend
+                                        code: genCode
                                     };
 
                                     fs.writeFile(unresolved_uuids_path, JSON.stringify(unresolved_uuids), function (err) {
                                         console.error(err)
                                     });
 
+                                    var result = {
+                                        result: "success",
+                                        ticket_number: new_ticket.ticket_number,
+                                        code: genCode
+                                    };
+                                    //var result = JSON.parse('{"result":"success","ticket_number":' + new_ticket['ticket_number'] + ',"code":' + codeToSend.toString() + '}');
+                                    res.status(200).json(result);
+
                                 }
-                            }
+                                else {
+                                    var result = {
+                                        result: "success",
+                                        ticket_number: new_ticket.ticket_number,
+                                        code: 'ack'
+                                    };
+                                    //var result = JSON.parse('{"result":"success","ticket_number":' + new_ticket['ticket_number'] + ',"code":' + codeToSend.toString() + '}');
+                                    res.status(200).json(result);
+                                }
 
-                            //var result = JSON.parse('{"result":"success","ticket_number":' + new_ticket['ticket_number'] + ',"code":"ack"}');
-                            var result = {result: "success", ticket_number: new_ticket.ticket_number, code: codeToSend};
-                            //var result = JSON.parse('{"result":"success","ticket_number":' + new_ticket['ticket_number'] + ',"code":' + codeToSend.toString() + '}');
-                            res.status(200).json(result);
+                                //var result = JSON.parse('{"result":"success","ticket_number":' + new_ticket['ticket_number'] + ',"code":"ack"}');
 
-                        });
+
+                            });
+
+
+                        }
 
 
                     }
@@ -1187,7 +1257,7 @@ app.post('/resolveUUID', function (req, res) {
 
             console.log('resolveUUID - searching ticket type (%s) queue', uuid);
 
-            var unUUID_pos= isUUIDUnresolved(unresolved_uuids, uuid);
+            var unUUID_pos = isUUIDUnresolved(unresolved_uuids, uuid);
 
             if (unUUID_pos != -1) {
 
