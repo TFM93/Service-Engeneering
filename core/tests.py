@@ -5,24 +5,11 @@ import requests
 s = requests.session()
 
 url = 'https://esmickettodule.herokuapp.com/client/requestTicket'
-res = s.post(url=url, data={"endpoint_id": "", "ticket_type": ""})
+res = s.post(url=url, data={"endpoint_id": "1", "ticket_type": "1"})
 print res.status_code
 print res.text
 
-# url = 'http://localhost:8000/accounts/twitter/login/?process=login'
-# res = s.get(url=url)
-# print res.status_code
-# print res.content
-#
-# url = 'https://api.twitter.com/oauth/authenticate'
-# data = {'authenticity_token': '',
-#         'redirect_after_login': 'https://api.twitter.com/oauth/authenticate?oauth_token=',
-#         'oauth_token': ''}
-# res = s.post(url=url, json=data)
-# print res.status_code
-# print res.headers
-#
-#
+
 # url = 'http://localhost:8000/api/authentication/user/details/2/'
 # headers = {
 #     'Content-Type': 'application/json',

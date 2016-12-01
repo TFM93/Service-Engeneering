@@ -1,5 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.parsers import JSONParser
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,6 +10,7 @@ from core.models import CustomSocialAccount
 from allauth.socialaccount.models import SocialAccount
 
 import os
+import requests
 
 
 class GetUserByUUID(APIView):
@@ -113,6 +115,7 @@ class GetUserUUIDbyID(APIView):
 
 class RegisterUserUUID(APIView):
     # permission_classes = (IsAuthenticated,)
+    parser_classes = (JSONParser,)
     allowed_methods = ['POST']
 
     def post(self, request):
@@ -124,7 +127,8 @@ class RegisterUserUUID(APIView):
             {
 
                 "id": "1",
-                "uuid": "A73B0CF79"
+                "uuid": "A73B0CF79",
+                "code": "codetest"
 
             }
 
@@ -136,19 +140,39 @@ class RegisterUserUUID(APIView):
             - 404 NOT FOUND
             - 400 BAD REQUEST
         """
-        if 'id' in request and 'uuid' in request:
+        # X-CSRFToken: CXhYB2UugjkpW8bQsEO269dxeCoigj8T
+        # Authorization: Token bc5c07b1993cf54d05d965c1ffc8e6b024976888
+        # Content-Type: application/json
+        # print(request.META['CSRF_COOKIE'])
+        if 'id' in request.data and 'uuid' in request.data and 'code' in request.data:
             try:
-                int_id = int(request['id'])
-                uuid = request['uuid']
-                print str(int_id) + uuid
-                # TODO validar o uuid do cartao no ricardo
-                account = SocialAccount.objects.get(user=int_id)
-                c_user = CustomSocialAccount.objects.get(account=account)
-                c_user.uuid = uuid
-                c_user.save()
+                int_id = int(request.data['id'])
+                uuid = request.data['uuid']
+                code = request.data['code']
+                res = requests.get('https://esmickettodule.herokuapp.com/didUUIDPass?uuid=' + uuid)
+                if res.status_code == 200:
+                    json = res.json()
+                    if json['exists']:
+                        res_code = json['code']
+                        if res_code == code:
+                            res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': uuid})
+                            if res.status_code == 200:
+                                account = SocialAccount.objects.get(user=int_id)
+                                c_user = CustomSocialAccount.objects.get(account=account)
+                                c_user.uuid = uuid
+                                c_user.save()
+                                return Response(status=status.HTTP_200_OK, data={'detail': 'Added with success.'})
+                            else:
+                                return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Error when validating code.'})
+                        else:
+                            return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Invalid code.'})
+                    else:
+                        return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'That uuid doesn\'t exists.'})
+                else:
+                    return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Error when validation uuid.'})
             except:
                 return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Invalid format.'})
 
 
 class DeleteUser(APIView):
@@ -191,28 +215,6 @@ class DeleteUser(APIView):
             except:
                 return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'User not found.'})
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
-
-
-# class ListUsers(generics.ListAPIView):
-#     queryset = EmailAddress.objects.all()
-#     serializer_class = EmailAddressSerializer
-#     allowed_methods = ['GET']
-#
-#     def get(self, request):
-#         """
-#         Gets list of users
-#
-#         <h3>Details</h3>
-#
-#         <b>METHODS:</b>
-#             - GET
-#
-#         <b>RETURNS:</b>
-#             - 200 OK
-#
-#         """
-#         # result = [users for users in EmailAddress.objects.all()]
-#         return self.list(request)
 
 
 # class Login(APIView):
@@ -259,52 +261,4 @@ class DeleteUser(APIView):
 #
 #             except:
 #                 return Response(status=status.HTTP_400_BAD_REQUEST)
-#         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-# class IsLogged(APIView):
-#     permission_classes = (IsAuthenticated,)
-#     allowed_methods = ['GET']
-#
-#     def get(self, request):
-#         """
-#         Checks if given user id is logged in the system
-#
-#         <h3>Details</h3>
-#
-#         <b>METHODS:</b>
-#             - GET
-#
-#         <b>RETURNS:</b>
-#             - 200 OK
-#             - 404 NOT FOUND
-#             - 400 BAD REQUEST
-#         """
-#         return Response(status=status.HTTP_200_OK)
-#
-#
-# class Logout(APIView):
-#     permission_classes = (IsAuthenticated,)
-#     allowed_methods = ['POST']
-#
-#     def post(self, request, pk=None):
-#         """
-#         Logout user from the system.
-#
-#         <h3>Details</h3>
-#
-#         <b>METHODS:</b>
-#             - POST
-#
-#         <b>RETURNS:</b>
-#             - 200 OK
-#             - 404 NOT FOUND
-#             - 400 BAD REQUEST
-#         """
-#         # print request.META['HTTP_X_CSRFTOKEN']
-#         # X-CSRFToken: zhOXQAEtUqXoolDN66tlSJ76zKLPl48N
-#         # Content-Type: application/json
-#         if request is not None:
-#             return Response(status=status.HTTP_200_OK)
-#
 #         return Response(status=status.HTTP_400_BAD_REQUEST)
