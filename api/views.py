@@ -11,6 +11,7 @@ from allauth.socialaccount.models import SocialAccount
 
 import os
 import requests
+import uuid
 
 
 class GetUserByUUID(APIView):
@@ -98,21 +99,39 @@ class GetUserUUIDbyID(APIView):
             - 404 NOT FOUND
             - 400 BAD REQUEST
         """
-        if pk is not None:
-            try:
+        try:
+            if pk is not None:
                 int_id = int(pk)
                 try:
                     user = User.objects.get(pk=int_id)
                     social_user = SocialAccount.objects.get(user=user)
                     custom_social_user = CustomSocialAccount.objects.get(account=social_user)
-                    if custom_social_user.uuid == "":
-                        return Response(status=status.HTTP_200_OK, data={'detail': 'This user does not have uuid yet.', 'uuid': ''})
                 except:
                     return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'User not found.'})
+
+                if custom_social_user.uuid == "":
+                    code = genCode(user.username)
+                    custom_social_user.uuid_code = code
+                    custom_social_user.save()
+                    payload = {
+                        'detail': 'This user does not have uuid yet.',
+                        'uuid': '',
+                        'code': code
+                    }
+                    return Response(status=status.HTTP_200_OK, data=payload)
                 return Response(status=status.HTTP_200_OK, data={'uuid': custom_social_user.uuid})
-            except:
-                return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Invalid request.'})
+        except:
+            pass
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
+
+
+def genCode(name):
+    try:
+        code = uuid.uuid3(namespace=uuid.NAMESPACE_DNS, name=str(name))
+        return code.hex[:8]
+    except Exception as e:
+        print e.message
+        pass
 
 
 class RegisterUserUUID(APIView):
