@@ -17,13 +17,13 @@ class CustomSocialAccount(models.Model):
 
     def delete(self, using=None):
         try:
-            path = 'static/web/avatars/avatar%s.jpg' % self.pk
+            path = 'static/web/avatars/avatar%s.jpg' % self.account.pk
             os.remove(path)
         except:
             print 'Error deleting avatar.'
 
     def __unicode__(self):
-        return '{0} - {1}'.format(self.account, self.uuid)
+        return '{0} - uuid: {1} - logins: {2}'.format(self.account, self.uuid, self.login_counter)
 
 
 @receiver(post_save, sender=User)
