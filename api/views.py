@@ -39,7 +39,13 @@ class GetUserInfoByUUID(APIView):
                     user = c_user.account.user
                 except:
                     return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'UUID not found.'})
-                return Response(status=status.HTTP_200_OK, data=c_user.account.extra_data)
+                payload = {
+                    'uuid': uuid,
+                    'detail': 'This user has an uuid associated.',
+                    'username': user.username,
+                    'extra_data': c_user.account.extra_data
+                }
+                return Response(status=status.HTTP_200_OK, data=payload)
         except:
             # return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
             pass
