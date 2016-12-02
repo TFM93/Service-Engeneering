@@ -1,0 +1,32 @@
+| {% extends "index.html" %}
+| {% block head_title %} - Manage UUID{% endblock %}
+| {% block content %}
+h3
+  | Manage my UUID
+div
+  br
+  .row
+    .col-md-2.col-xs-12
+    .col-md-7.col-xs-12
+      .alert.alert-dismissible.text-center(class="{{className}}")
+        | {% if not hasMessage %}
+        strong(style="color:white;") Something was supposed to be in here!
+        | {% else %}
+        h6(style="color:white;") {{message}}
+        | {% endif %}
+    .col-md-2.col-xs-12
+  .row
+    .col-md-2.col-xs-12
+    .col-md-10.col-xs-12
+      h5 Add UUID manually
+      form(method='post', action="/accounts/add/uuid/")
+        | {% csrf_token %}
+        | {{uuid_form.as_p}}
+        //p
+          label(for="uuid") UUID:
+          input(type="text", name="uuid", id="uuid", placeholder="UUID")
+        //p
+          label(for="code_uuid") Code:
+          input(type="text", name="code_uuid", id="code_uuid", placeholder="Code for UUID")
+        button.btn.btn-xs.btn-toolbar(name='action_add_uuid', type='submit') Add
+| {% endblock %}

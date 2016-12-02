@@ -1,0 +1,8 @@
+git push heroku master
+heroku run bash
+# to apply migrations is better to do run bash and then makemigrations core etc...
+heroku run python manage.py makemigrations core
+heroku run python manage.py migrate core
+heroku pg:reset DATABASE_URL
+heroku pg:psql DATABASE_URL --app authservice-es-2016
+heroku config:add DISABLE_COLLECTSTATIC=1

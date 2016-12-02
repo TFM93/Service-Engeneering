@@ -286,3 +286,7 @@ dump*.json
 /static/master/jade_*
 /static/master/temp
 .idea/
+
+
+# Avatars images
+static/web/avatars/*
