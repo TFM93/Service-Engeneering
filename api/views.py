@@ -116,9 +116,6 @@ class GetUserUUIDbyID(APIView):
                     return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'User not found.'})
 
                 if custom_social_user.uuid == "":
-                    # code = genCode(user.username)
-                    # custom_social_user.uuid_code = code
-                    # custom_social_user.save()
                     payload = {
                         'detail': 'This user does not have uuid yet.',
                         'uuid': None,
@@ -131,13 +128,13 @@ class GetUserUUIDbyID(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
 
 
-def genCode(name):
-    try:
-        code = uuid.uuid3(namespace=uuid.NAMESPACE_DNS, name=str(name))
-        return code.hex[:8]
-    except Exception as e:
-        print e.message
-        pass
+# def genCode(name):
+#     try:
+#         code = uuid.uuid3(namespace=uuid.NAMESPACE_DNS, name=str(name))
+#         return code.hex[:8]
+#     except Exception as e:
+#         print e.message
+#         pass
 
 
 class RegisterUserUUID(APIView):
@@ -171,8 +168,8 @@ class RegisterUserUUID(APIView):
         # Authorization: Token bc5c07b1993cf54d05d965c1ffc8e6b024976888
         # Content-Type: application/json
         # print(request.META['CSRF_COOKIE'])
-        if 'id' in request.data and 'uuid' in request.data and 'code' in request.data:
-            try:
+        try:
+            if 'id' in request.data and 'uuid' in request.data and 'code' in request.data:
                 int_id = int(request.data['id'])
                 uuid = request.data['uuid']
                 code = request.data['code']
@@ -184,22 +181,26 @@ class RegisterUserUUID(APIView):
                         if res_code == code:
                             res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': uuid})
                             if res.status_code == 200:
-                                account = SocialAccount.objects.get(user=int_id)
-                                c_user = CustomSocialAccount.objects.get(account=account)
-                                c_user.uuid = uuid
-                                c_user.save()
-                                return Response(status=status.HTTP_200_OK, data={'detail': 'Added with success.'})
+                                try:
+                                    account = SocialAccount.objects.get(user=int_id)
+                                    c_user = CustomSocialAccount.objects.get(account=account)
+                                    c_user.uuid = uuid
+                                    c_user.save()
+                                    return Response(status=status.HTTP_200_OK, data={'detail': 'Added with success.'})
+                                except:
+                                    return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'User not found.'})
                             else:
-                                return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Error when validating code.'})
+                                return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Error validating code.'})
                         else:
                             return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Invalid code.'})
                     else:
-                        return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'That uuid doesn\'t exists.'})
+                        return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'UUID does not exists.'})
                 else:
-                    return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Error when validation uuid.'})
-            except:
-                return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Invalid format.'})
+                    return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Error validating uuid.'})
+        except:
+            # return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
+            pass
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
 
 
 class DeleteUser(APIView):
