@@ -14,7 +14,7 @@ class DashboardEmployee extends React.Component {
     componentDidMount() {
         DashboardEmployeeStore.listen(this.onChange);
         DashboardEmployeeActions.nextTicket();
-        DashboardmEmployeeActions.logUser(this.props.location.query.id, this.props.location.query.token);
+        DashboardEmployeeActions.logUser({id:this.props.location.query.id, token:this.props.location.query.token});
 
     }
 

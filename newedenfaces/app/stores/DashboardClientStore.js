@@ -7,12 +7,13 @@ class DashboardClientStore {
     this.bindActions(DashboardClientActions);
     this.lastTickets = [];
     this.myTickets = [];
-    this.user = { id: '', token: '' }
+    this.user = { id: '', token: '', uuid: '' }
   }
 
-  login(usr){
+  onLoginSuccess(usr) {
     this.user.id = usr.id;
-    this.user.token = usr.token;
+    
+    this.user.uuid = usr.uuid;
 
     console.log("apos login")
     console.log(this.user)
@@ -35,6 +36,11 @@ class DashboardClientStore {
   }
 
   onGetMyTicketsFail(jqXhr) {
+    // Handle multiple response formats, fallback to HTTP status code number.
+    toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+  }
+
+  onLoginFail(jqXhr) {
     // Handle multiple response formats, fallback to HTTP status code number.
     toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
   }

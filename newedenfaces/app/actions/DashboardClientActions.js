@@ -11,7 +11,8 @@ class DashboardClientActions {
       'getMyTicketsFail',
       'testSuccess',
       'testFail',
-      'login'
+      'loginSuccess',
+      'loginFail'
     );
   }
 
@@ -45,7 +46,23 @@ class DashboardClientActions {
   }
 
   logUser(usr) {
-    this.actions.login({id:usr.id, token:usr.token});
+    //this.actions.login({id:usr.id, token:usr.token});
+    $.ajax({
+      type: 'GET',
+      url: '/auth/api/authentication/user/id/'+ usr.id +'/',
+      headers : { 'Authorization': 'Token '+usr.token }
+    })
+      .done((data) => {
+        usr.uuid = data.uuid;
+        this.actions.loginSuccess(usr);
+      })
+      .fail((jqXhr) => {
+        this.actions.loginFail(jqXhr);
+      });
+// url = 'http://authservice-es-2016.herokuapp.com/api/authentication/user/uuid/4/'
+// res = requests.get(url, auth=('admin', 'ad.test.min.es'))
+// print res.text
+
   }
 
 

@@ -167,7 +167,7 @@ var DashboardClientActions = function () {
   function DashboardClientActions() {
     _classCallCheck(this, DashboardClientActions);
 
-    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'login');
+    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'loginSuccess', 'loginFail');
   }
 
   _createClass(DashboardClientActions, [{
@@ -204,35 +204,50 @@ var DashboardClientActions = function () {
   }, {
     key: 'logUser',
     value: function logUser(usr) {
-      this.actions.login({ id: usr.id, token: usr.token });
+      var _this3 = this;
+
+      //this.actions.login({id:usr.id, token:usr.token});
+      $.ajax({
+        type: 'GET',
+        url: '/auth/api/authentication/user/id/' + usr.id + '/',
+        headers: { 'Authorization': 'Token ' + usr.token }
+      }).done(function (data) {
+        usr.uuid = data.uuid;
+        _this3.actions.loginSuccess(usr);
+      }).fail(function (jqXhr) {
+        _this3.actions.loginFail(jqXhr);
+      });
+      // url = 'http://authservice-es-2016.herokuapp.com/api/authentication/user/uuid/4/'
+      // res = requests.get(url, auth=('admin', 'ad.test.min.es'))
+      // print res.text
     }
   }, {
     key: 'getMyTickets',
     value: function getMyTickets() {
-      var _this3 = this;
+      var _this4 = this;
 
       $.ajax({
         url: 'https://esmickettodule.herokuapp.com/everyQueue',
         type: 'get'
       }).done(function (data) {
-        _this3.actions.getMyTicketsSuccess(data);
+        _this4.actions.getMyTicketsSuccess(data);
       }).fail(function (jqXhr) {
-        _this3.actions.getMyTicketsFail(jqXhr);
+        _this4.actions.getMyTicketsFail(jqXhr);
       });
     }
   }, {
     key: 'report',
     value: function report(DashboardClientId) {
-      var _this4 = this;
+      var _this5 = this;
 
       $.ajax({
         type: 'POST',
         url: '/api/report',
         data: { DashboardClientId: DashboardClientId }
       }).done(function () {
-        _this4.actions.reportSuccess();
+        _this5.actions.reportSuccess();
       }).fail(function (jqXhr) {
-        _this4.actions.reportFail(jqXhr);
+        _this5.actions.reportFail(jqXhr);
       });
     }
   }]);
@@ -1001,18 +1016,8 @@ var DashboardClient = function (_React$Component) {
       _DashboardClientStore2.default.listen(this.onChange);
       _DashboardClientActions2.default.getLastTickets();
       _DashboardClientActions2.default.getMyTickets();
+      console.log(document.cookie);
       _DashboardClientActions2.default.logUser({ id: this.props.location.query.id, token: this.props.location.query.token });
-
-      // $('.magnific-popup').magnificPopup({
-      //   type: 'image',
-      //   mainClass: 'mfp-zoom-in',
-      //   closeOnContentClick: true,
-      //   midClick: true,
-      //   zoom: {
-      //     enabled: true,
-      //     duration: 300
-      //   }
-      // });
     }
   }, {
     key: 'componentWillUnmount',
@@ -1050,9 +1055,6 @@ var DashboardClient = function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
-      console.log("AFFA");
-      console.log(this.props.location);
-
       var lastTicketsBoard = this.state.lastTickets.map(function (ticket) {
         return _react2.default.createElement(
           'div',
@@ -1080,6 +1082,9 @@ var DashboardClient = function (_React$Component) {
         for (var i = 0; i < ticket.queue.length; i++) {
           avgTime = avgTime + ticket['queue_average_time'];
           console.log("pre if :" + avgTime);
+          /*
+           * Substituir c3c72F79 por this.state.user.uuid
+           */
           if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
             console.log(i);
 
@@ -1283,7 +1288,7 @@ var DashboardEmployee = function (_React$Component) {
         value: function componentDidMount() {
             _DashboardEmployeeStore2.default.listen(this.onChange);
             _DashboardEmployeeActions2.default.nextTicket();
-            DashboardmEmployeeActions.logUser(this.props.location.query.id, this.props.location.query.token);
+            _DashboardEmployeeActions2.default.logUser({ id: this.props.location.query.id, token: this.props.location.query.token });
         }
     }, {
         key: 'componentWillUnmount',
@@ -2289,14 +2294,15 @@ var DashboardClientStore = function () {
     this.bindActions(_DashboardClientActions2.default);
     this.lastTickets = [];
     this.myTickets = [];
-    this.user = { id: '', token: '' };
+    this.user = { id: '', token: '', uuid: '' };
   }
 
   _createClass(DashboardClientStore, [{
-    key: 'login',
-    value: function login(usr) {
+    key: 'onLoginSuccess',
+    value: function onLoginSuccess(usr) {
       this.user.id = usr.id;
-      this.user.token = usr.token;
+
+      this.user.uuid = usr.uuid;
 
       console.log("apos login");
       console.log(this.user);
@@ -2320,6 +2326,12 @@ var DashboardClientStore = function () {
   }, {
     key: 'onGetMyTicketsFail',
     value: function onGetMyTicketsFail(jqXhr) {
+      // Handle multiple response formats, fallback to HTTP status code number.
+      toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+    }
+  }, {
+    key: 'onLoginFail',
+    value: function onLoginFail(jqXhr) {
       // Handle multiple response formats, fallback to HTTP status code number.
       toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
     }

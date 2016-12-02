@@ -15,19 +15,9 @@ class DashboardClient extends React.Component {
     DashboardClientStore.listen(this.onChange);
     DashboardClientActions.getLastTickets();
     DashboardClientActions.getMyTickets();
+    console.log(document.cookie);
     DashboardClientActions.logUser({id: this.props.location.query.id, token:this.props.location.query.token});
 
-
-    // $('.magnific-popup').magnificPopup({
-    //   type: 'image',
-    //   mainClass: 'mfp-zoom-in',
-    //   closeOnContentClick: true,
-    //   midClick: true,
-    //   zoom: {
-    //     enabled: true,
-    //     duration: 300
-    //   }
-    // });
   }
 
   componentWillUnmount() {
@@ -62,9 +52,6 @@ class DashboardClient extends React.Component {
 
   render() {
 
-    console.log("AFFA")
-    console.log(this.props.location);
-
 
     let lastTicketsBoard = this.state.lastTickets.map((ticket) => {
       return (
@@ -86,6 +73,9 @@ class DashboardClient extends React.Component {
       for (let i = 0; i < ticket.queue.length; i++) {
         avgTime = avgTime + ticket['queue_average_time'];
         console.log("pre if :" + avgTime);
+        /*
+         * Substituir c3c72F79 por this.state.user.uuid
+         */
         if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
           console.log(i);
 

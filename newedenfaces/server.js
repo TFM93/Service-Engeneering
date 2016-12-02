@@ -132,6 +132,41 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+
+
+
+app.post('/newTicket', function (req, res) {
+
+  console.log('newTicket: entered function');
+  console.log('newTicket: received ' + JSON.stringify(req.body));
+  var newTrial = req.body;
+
+  if (newTrial != null && newTrial.ticket_number != null && newTrial.request_timestamp != null && newTrial.ticket_type != null && newTrial.ticket_UUID != null) {
+
+    var codeToSend = 'testeack';
+
+    //TO DO
+    //falar com o auth serviçe e mudar o codeToSend para o codigo temporario (caso seja preciso)
+
+    res.status(200).json({
+      result: 'success',
+      code: codeToSend,
+    });
+  }
+  else {
+    res.status(200).json({
+      result: 'fail',
+      message: 'parameters missing.'
+    });
+  }
+});
+
+
+
+
+
+
+
 /**
  * POST /api/characters
  * Adds new character to the database.
