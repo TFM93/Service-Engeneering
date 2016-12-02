@@ -18,23 +18,21 @@
             crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="{% static 'web/css/pay.css' %}">
+    <link rel="stylesheet" href="{% static 'web/css/progress.css' %}">
 </head>
 <body>
-        <div>
-            <h1><a href="">Payment Page </a></h1>
-        </div>
-        <a href="/paypal/redirect/{{ value }}/{{ uid }}/" id="button1"> <!--onclick="myRedirect()"-->
+<div class="container">
+	<div class="row"><br />
+		<div class="col-md-12">
+    	<div class="progress">
+        <div class="one primary-color"></div><div class="two no-color"></div><div class="three no-color"></div>
+  			<div class="progress-bar" style="width: 25%;"></div>
+		</div>
+	</div>
+	</div>
+</div>
+        <a href="/paypal/redirect/{{ value }}/{{ uid }}/" id="button1">
             <img src="https://www.paypalobjects.com/en_US/i/btn/btn_xpressCheckout.gif"/>
         </a>
 </body>
 </html>
-
-<script>
-    function myRedirect() {
-    event.preventDefault();
-    window.location.replace("http://stackoverflow.com");
-}
-    console.log("alfihf")
-    var params = location.pathname.split("/")
-    console.log(param1)
-</script>
