@@ -78,23 +78,41 @@ def add_uuid(request):
                 form_uuid = form.cleaned_data['uuid']
                 form_code = form.cleaned_data['code']
 
-                res = requests.get('https://esmickettodule.herokuapp.com/didUUIDPass?uuid=' + form_uuid)
+                if len(form_uuid) > 0:
+                    assoc_type = 0  # association by uuid
+                    url = 'https://esmickettodule.herokuapp.com/didUUIDPass?uuid=' + form_uuid
+                else:
+                    assoc_type = 1  # association by code
+                    url = 'https://esmickettodule.herokuapp.com/UUIDByCode?code=' + form_code
+
+                res = requests.get(url)
                 if res.status_code == 200:
                     json = res.json()
-                    if json['exists']:
-                        res_code = json['code']
-                        if res_code == form_code:
-                            res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': form_uuid})
+                    if assoc_type == 0:
+                        if json['exists']:
+                            res_code = json['code']
+                            if res_code == form_code:
+                                res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': form_uuid})
+                                if res.status_code == 200:
+                                    c_user.uuid = form_uuid
+                                    c_user.save()
+                                    class_name = 'alert-success'
+                                    msg = 'UUID %s added with success to your account.' % form_uuid
+                            else:  # wrong code for uuid
+                                msg = 'Wrong code! Better know it, or you\'re screwed'
+                        else:  # uuid does not exists
+                            msg = 'Invalid UUID, do you know what you\'re doing?'
+                    elif assoc_type == 1:
+                        if json['exists']:
+                            res_uuid = json['uuid']
+                            res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': res_uuid})
                             if res.status_code == 200:
-                                c_user.uuid = form_uuid
+                                c_user.uuid = res_uuid
                                 c_user.save()
-
                                 class_name = 'alert-success'
                                 msg = 'UUID %s added with success to your account.' % form_uuid
-                        else:  # wrong code for uuid
-                            msg = 'Wrong code! Better know it, or you\'re screwed'
-                    else:  # uuid does not exists
-                        msg = 'Invalid UUID, do you know what you\'re doing?'
+                        else:  # uuid does not exists
+                            msg = 'Invalid Code, do you know what you\'re doing?'
         else:
             if existent_uuid is not None and existent_uuid is not unicode(''):
                 msg = 'You have currently this uuid: %s' % existent_uuid
