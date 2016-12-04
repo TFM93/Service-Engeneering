@@ -1,7 +1,8 @@
 import React from 'react';
-import {Link} from 'react-router';
+import { Link } from 'react-router';
 import NavbarStore from '../stores/NavbarStore';
 import NavbarActions from '../actions/NavbarActions';
+
 
 class Navbar extends React.Component {
   constructor(props) {
@@ -29,6 +30,12 @@ class Navbar extends React.Component {
         NavbarActions.updateAjaxAnimation('fadeOut');
       }, 750);
     });
+
+    // location.search[4] = id no url
+    console.log(location.search[4]);
+    NavbarActions.getUserDetails(location.search[4]);
+
+
   }
 
   componentWillUnmount() {
@@ -82,8 +89,16 @@ class Navbar extends React.Component {
         <div id='navbar' className='navbar-collapse collapse'>
           <ul className='nav navbar-nav'>
             <li><Link to='/'>Home</Link></li>
-            <li><Link to='/stats'>Stats</Link></li>          
+            <li><Link to='/stats'>Stats</Link></li>
           </ul>
+
+          <ul className='nav navbar-nav' style={{float: 'right'}}>
+            <li><a>Bem-vindo, {this.state.userDetails.name} !</a></li>
+            <li><a className="btn btn-danger" role="button" href='http://google.pt'>Logout</a></li>
+
+          </ul>
+
+
         </div>
       </nav>
     );

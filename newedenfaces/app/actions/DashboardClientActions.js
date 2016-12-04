@@ -14,7 +14,8 @@ class DashboardClientActions {
       'loginSuccess',
       'loginFail',
       'getCreditsSuccess',
-      'getCreditsFail'
+      'getCreditsFail',
+      'updateCreditsToGet'
     );
   }
 
@@ -33,6 +34,26 @@ class DashboardClientActions {
       });
   }
 
+  buyCredits(payload) {
+    console.log("GET CREDITS")
+    console.log(payload);
+    //nots2.aws.atnog.av.it.pt
+    $.ajax({
+      url: 'https://esmickettodule.herokuapp.com/lastTickets',
+      //url: 'http://192.168.1.78/lastTickets',
+      type: 'get'
+    })
+      .done((data) => {
+        this.actions.getLastTicketsSuccess(data);
+      })
+      .fail((jqXhr) => {
+        this.actions.getLastTicketsFail(jqXhr);
+      });
+
+  }
+
+
+
   getLastTickets() {
     $.ajax({
       url: 'https://esmickettodule.herokuapp.com/lastTickets',
@@ -46,6 +67,9 @@ class DashboardClientActions {
         this.actions.getLastTicketsFail(jqXhr);
       });
   }
+
+
+
 
   logUser(usr) {
     //this.actions.login({id:usr.id, token:usr.token});
@@ -69,16 +93,16 @@ class DashboardClientActions {
 
   getCredits() {
     this.actions.getCreditsSuccess(10);
-  //   $.ajax({
-  //     url: 'https://esmickettodule.herokuapp.com/everyQueue',
-  //     type: 'get'
-  //   })
-  //     .done((data) => {
-  //       this.actions.getMyTicketsSuccess(data);
-  //     })
-  //     .fail((jqXhr) => {
-  //       this.actions.getMyTicketsFail(jqXhr);
-  //     });
+    //   $.ajax({
+    //     url: 'https://esmickettodule.herokuapp.com/everyQueue',
+    //     type: 'get'
+    //   })
+    //     .done((data) => {
+    //       this.actions.getMyTicketsSuccess(data);
+    //     })
+    //     .fail((jqXhr) => {
+    //       this.actions.getMyTicketsFail(jqXhr);
+    //     });
   }
 
 

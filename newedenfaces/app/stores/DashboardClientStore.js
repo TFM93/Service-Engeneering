@@ -9,22 +9,27 @@ class DashboardClientStore {
     this.myTickets = [];
     this.user = { id: '', token: '', uuid: '' }
     this.credits = 0;
+    this.creditsToGet = 0;
   }
 
   onLoginSuccess(usr) {
     this.user.id = usr.id;
-
     this.user.uuid = usr.uuid;
-
     console.log("apos login")
     console.log(this.user)
-
-
   }
+
+
 
   onGetCreditsSuccess(data) {
 
     this.credits = data;
+  }
+
+
+
+  onUpdateCreditsToGet(event) {
+    this.creditsToGet = event.target.value;
   }
 
   onGetCreditsFail(jqXhr) {

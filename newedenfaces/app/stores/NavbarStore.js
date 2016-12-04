@@ -8,7 +8,20 @@ class NavbarStore {
     this.onlineUsers = 0;
     this.searchQuery = '';
     this.ajaxAnimationClass = '';
+    this.userDetails = {};
   }
+
+
+  onGetUserDetailsSuccess(data) {
+    this.userDetails = data;
+    console.log(this.userDetails);
+  }
+
+  onGetUserDetailsFail(jqXhr) {
+    // Handle multiple response formats, fallback to HTTP status code number.
+    toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+  }
+
 
   onFindCharacterSuccess(payload) {
     payload.history.pushState(null, '/characters/' + payload.characterId);

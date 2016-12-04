@@ -17,6 +17,7 @@ class DashboardClient extends React.Component {
     DashboardClientActions.getMyTickets();
     DashboardClientActions.getCredits();
     console.log(document.cookie);
+    console.log(this.props);
     DashboardClientActions.logUser({ id: this.props.location.query.id, token: this.props.location.query.token });
 
   }
@@ -49,6 +50,26 @@ class DashboardClient extends React.Component {
     //   }
     // });
 
+  }
+
+
+  handleCreditSubmit(event) {
+    event.preventDefault();
+    console.log("CHEGA AKI MPS")
+    console.log(this.state.creditsToGet)
+    let creditsToGet = this.state.creditsToGet;
+
+    if (creditsToGet) {
+      console.log("YA POIS AQQUQUQUQUQQ")
+      DashboardClientActions.buyCredits({
+        creditsToGet: creditsToGet,
+        user:this.state.user,        
+        history: this.props.history
+      });
+    }
+    else{
+      console.log("n pintou o if mpt")
+    }
   }
 
   render() {
@@ -115,17 +136,52 @@ class DashboardClient extends React.Component {
     return (
       <div className='container'>
 
+
         <div className="row">
           <div className="col-lg-12">
             <div className="panel panel-info">
+              <div className="panel-heading"><h4>Créditos</h4></div>
+              <div className="panel-body">
+                <div className="row">
+                  <div className="col-lg-6">
+                    <div className="panel panel-default">
+                      <div className="panel-heading"><center>Os meus créditos</center></div>
+                      <div className="panel-body">
+                        <center>
+                          {this.state.credits}
+                        </center>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
+                    <div className="panel panel-default">
+                      <div className="panel-heading"><center>Obter créditos</center></div>
+                      <div className="panel-body">
+                        <center>
 
-              <div className="panel-heading"><center><h4>Créditos: {this.state.credits}</h4></center></div>
 
+                          <form className='form-inline' onSubmit={this.handleCreditSubmit.bind(this)}>
+                            <div className='input-group'>
+                              <input type='number' className='form-control' placeholder="Nr de créditos a obter" value={this.state.creditsToGet} onChange={DashboardClientActions.updateCreditsToGet} />
+                              <span className='input-group-btn'>
+                                <button type="submit" className="btn btn-primary" data-toggle="tooltip" title="Será reencaminhado para a página de pagamentos">Receber créditos</button>
+                              </span>
+                            </div>
+                          </form>
 
+                        </center>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
             </div>
           </div>
 
         </div>
+
+
 
         <div className="row">
           <div className="col-lg-12">
@@ -163,22 +219,29 @@ class DashboardClient extends React.Component {
 export default DashboardClient;
 
 
-        // <li key={character.tick}>
-        //   <Link to={'/characters/' + character.characterId}>
-        //     <img className='thumb-md' src={'http://image.eveonline.com/Character/' + character.characterId + '_128.jpg'} />
-        //   </Link>
-        // </li>
+// <li key={character.tick}>
+//   <Link to={'/characters/' + character.characterId}>
+//     <img className='thumb-md' src={'http://image.eveonline.com/Character/' + character.characterId + '_128.jpg'} />
+//   </Link>
+// </li>
 
 
-        //         <div key={ticket["ticket_type"]} className="panel panel-default">
-        //   <div className="panel-heading">{ticket["ticket_type"]}</div>
-        //   <div className="panel-body">{ticket["ticket_number"]}</div>
-        // </div>
+//         <div key={ticket["ticket_type"]} className="panel panel-default">
+//   <div className="panel-heading">{ticket["ticket_type"]}</div>
+//   <div className="panel-body">{ticket["ticket_number"]}</div>
+// </div>
 
 
-                  //         <div className="col-lg-12">
-                  //   <div className="panel panel-default">
-                  //     <div className="panel-heading">A</div>
-                  //     <div className="panel-body">54</div>
-                  //   </div>
-                  // </div>
+//         <div className="col-lg-12">
+//   <div className="panel panel-default">
+//     <div className="panel-heading">A</div>
+//     <div className="panel-body">54</div>
+//   </div>
+// </div>
+
+// <form className="form-inline">
+//   <div className="form-group">
+//     <input type="number" className="form-control" id="exampleInputEmail2" placeholder="Número de créditos a obter" />
+//   </div>
+
+// </form>

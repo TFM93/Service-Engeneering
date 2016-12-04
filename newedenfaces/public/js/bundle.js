@@ -167,7 +167,7 @@ var DashboardClientActions = function () {
   function DashboardClientActions() {
     _classCallCheck(this, DashboardClientActions);
 
-    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'loginSuccess', 'loginFail', 'getCreditsSuccess', 'getCreditsFail');
+    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'loginSuccess', 'loginFail', 'getCreditsSuccess', 'getCreditsFail', 'updateCreditsToGet');
   }
 
   _createClass(DashboardClientActions, [{
@@ -187,10 +187,13 @@ var DashboardClientActions = function () {
       });
     }
   }, {
-    key: 'getLastTickets',
-    value: function getLastTickets() {
+    key: 'buyCredits',
+    value: function buyCredits(payload) {
       var _this2 = this;
 
+      console.log("GET CREDITS");
+      console.log(payload);
+      //nots2.aws.atnog.av.it.pt
       $.ajax({
         url: 'https://esmickettodule.herokuapp.com/lastTickets',
         //url: 'http://192.168.1.78/lastTickets',
@@ -202,9 +205,24 @@ var DashboardClientActions = function () {
       });
     }
   }, {
+    key: 'getLastTickets',
+    value: function getLastTickets() {
+      var _this3 = this;
+
+      $.ajax({
+        url: 'https://esmickettodule.herokuapp.com/lastTickets',
+        //url: 'http://192.168.1.78/lastTickets',
+        type: 'get'
+      }).done(function (data) {
+        _this3.actions.getLastTicketsSuccess(data);
+      }).fail(function (jqXhr) {
+        _this3.actions.getLastTicketsFail(jqXhr);
+      });
+    }
+  }, {
     key: 'logUser',
     value: function logUser(usr) {
-      var _this3 = this;
+      var _this4 = this;
 
       //this.actions.login({id:usr.id, token:usr.token});
       $.ajax({
@@ -213,9 +231,9 @@ var DashboardClientActions = function () {
         headers: { 'Authorization': 'Token ' + usr.token }
       }).done(function (data) {
         usr.uuid = data.uuid;
-        _this3.actions.loginSuccess(usr);
+        _this4.actions.loginSuccess(usr);
       }).fail(function (jqXhr) {
-        _this3.actions.loginFail(jqXhr);
+        _this4.actions.loginFail(jqXhr);
       });
       // url = 'http://authservice-es-2016.herokuapp.com/api/authentication/user/uuid/4/'
       // res = requests.get(url, auth=('admin', 'ad.test.min.es'))
@@ -239,30 +257,30 @@ var DashboardClientActions = function () {
   }, {
     key: 'getMyTickets',
     value: function getMyTickets() {
-      var _this4 = this;
+      var _this5 = this;
 
       $.ajax({
         url: 'https://esmickettodule.herokuapp.com/everyQueue',
         type: 'get'
       }).done(function (data) {
-        _this4.actions.getMyTicketsSuccess(data);
+        _this5.actions.getMyTicketsSuccess(data);
       }).fail(function (jqXhr) {
-        _this4.actions.getMyTicketsFail(jqXhr);
+        _this5.actions.getMyTicketsFail(jqXhr);
       });
     }
   }, {
     key: 'report',
     value: function report(DashboardClientId) {
-      var _this5 = this;
+      var _this6 = this;
 
       $.ajax({
         type: 'POST',
         url: '/api/report',
         data: { DashboardClientId: DashboardClientId }
       }).done(function () {
-        _this5.actions.reportSuccess();
+        _this6.actions.reportSuccess();
       }).fail(function (jqXhr) {
-        _this5.actions.reportFail(jqXhr);
+        _this6.actions.reportFail(jqXhr);
       });
     }
   }]);
@@ -521,7 +539,7 @@ var NavbarActions = function () {
   function NavbarActions() {
     _classCallCheck(this, NavbarActions);
 
-    this.generateActions('updateOnlineUsers', 'updateAjaxAnimation', 'updateSearchQuery', 'getCharacterCountSuccess', 'getCharacterCountFail', 'findCharacterSuccess', 'findCharacterFail');
+    this.generateActions('updateOnlineUsers', 'updateAjaxAnimation', 'updateSearchQuery', 'getCharacterCountSuccess', 'getCharacterCountFail', 'findCharacterSuccess', 'findCharacterFail', 'getUserDetailsSuccess', 'getUserDetailsFail');
   }
 
   _createClass(NavbarActions, [{
@@ -540,14 +558,28 @@ var NavbarActions = function () {
       });
     }
   }, {
-    key: 'getCharacterCount',
-    value: function getCharacterCount() {
+    key: 'getUserDetails',
+    value: function getUserDetails(id) {
       var _this2 = this;
 
-      $.ajax({ url: '/api/characters/count' }).done(function (data) {
-        _this2.actions.getCharacterCountSuccess(data);
+      $.ajax({
+        type: 'GET',
+        url: '/auth/api/authentication/user/details/' + id + '/'
+      }).done(function (data) {
+        _this2.actions.getUserDetailsSuccess(data);
       }).fail(function (jqXhr) {
-        _this2.actions.getCharacterCountFail(jqXhr);
+        _this2.actions.getUserDetailsFail(jqXhr);
+      });
+    }
+  }, {
+    key: 'getCharacterCount',
+    value: function getCharacterCount() {
+      var _this3 = this;
+
+      $.ajax({ url: '/api/characters/count' }).done(function (data) {
+        _this3.actions.getCharacterCountSuccess(data);
+      }).fail(function (jqXhr) {
+        _this3.actions.getCharacterCountFail(jqXhr);
       });
     }
   }]);
@@ -1033,6 +1065,7 @@ var DashboardClient = function (_React$Component) {
       _DashboardClientActions2.default.getMyTickets();
       _DashboardClientActions2.default.getCredits();
       console.log(document.cookie);
+      console.log(this.props);
       _DashboardClientActions2.default.logUser({ id: this.props.location.query.id, token: this.props.location.query.token });
     }
   }, {
@@ -1065,6 +1098,25 @@ var DashboardClient = function (_React$Component) {
       //     }
       //   }
       // });
+    }
+  }, {
+    key: 'handleCreditSubmit',
+    value: function handleCreditSubmit(event) {
+      event.preventDefault();
+      console.log("CHEGA AKI MPS");
+      console.log(this.state.creditsToGet);
+      var creditsToGet = this.state.creditsToGet;
+
+      if (creditsToGet) {
+        console.log("YA POIS AQQUQUQUQUQQ");
+        _DashboardClientActions2.default.buyCredits({
+          creditsToGet: creditsToGet,
+          user: this.state.user,
+          history: this.props.history
+        });
+      } else {
+        console.log("n pintou o if mpt");
+      }
     }
   }, {
     key: 'render',
@@ -1179,13 +1231,85 @@ var DashboardClient = function (_React$Component) {
                 'div',
                 { className: 'panel-heading' },
                 _react2.default.createElement(
-                  'center',
+                  'h4',
                   null,
+                  'Cr\xE9ditos'
+                )
+              ),
+              _react2.default.createElement(
+                'div',
+                { className: 'panel-body' },
+                _react2.default.createElement(
+                  'div',
+                  { className: 'row' },
                   _react2.default.createElement(
-                    'h4',
-                    null,
-                    'Cr\xE9ditos: ',
-                    this.state.credits
+                    'div',
+                    { className: 'col-lg-6' },
+                    _react2.default.createElement(
+                      'div',
+                      { className: 'panel panel-default' },
+                      _react2.default.createElement(
+                        'div',
+                        { className: 'panel-heading' },
+                        _react2.default.createElement(
+                          'center',
+                          null,
+                          'Os meus cr\xE9ditos'
+                        )
+                      ),
+                      _react2.default.createElement(
+                        'div',
+                        { className: 'panel-body' },
+                        _react2.default.createElement(
+                          'center',
+                          null,
+                          this.state.credits
+                        )
+                      )
+                    )
+                  ),
+                  _react2.default.createElement(
+                    'div',
+                    { className: 'col-lg-6' },
+                    _react2.default.createElement(
+                      'div',
+                      { className: 'panel panel-default' },
+                      _react2.default.createElement(
+                        'div',
+                        { className: 'panel-heading' },
+                        _react2.default.createElement(
+                          'center',
+                          null,
+                          'Obter cr\xE9ditos'
+                        )
+                      ),
+                      _react2.default.createElement(
+                        'div',
+                        { className: 'panel-body' },
+                        _react2.default.createElement(
+                          'center',
+                          null,
+                          _react2.default.createElement(
+                            'form',
+                            { className: 'form-inline', onSubmit: this.handleCreditSubmit.bind(this) },
+                            _react2.default.createElement(
+                              'div',
+                              { className: 'input-group' },
+                              _react2.default.createElement('input', { type: 'number', className: 'form-control', placeholder: 'Nr de cr\xE9ditos a obter', value: this.state.creditsToGet, onChange: _DashboardClientActions2.default.updateCreditsToGet }),
+                              _react2.default.createElement(
+                                'span',
+                                { className: 'input-group-btn' },
+                                _react2.default.createElement(
+                                  'button',
+                                  { type: 'submit', className: 'btn btn-primary', 'data-toggle': 'tooltip', title: 'Ser\xE1 reencaminhado para a p\xE1gina de pagamentos' },
+                                  'Receber cr\xE9ditos'
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
                   )
                 )
               )
@@ -1280,6 +1404,13 @@ exports.default = DashboardClient;
 //     <div className="panel-body">54</div>
 //   </div>
 // </div>
+
+// <form className="form-inline">
+//   <div className="form-group">
+//     <input type="number" className="form-control" id="exampleInputEmail2" placeholder="Número de créditos a obter" />
+//   </div>
+
+// </form>
 
 },{"../actions/DashboardClientActions":4,"../stores/DashboardClientStore":22,"react":"react"}],14:[function(require,module,exports){
 'use strict';
@@ -1954,6 +2085,10 @@ var Navbar = function (_React$Component) {
           _NavbarActions2.default.updateAjaxAnimation('fadeOut');
         }, 750);
       });
+
+      // location.search[4] = id no url
+      console.log(location.search[4]);
+      _NavbarActions2.default.getUserDetails(location.search[4]);
     }
   }, {
     key: 'componentWillUnmount',
@@ -2047,6 +2182,30 @@ var Navbar = function (_React$Component) {
                 _reactRouter.Link,
                 { to: '/stats' },
                 'Stats'
+              )
+            )
+          ),
+          _react2.default.createElement(
+            'ul',
+            { className: 'nav navbar-nav', style: { float: 'right' } },
+            _react2.default.createElement(
+              'li',
+              null,
+              _react2.default.createElement(
+                'a',
+                null,
+                'Bem-vindo, ',
+                this.state.userDetails.name,
+                ' !'
+              )
+            ),
+            _react2.default.createElement(
+              'li',
+              null,
+              _react2.default.createElement(
+                'a',
+                { className: 'btn btn-danger', role: 'button', href: 'http://google.pt' },
+                'Logout'
               )
             )
           )
@@ -2336,15 +2495,14 @@ var DashboardClientStore = function () {
     this.myTickets = [];
     this.user = { id: '', token: '', uuid: '' };
     this.credits = 0;
+    this.creditsToGet = 0;
   }
 
   _createClass(DashboardClientStore, [{
     key: 'onLoginSuccess',
     value: function onLoginSuccess(usr) {
       this.user.id = usr.id;
-
       this.user.uuid = usr.uuid;
-
       console.log("apos login");
       console.log(this.user);
     }
@@ -2353,6 +2511,11 @@ var DashboardClientStore = function () {
     value: function onGetCreditsSuccess(data) {
 
       this.credits = data;
+    }
+  }, {
+    key: 'onUpdateCreditsToGet',
+    value: function onUpdateCreditsToGet(event) {
+      this.creditsToGet = event.target.value;
     }
   }, {
     key: 'onGetCreditsFail',
@@ -2641,9 +2804,22 @@ var NavbarStore = function () {
     this.onlineUsers = 0;
     this.searchQuery = '';
     this.ajaxAnimationClass = '';
+    this.userDetails = {};
   }
 
   _createClass(NavbarStore, [{
+    key: 'onGetUserDetailsSuccess',
+    value: function onGetUserDetailsSuccess(data) {
+      this.userDetails = data;
+      console.log(this.userDetails);
+    }
+  }, {
+    key: 'onGetUserDetailsFail',
+    value: function onGetUserDetailsFail(jqXhr) {
+      // Handle multiple response formats, fallback to HTTP status code number.
+      toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+    }
+  }, {
     key: 'onFindCharacterSuccess',
     value: function onFindCharacterSuccess(payload) {
       payload.history.pushState(null, '/characters/' + payload.characterId);
