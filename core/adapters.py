@@ -14,11 +14,11 @@ import requests
 class AccountAdapter(DefaultAccountAdapter):
     def get_login_redirect_url(self, request):
         token = Token.objects.get(user=request.user)
-        # host = request.META['SERVER_NAME']
+        direction_url = 'dashboardEmployee' if request.user.groups.filter(name='Staff').exists() else 'dashboardClient'
         if settings.SITE_URL == 'http://localhost:8000':
             host_to_go = settings.SITE_URL
         else:
-            host_to_go = 'http://localhost/dashboardClient'
+            host_to_go = 'http://localhost/' + direction_url
         url = host_to_go + '/?id=' + str(request.user.id) + '&token=' + str(token.key)
         data = {'id': str(request.user.id), 'token': token.key}
 
