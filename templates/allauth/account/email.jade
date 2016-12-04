@@ -56,12 +56,11 @@ br
 
 br
 .row
-  .col-md-12
-    a.btn.btn-xs.btn-success(href="/accounts/add/uuid/") Manage UUID manually
-
-br
-.row
-  .col-md-12
+  .col-md-4.col-xs-12
+    a.btn.btn-xs.btn-info(href="/accounts/manage/uuid/") Manage UUID manually
+  .col-md-4
+    a.btn.btn-xs.btn-info(href="/accounts/manage/phone/") Manage my Phone
+  .col-md-4
     form(method='post', action="/accounts/delete/")
       | {% csrf_token %}
       button.btn.btn-xs.btn-danger(name='delete_account', type='submit', onclick='confirmDelete();') Delete Account

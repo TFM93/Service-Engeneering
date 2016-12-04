@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from allauth.socialaccount.models import SocialAccount
 from models import CustomSocialAccount
-from forms import add_uuid_form
-from allauth.account.views import EmailView
+from forms import add_uuid_form, add_phone_form
+# from allauth.account.views import EmailView
 
 import os
 import requests
@@ -60,7 +60,7 @@ def social_account_login(sender, **kwargs):
 #     return render_to_response("core/googleff1931c407ddd6d6.html")
 
 
-def add_uuid(request):
+def manage_uuid(request):
     msg = 'Some error occurred!'
     class_name = 'alert-danger'
     existent_uuid = None
@@ -88,7 +88,7 @@ def add_uuid(request):
                 res = requests.get(url)
                 if res.status_code == 200:
                     json = res.json()
-                    if assoc_type == 0:
+                    if assoc_type == 0:  # assoc by uuid
                         if json['exists']:
                             res_code = json['code']
                             if res_code == form_code:
@@ -102,7 +102,7 @@ def add_uuid(request):
                                 msg = 'Wrong code! Better know it, or you\'re screwed'
                         else:  # uuid does not exists
                             msg = 'Invalid UUID, do you know what you\'re doing?'
-                    elif assoc_type == 1:
+                    elif assoc_type == 1:  # assoc by code
                         if json['exists']:
                             res_uuid = json['uuid']
                             res = requests.post('https://esmickettodule.herokuapp.com/resolveUUID', data={'uuid': res_uuid})
@@ -113,6 +113,8 @@ def add_uuid(request):
                                 msg = 'UUID %s added with success to your account.' % form_uuid
                         else:  # uuid does not exists
                             msg = 'Invalid Code, do you know what you\'re doing?'
+            else:
+                msg = 'Missing required fields!'
         else:
             if existent_uuid is not None and existent_uuid is not unicode(''):
                 msg = 'You have currently this uuid: %s' % existent_uuid
@@ -136,6 +138,55 @@ def add_uuid(request):
         'message': msg,
         'className': class_name,
         'uuid_form': form,
+    })
+    return HttpResponse(template.render(context))
+
+
+def manage_phone(request):
+    msg = 'Some error occurred!'
+    class_name = 'alert-danger'
+    existent_phone = None
+
+    try:
+        # get the user and an existing phone
+        user = User.objects.get(pk=request.user.pk)
+        account = SocialAccount.objects.get(user=user)
+        c_user = CustomSocialAccount.objects.get(account=account)
+        existent_phone = c_user.phone
+
+        if request.method == 'POST':
+            form = add_phone_form(request.POST)
+            if form.is_valid():
+                form_phone = form.cleaned_data['phone']
+                c_user.phone = form_phone
+                c_user.save()
+                class_name = 'alert-success'
+                msg = 'Phone number %s added with success to your account.' % form_phone
+            else:
+                msg = 'Missing required fields!'
+        else:
+            if existent_phone is not None and existent_phone is not 0:
+                msg = 'You have currently this phone number: %s' % existent_phone
+                class_name = 'alert-info'
+            else:
+                msg = 'You don\'t have any associated phone number.'
+                class_name = 'alert-warning'
+            form = add_phone_form()
+    except:
+        template = loader.get_template('index.html')
+        context = RequestContext(request, {
+            'hasMessage': True,
+            'message': 'Some error occurred! Contact the administrator.',
+            'className': 'alert-danger',
+        })
+        return HttpResponse(template.render(context))
+
+    template = loader.get_template('core/account_phone.html')
+    context = RequestContext(request, {
+        'hasMessage': True,
+        'message': msg,
+        'className': class_name,
+        'phone_form': form,
     })
     return HttpResponse(template.render(context))
 

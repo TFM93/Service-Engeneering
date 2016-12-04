@@ -1,0 +1,27 @@
+
+| {% extends "index.html" %}
+| {% block head_title %} - Manage Phone{% endblock %}
+| {% block content %}
+h3
+  | Manage my Phone
+div
+  br
+  .row
+    .col-md-2.col-xs-12
+    .col-md-7.col-xs-12
+      .alert.alert-dismissible.text-center(class="{{className}}")
+        | {% if not hasMessage %}
+        strong(style="color:white;") Something was supposed to be in here!
+        | {% else %}
+        h6(style="color:white;") {{message}}
+        | {% endif %}
+    .col-md-2.col-xs-12
+  .row
+    .col-md-2.col-xs-12
+    .col-md-10.col-xs-12
+      h5 Add Phone manually
+      form(method='post', action="/accounts/manage/phone/")
+        | {% csrf_token %}
+        | {{phone_form.as_p}}
+        button.btn.btn-xs.btn-toolbar(name='action_add_phone', type='submit') Add
+| {% endblock %}
