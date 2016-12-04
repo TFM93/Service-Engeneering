@@ -110,6 +110,8 @@ LOGIN_REDIRECT_URL = '/'
 
 LOGOUT_URL = "/accounts/logout/"
 
+LOGOUT_REDIRECT_URL = "http://localhost/dashboardClient"
+
 SOCIALACCOUNT_QUERY_EMAIL = True
 
 SOCIALACCOUNT_ADAPTER = 'core.adapters.SocialAccountAdapter'

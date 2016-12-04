@@ -8,7 +8,7 @@ from rest_framework import status, generics
 from django.contrib.auth.models import User
 from core.models import CustomSocialAccount
 from allauth.socialaccount.models import SocialAccount
-# from django.contrib.auth import logout
+from django.contrib.auth import logout
 
 import os
 import requests
@@ -239,13 +239,13 @@ class DeleteUser(APIView):
                 int_id = int(pk)
                 try:
                     user = User.objects.get(pk=int_id)
-                    # TODO delete avatar image
                     try:
                         path = 'static/web/avatars/avatar%s.jpg' % user.pk
                         os.remove(path)
                     except:
                         raise Exception
                     user.delete()
+                    logout(request)
                 except:
                     raise Exception
                 return Response(status=status.HTTP_200_OK, data={'detail': 'User deleted with success.'})

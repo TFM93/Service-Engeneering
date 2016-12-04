@@ -10,7 +10,6 @@ from django.contrib.auth import logout
 from allauth.socialaccount.models import SocialAccount
 from models import CustomSocialAccount
 from forms import add_uuid_form, add_phone_form
-# from allauth.account.views import EmailView
 
 import os
 import requests
