@@ -121,6 +121,7 @@ class DashboardClient extends React.Component {
 
               <div className="panel-heading"><center><h4>Créditos: {this.state.credits}</h4></center></div>
 
+
             </div>
           </div>
 
