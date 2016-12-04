@@ -118,7 +118,9 @@ class DashboardClient extends React.Component {
         <div className="row">
           <div className="col-lg-12">
             <div className="panel panel-info">
-              <div className="panel-heading"><h4>Créditos: {this.state.credits}</h4></div>
+
+              <div className="panel-heading"><center><h4>Créditos: {this.state.credits}</h4></center></div>
+
             </div>
           </div>
 

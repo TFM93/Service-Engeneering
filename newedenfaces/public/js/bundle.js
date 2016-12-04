@@ -1179,10 +1179,14 @@ var DashboardClient = function (_React$Component) {
                 'div',
                 { className: 'panel-heading' },
                 _react2.default.createElement(
-                  'h4',
+                  'center',
                   null,
-                  'Cr\xE9ditos: ',
-                  this.state.credits
+                  _react2.default.createElement(
+                    'h4',
+                    null,
+                    'Cr\xE9ditos: ',
+                    this.state.credits
+                  )
                 )
               )
             )
