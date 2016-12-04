@@ -12,7 +12,9 @@ class DashboardClientActions {
       'testSuccess',
       'testFail',
       'loginSuccess',
-      'loginFail'
+      'loginFail',
+      'getCreditsSuccess',
+      'getCreditsFail'
     );
   }
 
@@ -49,8 +51,8 @@ class DashboardClientActions {
     //this.actions.login({id:usr.id, token:usr.token});
     $.ajax({
       type: 'GET',
-      url: '/auth/api/authentication/user/id/'+ usr.id +'/',
-      headers : { 'Authorization': 'Token '+usr.token }
+      url: '/auth/api/authentication/user/id/' + usr.id + '/',
+      headers: { 'Authorization': 'Token ' + usr.token }
     })
       .done((data) => {
         usr.uuid = data.uuid;
@@ -59,10 +61,24 @@ class DashboardClientActions {
       .fail((jqXhr) => {
         this.actions.loginFail(jqXhr);
       });
-// url = 'http://authservice-es-2016.herokuapp.com/api/authentication/user/uuid/4/'
-// res = requests.get(url, auth=('admin', 'ad.test.min.es'))
-// print res.text
+    // url = 'http://authservice-es-2016.herokuapp.com/api/authentication/user/uuid/4/'
+    // res = requests.get(url, auth=('admin', 'ad.test.min.es'))
+    // print res.text
 
+  }
+
+  getCredits() {
+    this.actions.getCreditsSuccess(10);
+  //   $.ajax({
+  //     url: 'https://esmickettodule.herokuapp.com/everyQueue',
+  //     type: 'get'
+  //   })
+  //     .done((data) => {
+  //       this.actions.getMyTicketsSuccess(data);
+  //     })
+  //     .fail((jqXhr) => {
+  //       this.actions.getMyTicketsFail(jqXhr);
+  //     });
   }
 
 

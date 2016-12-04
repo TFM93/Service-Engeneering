@@ -8,17 +8,28 @@ class DashboardClientStore {
     this.lastTickets = [];
     this.myTickets = [];
     this.user = { id: '', token: '', uuid: '' }
+    this.credits = 0;
   }
 
   onLoginSuccess(usr) {
     this.user.id = usr.id;
-    
+
     this.user.uuid = usr.uuid;
 
     console.log("apos login")
     console.log(this.user)
 
 
+  }
+
+  onGetCreditsSuccess(data) {
+
+    this.credits = data;
+  }
+
+  onGetCreditsFail(jqXhr) {
+    // Handle multiple response formats, fallback to HTTP status code number.
+    toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
   }
 
 

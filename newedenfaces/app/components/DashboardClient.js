@@ -15,8 +15,9 @@ class DashboardClient extends React.Component {
     DashboardClientStore.listen(this.onChange);
     DashboardClientActions.getLastTickets();
     DashboardClientActions.getMyTickets();
+    DashboardClientActions.getCredits();
     console.log(document.cookie);
-    DashboardClientActions.logUser({id: this.props.location.query.id, token:this.props.location.query.token});
+    DashboardClientActions.logUser({ id: this.props.location.query.id, token: this.props.location.query.token });
 
   }
 
@@ -73,10 +74,8 @@ class DashboardClient extends React.Component {
       for (let i = 0; i < ticket.queue.length; i++) {
         avgTime = avgTime + ticket['queue_average_time'];
         console.log("pre if :" + avgTime);
-        /*
-         * Substituir c3c72F79 por this.state.user.uuid
-         */
-        if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
+
+        if (ticket.queue[i]['ticket_UUID'] == this.state.user.uuid) {
           console.log(i);
 
           //console.log((Math.ceil(avgTime)).toHHMMSS());
@@ -90,11 +89,11 @@ class DashboardClient extends React.Component {
 
             <div key={ticket.type} className="col-lg-3">
               <div className="panel panel-default">
-               <div className="panel-heading"><center>{ticket['type']}</center></div>
+                <div className="panel-heading"><center>{ticket['type']}</center></div>
                 <div className="panel-body">
                   <div className="row">
                     <div className="col-lg-6"><center>{ticket.queue[i]['ticket_number']}</center></div>
-                    <div className="col-lg-6"><center>Tempo Estimado: {dateTime.getHours() + ':' + dateTime.getMinutes() + ':'+ dateTime.getSeconds()}</center></div>
+                    <div className="col-lg-6"><center>Tempo Estimado: {dateTime.getHours() + ':' + dateTime.getMinutes() + ':' + dateTime.getSeconds()}</center></div>
                   </div>
                 </div>
 
@@ -115,6 +114,16 @@ class DashboardClient extends React.Component {
 
     return (
       <div className='container'>
+
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="panel panel-info">
+              <div className="panel-heading"><h4>Créditos: {this.state.credits}</h4></div>
+            </div>
+          </div>
+
+        </div>
+
         <div className="row">
           <div className="col-lg-12">
             <div className="panel panel-info">

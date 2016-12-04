@@ -167,7 +167,7 @@ var DashboardClientActions = function () {
   function DashboardClientActions() {
     _classCallCheck(this, DashboardClientActions);
 
-    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'loginSuccess', 'loginFail');
+    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'loginSuccess', 'loginFail', 'getCreditsSuccess', 'getCreditsFail');
   }
 
   _createClass(DashboardClientActions, [{
@@ -220,6 +220,21 @@ var DashboardClientActions = function () {
       // url = 'http://authservice-es-2016.herokuapp.com/api/authentication/user/uuid/4/'
       // res = requests.get(url, auth=('admin', 'ad.test.min.es'))
       // print res.text
+    }
+  }, {
+    key: 'getCredits',
+    value: function getCredits() {
+      this.actions.getCreditsSuccess(10);
+      //   $.ajax({
+      //     url: 'https://esmickettodule.herokuapp.com/everyQueue',
+      //     type: 'get'
+      //   })
+      //     .done((data) => {
+      //       this.actions.getMyTicketsSuccess(data);
+      //     })
+      //     .fail((jqXhr) => {
+      //       this.actions.getMyTicketsFail(jqXhr);
+      //     });
     }
   }, {
     key: 'getMyTickets',
@@ -1016,6 +1031,7 @@ var DashboardClient = function (_React$Component) {
       _DashboardClientStore2.default.listen(this.onChange);
       _DashboardClientActions2.default.getLastTickets();
       _DashboardClientActions2.default.getMyTickets();
+      _DashboardClientActions2.default.getCredits();
       console.log(document.cookie);
       _DashboardClientActions2.default.logUser({ id: this.props.location.query.id, token: this.props.location.query.token });
     }
@@ -1082,10 +1098,8 @@ var DashboardClient = function (_React$Component) {
         for (var i = 0; i < ticket.queue.length; i++) {
           avgTime = avgTime + ticket['queue_average_time'];
           console.log("pre if :" + avgTime);
-          /*
-           * Substituir c3c72F79 por this.state.user.uuid
-           */
-          if (ticket.queue[i]['ticket_UUID'] == 'C3C72F79') {
+
+          if (ticket.queue[i]['ticket_UUID'] == _this2.state.user.uuid) {
             console.log(i);
 
             //console.log((Math.ceil(avgTime)).toHHMMSS());
@@ -1152,6 +1166,28 @@ var DashboardClient = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         { className: 'container' },
+        _react2.default.createElement(
+          'div',
+          { className: 'row' },
+          _react2.default.createElement(
+            'div',
+            { className: 'col-lg-12' },
+            _react2.default.createElement(
+              'div',
+              { className: 'panel panel-info' },
+              _react2.default.createElement(
+                'div',
+                { className: 'panel-heading' },
+                _react2.default.createElement(
+                  'h4',
+                  null,
+                  'Cr\xE9ditos: ',
+                  this.state.credits
+                )
+              )
+            )
+          )
+        ),
         _react2.default.createElement(
           'div',
           { className: 'row' },
@@ -2295,6 +2331,7 @@ var DashboardClientStore = function () {
     this.lastTickets = [];
     this.myTickets = [];
     this.user = { id: '', token: '', uuid: '' };
+    this.credits = 0;
   }
 
   _createClass(DashboardClientStore, [{
@@ -2306,6 +2343,18 @@ var DashboardClientStore = function () {
 
       console.log("apos login");
       console.log(this.user);
+    }
+  }, {
+    key: 'onGetCreditsSuccess',
+    value: function onGetCreditsSuccess(data) {
+
+      this.credits = data;
+    }
+  }, {
+    key: 'onGetCreditsFail',
+    value: function onGetCreditsFail(jqXhr) {
+      // Handle multiple response formats, fallback to HTTP status code number.
+      toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
     }
   }, {
     key: 'onGetLastTicketsSuccess',
