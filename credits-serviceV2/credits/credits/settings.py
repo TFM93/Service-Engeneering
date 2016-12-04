@@ -26,7 +26,7 @@ SECRET_KEY = 'nr+q%k8mh6z(se+@$*d$bpe9@*1b_=a^&3%=j@db9t7pq-l*kw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -162,7 +162,7 @@ REST_FRAMEWORK = {
     'VIEW_DESCRIPTION_FUNCTION': 'rest_framework_swagger.views.get_restructuredtext',
 
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+#        'rest_framework.permissions.IsAuthenticated',
     ),
 
     'DEFAULT_RENDERER_CLASSES': (
