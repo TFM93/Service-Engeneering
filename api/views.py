@@ -8,10 +8,11 @@ from rest_framework import status, generics
 from django.contrib.auth.models import User
 from core.models import CustomSocialAccount
 from allauth.socialaccount.models import SocialAccount
+# from django.contrib.auth import logout
 
 import os
 import requests
-import uuid
+# import uuid
 
 
 class GetUserInfoByUUID(APIView):
@@ -244,6 +245,33 @@ class DeleteUser(APIView):
                 return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'User not found.'})
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
 
+
+# class LogoutUser(APIView):
+#     allowed_methods = ['POST']
+#
+#     def post(self, request):
+#         """
+#             Log outs logged user
+#
+#             <h3>Details</h3>
+#
+#             <b>METHODS:</b>
+#                 - POST
+#
+#             <b>RETURNS:</b>
+#                 - 200 OK
+#                 - 404 NOT FOUND
+#                 - 400 BAD REQUEST
+#         """
+#         try:
+#             if request.user.is_authenticated:
+#                 logout(request)
+#                 return Response(status=status.HTTP_200_OK, data={'detail': 'Logout with success.'})
+#             else:
+#                 return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'No user logged in found.'})
+#         except:
+#             pass
+#         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
 
 # class Login(APIView):
 #     allowed_methods = ['POST']
