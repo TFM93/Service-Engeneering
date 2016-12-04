@@ -8,7 +8,7 @@ from rest_framework import status, generics
 from django.contrib.auth.models import User
 from core.models import CustomSocialAccount
 from allauth.socialaccount.models import SocialAccount
-# from django.contrib.auth import logout
+from django.contrib.auth import logout
 
 import os
 import requests
@@ -42,13 +42,14 @@ class GetUserInfoByUUID(APIView):
                     return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'UUID not found.'})
                 payload = {
                     'uuid': uuid,
-                    'detail': 'This user has an uuid associated.',
+                    # 'detail': 'This user has an uuid associated.',
                     'username': user.username,
+                    'staff': user.groups.filter(name='Staff').exists(),
+                    'phone': None if c_user.phone == 0 else c_user.phone,
                     'extra_data': c_user.account.extra_data
                 }
                 return Response(status=status.HTTP_200_OK, data=payload)
         except:
-            # return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
             pass
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
 
@@ -59,7 +60,7 @@ class GetUserInfoByID(APIView):
 
     def get(self, request, pk=None):
         """
-        Get user extra info by given ID
+        Get user info by given ID
 
         <h3>Details</h3>
 
@@ -71,17 +72,25 @@ class GetUserInfoByID(APIView):
             - 404 NOT FOUND
             - 400 BAD REQUEST
         """
-        if pk is not None:
-            try:
+        try:
+            if pk is not None:
                 int_id = int(pk)
                 try:
                     user = User.objects.get(pk=int_id)
                     social_user = SocialAccount.objects.get(user=user)
+                    c_user = CustomSocialAccount.objects.get(account=social_user)
                 except:
-                    raise Exception
-                return Response(status=status.HTTP_200_OK, data=social_user.extra_data)
-            except:
-                return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
+                    return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': 'User not found.'})
+                payload = {
+                    'uuid': c_user.uuid,
+                    'username': user.username,
+                    'staff': user.groups.filter(name='Staff').exists(),
+                    'phone': None if c_user.phone == 0 else c_user.phone,
+                    'extra_data': social_user.extra_data
+                }
+                return Response(status=status.HTTP_200_OK, data=payload)
+        except:
+            pass
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'Bad request.'})
 
 
@@ -120,7 +129,6 @@ class GetUserUUIDbyID(APIView):
                     payload = {
                         'detail': 'This user does not have uuid yet.',
                         'uuid': None,
-                        # 'code': code
                     }
                     return Response(status=status.HTTP_200_OK, data=payload)
                 return Response(status=status.HTTP_200_OK, data={'uuid': custom_social_user.uuid})
@@ -231,13 +239,13 @@ class DeleteUser(APIView):
                 int_id = int(pk)
                 try:
                     user = User.objects.get(pk=int_id)
-                    # TODO delete avatar image
                     try:
                         path = 'static/web/avatars/avatar%s.jpg' % user.pk
                         os.remove(path)
                     except:
                         raise Exception
                     user.delete()
+                    logout(request)
                 except:
                     raise Exception
                 return Response(status=status.HTTP_200_OK, data={'detail': 'User deleted with success.'})

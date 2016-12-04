@@ -1,8 +1,8 @@
 
 {% extends "index.html" %}
-{% block head_title %} - Manage UUID{% endblock %}
+{% block head_title %} - Manage Phone{% endblock %}
 {% block content %}
-<h3>Manage my UUID</h3>
+<h3>Manage my Phone</h3>
 <div><br/>
   <div class="row">
     <div class="col-md-2 col-xs-12"></div>
@@ -16,19 +16,11 @@
   <div class="row">
     <div class="col-md-2 col-xs-12"></div>
     <div class="col-md-10 col-xs-12">
-      <h5>Add UUID manually</h5>
-      <form method="post" action="/accounts/manage/uuid/">
+      <h5>Add Phone manually</h5>
+      <form method="post" action="/accounts/manage/phone/">
         {% csrf_token %}
-        {{uuid_form.as_p}}
-        <!--p
-        label(for="uuid") UUID:
-        input(type="text", name="uuid", id="uuid", placeholder="UUID")
-        -->
-        <!--p
-        label(for="code_uuid") Code:
-        input(type="text", name="code_uuid", id="code_uuid", placeholder="Code for UUID")
-        -->
-        <button name="action_add_uuid" type="submit" class="btn btn-xs btn-toolbar">Add</button>
+        {{phone_form.as_p}}
+        <button name="action_add_phone" type="submit" class="btn btn-xs btn-toolbar">Add</button>
       </form>
     </div>
   </div>

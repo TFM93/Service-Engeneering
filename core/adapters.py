@@ -3,23 +3,23 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.socialaccount.models import SocialAccount
 from models import CustomSocialAccount
 from rest_framework.authtoken.models import Token
-from django.http import HttpResponse
+# from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import resolve_url
 from django.core import files
 import requests
 
 
-# Redirect to specific url after login
+# Redirect to specific url after login and logout
 class AccountAdapter(DefaultAccountAdapter):
     def get_login_redirect_url(self, request):
         token = Token.objects.get(user=request.user)
         # host = request.META['SERVER_NAME']
         if settings.SITE_URL == 'http://localhost:8000':
-            host_composer = settings.SITE_URL
+            host_to_go = settings.SITE_URL
         else:
-            host_composer = 'http://localhost/dashboardClient'
-        url = host_composer + '/?id=' + str(request.user.id) + '&token=' + str(token.key)
+            host_to_go = 'http://localhost/dashboardClient'
+        url = host_to_go + '/?id=' + str(request.user.id) + '&token=' + str(token.key)
         data = {'id': str(request.user.id), 'token': token.key}
 
         return resolve_url(url, data)

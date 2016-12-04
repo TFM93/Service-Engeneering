@@ -110,6 +110,8 @@ LOGIN_REDIRECT_URL = '/'
 
 LOGOUT_URL = "/accounts/logout/"
 
+LOGOUT_REDIRECT_URL = "http://localhost/dashboardClient"
+
 SOCIALACCOUNT_QUERY_EMAIL = True
 
 SOCIALACCOUNT_ADAPTER = 'core.adapters.SocialAccountAdapter'
@@ -185,7 +187,7 @@ SWAGGER_SETTINGS = {
     'DOC_EXPANSION': 'list',
 }
 
-# restframework pagination settings
+# restframework settings
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
@@ -199,6 +201,7 @@ REST_FRAMEWORK = {
 
     'DEFAULT_PERMISSION_CLASSES': (
         # 'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ),
 
     'DEFAULT_RENDERER_CLASSES': (

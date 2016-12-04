@@ -52,10 +52,9 @@
   </div>
 </div><br/>
 <div class="row">
-  <div class="col-md-12"><a href="/accounts/add/uuid/" class="btn btn-xs btn-success">Manage UUID manually</a></div>
-</div><br/>
-<div class="row">
-  <div class="col-md-12">
+  <div class="col-md-4 col-xs-12"><a href="/accounts/manage/uuid/" class="btn btn-xs btn-info">Manage UUID manually</a></div>
+  <div class="col-md-4"><a href="/accounts/manage/phone/" class="btn btn-xs btn-info">Manage my Phone</a></div>
+  <div class="col-md-4">
     <form method="post" action="/accounts/delete/">{% csrf_token %}
       <button name="delete_account" type="submit" onclick="confirmDelete();" class="btn btn-xs btn-danger">Delete Account</button>
     </form>

@@ -19,7 +19,7 @@ div
     .col-md-2.col-xs-12
     .col-md-10.col-xs-12
       h5 Add UUID manually
-      form(method='post', action="/accounts/add/uuid/")
+      form(method='post', action="/accounts/manage/uuid/")
         | {% csrf_token %}
         | {{uuid_form.as_p}}
         //p
