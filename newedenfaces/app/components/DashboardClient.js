@@ -15,9 +15,10 @@ class DashboardClient extends React.Component {
     DashboardClientStore.listen(this.onChange);
     DashboardClientActions.getLastTickets();
     DashboardClientActions.getMyTickets();
-    DashboardClientActions.getCredits();
+    DashboardClientActions.getCredits(location.search[4]);
+    DashboardClientActions.getUserDetails(location.search[4]);
     console.log(document.cookie);
-    console.log(this.props);
+    console.log(this.props)
     DashboardClientActions.logUser({ id: this.props.location.query.id, token: this.props.location.query.token });
 
   }
@@ -63,11 +64,11 @@ class DashboardClient extends React.Component {
       console.log("YA POIS AQQUQUQUQUQQ")
       DashboardClientActions.buyCredits({
         creditsToGet: creditsToGet,
-        user:this.state.user,        
+        user: this.state.user,
         history: this.props.history
       });
     }
-    else{
+    else {
       console.log("n pintou o if mpt")
     }
   }
@@ -136,6 +137,20 @@ class DashboardClient extends React.Component {
     return (
       <div className='container'>
 
+        <div className="row">
+          <div className="col-lg-4"></div>
+          <div className="col-lg-3">
+            <h3>Bem-vindo, {this.state.userDetails.name}!</h3>
+          </div>
+          <div className="col-lg-5">
+            <br/>
+            <a className="btn btn-danger" role="button" href='http://authservice-es-2016.herokuapp.com/accounts/logout/'>Logout</a>
+
+          </div>
+
+        </div>
+
+        <hr/>
 
         <div className="row">
           <div className="col-lg-12">
@@ -182,7 +197,7 @@ class DashboardClient extends React.Component {
         </div>
 
 
-
+        <hr/>
         <div className="row">
           <div className="col-lg-12">
             <div className="panel panel-info">

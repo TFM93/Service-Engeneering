@@ -10,6 +10,7 @@ class DashboardClientStore {
     this.user = { id: '', token: '', uuid: '' }
     this.credits = 0;
     this.creditsToGet = 0;
+    this.userDetails = {};
   }
 
   onLoginSuccess(usr) {
@@ -71,6 +72,17 @@ class DashboardClientStore {
   onTestFail(jqXhr) {
     toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
   }
+
+  onGetUserDetailsSuccess(data) {
+    this.userDetails = data.extra_data;
+    console.log(this.userDetails);
+  }
+
+  onGetUserDetailsFail(jqXhr) {
+    // Handle multiple response formats, fallback to HTTP status code number.
+    toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+  }
+
 
 
 

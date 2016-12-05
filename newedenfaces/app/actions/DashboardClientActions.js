@@ -15,8 +15,24 @@ class DashboardClientActions {
       'loginFail',
       'getCreditsSuccess',
       'getCreditsFail',
-      'updateCreditsToGet'
+      'updateCreditsToGet',
+      'getUserDetailsSuccess',
+      'getUserDetailsFail'
     );
+  }
+
+
+  getUserDetails(id) {
+    $.ajax({
+      type: 'GET',
+      url: '/auth/api/authentication/user/details/' + id + '/'
+    })
+      .done((data) => {
+        this.actions.getUserDetailsSuccess(data);
+      })
+      .fail((jqXhr) => {
+        this.actions.getUserDetailsFail(jqXhr);
+      });
   }
 
   test(type, nr) {
@@ -38,17 +54,19 @@ class DashboardClientActions {
     console.log("GET CREDITS")
     console.log(payload);
     //nots2.aws.atnog.av.it.pt
-    $.ajax({
-      url: 'https://esmickettodule.herokuapp.com/lastTickets',
-      //url: 'http://192.168.1.78/lastTickets',
-      type: 'get'
-    })
-      .done((data) => {
-        this.actions.getLastTicketsSuccess(data);
-      })
-      .fail((jqXhr) => {
-        this.actions.getLastTicketsFail(jqXhr);
-      });
+    //nots2.aws.atnog.av.it.pt/pay/1000/rui
+    window.location.replace("https://nots2.aws.atnog.av.it.pt/pay/"+ payload.creditsToGet * 100 +"/" + payload.user.id);
+    // $.ajax({
+    //   url: 'https://esmickettodule.herokuapp.com/lastTickets',
+    //   //url: 'http://192.168.1.78/lastTickets',
+    //   type: 'get'
+    // })
+    //   .done((data) => {
+    //     this.actions.getLastTicketsSuccess(data);
+    //   })
+    //   .fail((jqXhr) => {
+    //     this.actions.getLastTicketsFail(jqXhr);
+    //   });
 
   }
 
@@ -91,18 +109,20 @@ class DashboardClientActions {
 
   }
 
-  getCredits() {
-    this.actions.getCreditsSuccess(10);
-    //   $.ajax({
-    //     url: 'https://esmickettodule.herokuapp.com/everyQueue',
-    //     type: 'get'
-    //   })
-    //     .done((data) => {
-    //       this.actions.getMyTicketsSuccess(data);
-    //     })
-    //     .fail((jqXhr) => {
-    //       this.actions.getMyTicketsFail(jqXhr);
-    //     });
+  getCredits(id) {
+    //this.actions.getCreditsSuccess(10);
+    
+      $.ajax({
+        url: '/payment/api/get/'+id+ '/',
+        type: 'get'
+      })
+        .done((data) => {
+          console.log(data);
+          this.actions.getCreditsSuccess(data.credit_amt);
+        })
+        .fail((jqXhr) => {
+          this.actions.getMyTicketsFail(jqXhr);
+        });
   }
 
 

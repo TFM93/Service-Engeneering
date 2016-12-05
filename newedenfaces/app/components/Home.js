@@ -61,28 +61,13 @@ class Home extends React.Component {
       <div className='container'>
 
         <div className="row">
-          <div className="col-md-6 col-md-offset-3">
-            <div className="panel panel-login">
-              <div className="panel-heading">
-                <div className="row">
-                  <div className="col-xs-6">
-                    <a href="#" className="active" id="login-form-link">Login</a>
-                  </div>
-                  <div className="col-xs-6">
-                    <a href="#" id="register-form-link">Register</a>
-                  </div>
-                </div>
-                <hr />
-              </div>
-              <div className="panel-body">
-                <div className="row">
-                  <div className="col-lg-12">
-                    <a href="https://authservice-es-2016.heroku.com/accounts/login/">Autenticar</a>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="col-md-4 "></div>
+          <div className="col-md-4">
+            <center>
+              <a href="https://authservice-es-2016.heroku.com/accounts/login/" class="btn btn-primary btn-lg" role="buttton">Autenticar</a>
+            </center>
           </div>
+          <div className="col-md-4"></div>
         </div>
       </div>
     );

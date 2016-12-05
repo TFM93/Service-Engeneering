@@ -167,13 +167,27 @@ var DashboardClientActions = function () {
   function DashboardClientActions() {
     _classCallCheck(this, DashboardClientActions);
 
-    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'loginSuccess', 'loginFail', 'getCreditsSuccess', 'getCreditsFail', 'updateCreditsToGet');
+    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'loginSuccess', 'loginFail', 'getCreditsSuccess', 'getCreditsFail', 'updateCreditsToGet', 'getUserDetailsSuccess', 'getUserDetailsFail');
   }
 
   _createClass(DashboardClientActions, [{
+    key: 'getUserDetails',
+    value: function getUserDetails(id) {
+      var _this = this;
+
+      $.ajax({
+        type: 'GET',
+        url: '/auth/api/authentication/user/details/' + id + '/'
+      }).done(function (data) {
+        _this.actions.getUserDetailsSuccess(data);
+      }).fail(function (jqXhr) {
+        _this.actions.getUserDetailsFail(jqXhr);
+      });
+    }
+  }, {
     key: 'test',
     value: function test(type, nr) {
-      var _this = this;
+      var _this2 = this;
 
       console.log(nr + type);
       $.ajax({
@@ -181,28 +195,30 @@ var DashboardClientActions = function () {
         url: 'https://esmickettodule.herokuapp.com/client/cancelTicket',
         data: { "ticket": { "ticket_number": nr, "ticket_type": type } }
       }).done(function (data) {
-        _this.actions.testSuccess(data);
+        _this2.actions.testSuccess(data);
       }).fail(function (jqXhr) {
-        _this.actions.testFail(jqXhr);
+        _this2.actions.testFail(jqXhr);
       });
     }
   }, {
     key: 'buyCredits',
     value: function buyCredits(payload) {
-      var _this2 = this;
-
       console.log("GET CREDITS");
       console.log(payload);
       //nots2.aws.atnog.av.it.pt
-      $.ajax({
-        url: 'https://esmickettodule.herokuapp.com/lastTickets',
-        //url: 'http://192.168.1.78/lastTickets',
-        type: 'get'
-      }).done(function (data) {
-        _this2.actions.getLastTicketsSuccess(data);
-      }).fail(function (jqXhr) {
-        _this2.actions.getLastTicketsFail(jqXhr);
-      });
+      //nots2.aws.atnog.av.it.pt/pay/1000/rui
+      window.location.replace("https://nots2.aws.atnog.av.it.pt/pay/" + payload.creditsToGet * 100 + "/" + payload.user.id);
+      // $.ajax({
+      //   url: 'https://esmickettodule.herokuapp.com/lastTickets',
+      //   //url: 'http://192.168.1.78/lastTickets',
+      //   type: 'get'
+      // })
+      //   .done((data) => {
+      //     this.actions.getLastTicketsSuccess(data);
+      //   })
+      //   .fail((jqXhr) => {
+      //     this.actions.getLastTicketsFail(jqXhr);
+      //   });
     }
   }, {
     key: 'getLastTickets',
@@ -241,46 +257,48 @@ var DashboardClientActions = function () {
     }
   }, {
     key: 'getCredits',
-    value: function getCredits() {
-      this.actions.getCreditsSuccess(10);
-      //   $.ajax({
-      //     url: 'https://esmickettodule.herokuapp.com/everyQueue',
-      //     type: 'get'
-      //   })
-      //     .done((data) => {
-      //       this.actions.getMyTicketsSuccess(data);
-      //     })
-      //     .fail((jqXhr) => {
-      //       this.actions.getMyTicketsFail(jqXhr);
-      //     });
-    }
-  }, {
-    key: 'getMyTickets',
-    value: function getMyTickets() {
+    value: function getCredits(id) {
       var _this5 = this;
 
+      //this.actions.getCreditsSuccess(10);
+
       $.ajax({
-        url: 'https://esmickettodule.herokuapp.com/everyQueue',
+        url: '/payment/api/get/' + id + '/',
         type: 'get'
       }).done(function (data) {
-        _this5.actions.getMyTicketsSuccess(data);
+        console.log(data);
+        _this5.actions.getCreditsSuccess(data.credit_amt);
       }).fail(function (jqXhr) {
         _this5.actions.getMyTicketsFail(jqXhr);
       });
     }
   }, {
+    key: 'getMyTickets',
+    value: function getMyTickets() {
+      var _this6 = this;
+
+      $.ajax({
+        url: 'https://esmickettodule.herokuapp.com/everyQueue',
+        type: 'get'
+      }).done(function (data) {
+        _this6.actions.getMyTicketsSuccess(data);
+      }).fail(function (jqXhr) {
+        _this6.actions.getMyTicketsFail(jqXhr);
+      });
+    }
+  }, {
     key: 'report',
     value: function report(DashboardClientId) {
-      var _this6 = this;
+      var _this7 = this;
 
       $.ajax({
         type: 'POST',
         url: '/api/report',
         data: { DashboardClientId: DashboardClientId }
       }).done(function () {
-        _this6.actions.reportSuccess();
+        _this7.actions.reportSuccess();
       }).fail(function (jqXhr) {
-        _this6.actions.reportFail(jqXhr);
+        _this7.actions.reportFail(jqXhr);
       });
     }
   }]);
@@ -539,7 +557,7 @@ var NavbarActions = function () {
   function NavbarActions() {
     _classCallCheck(this, NavbarActions);
 
-    this.generateActions('updateOnlineUsers', 'updateAjaxAnimation', 'updateSearchQuery', 'getCharacterCountSuccess', 'getCharacterCountFail', 'findCharacterSuccess', 'findCharacterFail', 'getUserDetailsSuccess', 'getUserDetailsFail');
+    this.generateActions('updateOnlineUsers', 'updateAjaxAnimation', 'updateSearchQuery', 'getCharacterCountSuccess', 'getCharacterCountFail', 'findCharacterSuccess', 'findCharacterFail');
   }
 
   _createClass(NavbarActions, [{
@@ -558,28 +576,14 @@ var NavbarActions = function () {
       });
     }
   }, {
-    key: 'getUserDetails',
-    value: function getUserDetails(id) {
-      var _this2 = this;
-
-      $.ajax({
-        type: 'GET',
-        url: '/auth/api/authentication/user/details/' + id + '/'
-      }).done(function (data) {
-        _this2.actions.getUserDetailsSuccess(data);
-      }).fail(function (jqXhr) {
-        _this2.actions.getUserDetailsFail(jqXhr);
-      });
-    }
-  }, {
     key: 'getCharacterCount',
     value: function getCharacterCount() {
-      var _this3 = this;
+      var _this2 = this;
 
       $.ajax({ url: '/api/characters/count' }).done(function (data) {
-        _this3.actions.getCharacterCountSuccess(data);
+        _this2.actions.getCharacterCountSuccess(data);
       }).fail(function (jqXhr) {
-        _this3.actions.getCharacterCountFail(jqXhr);
+        _this2.actions.getCharacterCountFail(jqXhr);
       });
     }
   }]);
@@ -1063,7 +1067,8 @@ var DashboardClient = function (_React$Component) {
       _DashboardClientStore2.default.listen(this.onChange);
       _DashboardClientActions2.default.getLastTickets();
       _DashboardClientActions2.default.getMyTickets();
-      _DashboardClientActions2.default.getCredits();
+      _DashboardClientActions2.default.getCredits(location.search[4]);
+      _DashboardClientActions2.default.getUserDetails(location.search[4]);
       console.log(document.cookie);
       console.log(this.props);
       _DashboardClientActions2.default.logUser({ id: this.props.location.query.id, token: this.props.location.query.token });
@@ -1221,6 +1226,33 @@ var DashboardClient = function (_React$Component) {
         _react2.default.createElement(
           'div',
           { className: 'row' },
+          _react2.default.createElement('div', { className: 'col-lg-4' }),
+          _react2.default.createElement(
+            'div',
+            { className: 'col-lg-3' },
+            _react2.default.createElement(
+              'h3',
+              null,
+              'Bem-vindo, ',
+              this.state.userDetails.name,
+              '!'
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'col-lg-5' },
+            _react2.default.createElement('br', null),
+            _react2.default.createElement(
+              'a',
+              { className: 'btn btn-danger', role: 'button', href: 'http://authservice-es-2016.herokuapp.com/accounts/logout/' },
+              'Logout'
+            )
+          )
+        ),
+        _react2.default.createElement('hr', null),
+        _react2.default.createElement(
+          'div',
+          { className: 'row' },
           _react2.default.createElement(
             'div',
             { className: 'col-lg-12' },
@@ -1316,6 +1348,7 @@ var DashboardClient = function (_React$Component) {
             )
           )
         ),
+        _react2.default.createElement('hr', null),
         _react2.default.createElement(
           'div',
           { className: 'row' },
@@ -1908,58 +1941,21 @@ var Home = function (_React$Component) {
         _react2.default.createElement(
           'div',
           { className: 'row' },
+          _react2.default.createElement('div', { className: 'col-md-4 ' }),
           _react2.default.createElement(
             'div',
-            { className: 'col-md-6 col-md-offset-3' },
+            { className: 'col-md-4' },
             _react2.default.createElement(
-              'div',
-              { className: 'panel panel-login' },
+              'center',
+              null,
               _react2.default.createElement(
-                'div',
-                { className: 'panel-heading' },
-                _react2.default.createElement(
-                  'div',
-                  { className: 'row' },
-                  _react2.default.createElement(
-                    'div',
-                    { className: 'col-xs-6' },
-                    _react2.default.createElement(
-                      'a',
-                      { href: '#', className: 'active', id: 'login-form-link' },
-                      'Login'
-                    )
-                  ),
-                  _react2.default.createElement(
-                    'div',
-                    { className: 'col-xs-6' },
-                    _react2.default.createElement(
-                      'a',
-                      { href: '#', id: 'register-form-link' },
-                      'Register'
-                    )
-                  )
-                ),
-                _react2.default.createElement('hr', null)
-              ),
-              _react2.default.createElement(
-                'div',
-                { className: 'panel-body' },
-                _react2.default.createElement(
-                  'div',
-                  { className: 'row' },
-                  _react2.default.createElement(
-                    'div',
-                    { className: 'col-lg-12' },
-                    _react2.default.createElement(
-                      'a',
-                      { href: 'https://authservice-es-2016.heroku.com/accounts/login/' },
-                      'Autenticar'
-                    )
-                  )
-                )
+                'a',
+                { href: 'https://authservice-es-2016.heroku.com/accounts/login/', 'class': 'btn btn-primary btn-lg', role: 'buttton' },
+                'Autenticar'
               )
             )
-          )
+          ),
+          _react2.default.createElement('div', { className: 'col-md-4' })
         )
       );
     }
@@ -2088,7 +2084,6 @@ var Navbar = function (_React$Component) {
 
       // location.search[4] = id no url
       console.log(location.search[4]);
-      _NavbarActions2.default.getUserDetails(location.search[4]);
     }
   }, {
     key: 'componentWillUnmount',
@@ -2118,6 +2113,7 @@ var Navbar = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
+
       return _react2.default.createElement(
         'nav',
         { className: 'navbar navbar-default navbar-static-top' },
@@ -2157,56 +2153,6 @@ var Navbar = function (_React$Component) {
               'span',
               { className: 'badge badge-up badge-danger' },
               this.state.onlineUsers
-            )
-          )
-        ),
-        _react2.default.createElement(
-          'div',
-          { id: 'navbar', className: 'navbar-collapse collapse' },
-          _react2.default.createElement(
-            'ul',
-            { className: 'nav navbar-nav' },
-            _react2.default.createElement(
-              'li',
-              null,
-              _react2.default.createElement(
-                _reactRouter.Link,
-                { to: '/' },
-                'Home'
-              )
-            ),
-            _react2.default.createElement(
-              'li',
-              null,
-              _react2.default.createElement(
-                _reactRouter.Link,
-                { to: '/stats' },
-                'Stats'
-              )
-            )
-          ),
-          _react2.default.createElement(
-            'ul',
-            { className: 'nav navbar-nav', style: { float: 'right' } },
-            _react2.default.createElement(
-              'li',
-              null,
-              _react2.default.createElement(
-                'a',
-                null,
-                'Bem-vindo, ',
-                this.state.userDetails.name,
-                ' !'
-              )
-            ),
-            _react2.default.createElement(
-              'li',
-              null,
-              _react2.default.createElement(
-                'a',
-                { className: 'btn btn-danger', role: 'button', href: 'http://google.pt' },
-                'Logout'
-              )
             )
           )
         )
@@ -2496,6 +2442,7 @@ var DashboardClientStore = function () {
     this.user = { id: '', token: '', uuid: '' };
     this.credits = 0;
     this.creditsToGet = 0;
+    this.userDetails = {};
   }
 
   _createClass(DashboardClientStore, [{
@@ -2561,6 +2508,18 @@ var DashboardClientStore = function () {
   }, {
     key: 'onTestFail',
     value: function onTestFail(jqXhr) {
+      toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+    }
+  }, {
+    key: 'onGetUserDetailsSuccess',
+    value: function onGetUserDetailsSuccess(data) {
+      this.userDetails = data.extra_data;
+      console.log(this.userDetails);
+    }
+  }, {
+    key: 'onGetUserDetailsFail',
+    value: function onGetUserDetailsFail(jqXhr) {
+      // Handle multiple response formats, fallback to HTTP status code number.
       toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
     }
   }]);
@@ -2804,22 +2763,9 @@ var NavbarStore = function () {
     this.onlineUsers = 0;
     this.searchQuery = '';
     this.ajaxAnimationClass = '';
-    this.userDetails = {};
   }
 
   _createClass(NavbarStore, [{
-    key: 'onGetUserDetailsSuccess',
-    value: function onGetUserDetailsSuccess(data) {
-      this.userDetails = data;
-      console.log(this.userDetails);
-    }
-  }, {
-    key: 'onGetUserDetailsFail',
-    value: function onGetUserDetailsFail(jqXhr) {
-      // Handle multiple response formats, fallback to HTTP status code number.
-      toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
-    }
-  }, {
     key: 'onFindCharacterSuccess',
     value: function onFindCharacterSuccess(payload) {
       payload.history.pushState(null, '/characters/' + payload.characterId);

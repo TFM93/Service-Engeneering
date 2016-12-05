@@ -33,7 +33,7 @@ class Navbar extends React.Component {
 
     // location.search[4] = id no url
     console.log(location.search[4]);
-    NavbarActions.getUserDetails(location.search[4]);
+    
 
 
   }
@@ -60,7 +60,12 @@ class Navbar extends React.Component {
     }
   }
 
+  
+
   render() {
+
+  
+
     return (
       <nav className='navbar navbar-default navbar-static-top'>
         <div className='navbar-header'>
@@ -85,20 +90,6 @@ class Navbar extends React.Component {
             SmartTicket
             <span className='badge badge-up badge-danger'>{this.state.onlineUsers}</span>
           </Link>
-        </div>
-        <div id='navbar' className='navbar-collapse collapse'>
-          <ul className='nav navbar-nav'>
-            <li><Link to='/'>Home</Link></li>
-            <li><Link to='/stats'>Stats</Link></li>
-          </ul>
-
-          <ul className='nav navbar-nav' style={{float: 'right'}}>
-            <li><a>Bem-vindo, {this.state.userDetails.name} !</a></li>
-            <li><a className="btn btn-danger" role="button" href='http://google.pt'>Logout</a></li>
-
-          </ul>
-
-
         </div>
       </nav>
     );

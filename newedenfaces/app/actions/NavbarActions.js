@@ -10,9 +10,8 @@ class NavbarActions {
       'getCharacterCountSuccess',
       'getCharacterCountFail',
       'findCharacterSuccess',
-      'findCharacterFail',
-      'getUserDetailsSuccess',
-      'getUserDetailsFail'
+      'findCharacterFail'
+
     );
   }
 
@@ -30,18 +29,7 @@ class NavbarActions {
       });
   }
 
-  getUserDetails(id) {
-    $.ajax({
-      type: 'GET',
-      url: '/auth/api/authentication/user/details/' + id + '/'
-    })
-      .done((data) => {
-        this.actions.getUserDetailsSuccess(data);
-      })
-      .fail((jqXhr) => {
-        this.actions.getUserDetailsFail(jqXhr);
-      });
-  }
+
 
   getCharacterCount() {
     $.ajax({ url: '/api/characters/count' })
