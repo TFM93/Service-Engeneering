@@ -109,7 +109,7 @@ def manage_uuid(request):
                                 c_user.uuid = res_uuid
                                 c_user.save()
                                 class_name = 'alert-success'
-                                msg = 'UUID %s added with success to your account.' % form_uuid
+                                msg = 'UUID %s added with success to your account.' % res_uuid
                         else:  # uuid does not exists
                             msg = 'Invalid Code, do you know what you\'re doing?'
             else:
