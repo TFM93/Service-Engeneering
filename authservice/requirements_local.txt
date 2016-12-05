@@ -13,7 +13,5 @@ requests-oauthlib==0.7.0
 simplejson==3.9.0
 uritemplate==3.0.0
 Pillow==3.4.2
-
 gunicorn==19.6.0
 whitenoise==3.2.2
-psycopg2==2.5.4

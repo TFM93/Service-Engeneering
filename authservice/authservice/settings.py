@@ -12,8 +12,10 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +27,7 @@ SECRET_KEY = 'g7ibe***8#ze7fh&avq#zk!j630h!wb-p5_tf-do@i1na%d_0#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,8 +43,9 @@ INSTALLED_APPS = (
     # Rest Framework and Swagger
     'rest_framework',
     'rest_framework_swagger',
+    'rest_framework.authtoken',
 
-    # Apps
+    # My Apps
     'core',
     'api',
 
@@ -59,7 +62,8 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.linkedin',
 )
 
-SITE_ID = 2
+SITE_ID = 3
+SITE_URL = 'https://authservice-es-2016.herokuapp.com'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -104,7 +108,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # auth and allauth settings
 LOGIN_REDIRECT_URL = '/'
 
+LOGOUT_URL = "/accounts/logout/"
+
+LOGOUT_REDIRECT_URL = "http://localhost/"
+
 SOCIALACCOUNT_QUERY_EMAIL = True
+
+SOCIALACCOUNT_ADAPTER = 'core.adapters.SocialAccountAdapter'
+
+ACCOUNT_ADAPTER = 'core.adapters.AccountAdapter'
 
 ACCOUNT_USERNAME_REQUIRED = False
 
@@ -136,24 +148,31 @@ DATABASES = {
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
+# Update database configuration with $DATABASE_URL.
+db_from_env = dj_database_url.config()
+DATABASES['default'].update(db_from_env)
+
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+# Simplified static file serving.
+# https://warehouse.python.org/project/whitenoise/
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # Swagger settings
 SWAGGER_SETTINGS = {
@@ -168,12 +187,29 @@ SWAGGER_SETTINGS = {
     'DOC_EXPANSION': 'list',
 }
 
-# restframework pagination settings
+# restframework settings
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
 
     'VIEW_DESCRIPTION_FUNCTION': 'rest_framework_swagger.views.get_restructuredtext',
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+
+    'DEFAULT_PERMISSION_CLASSES': (
+        # 'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ),
+
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    )
 }
 
 # Social Account Providers Configs
@@ -215,3 +251,8 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 
 }
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass

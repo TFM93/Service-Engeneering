@@ -32,11 +32,13 @@ html(lang="en")
             li
               a(href='/') Home
             li
-              a(href='http://localhost:8000/api/docs/') API Specification
+              a(href='{{ SITE_URL }}/api/docs/') API Specification
             li
               a(href="/about") About
           ul.nav.navbar-nav.navbar-right
             | {% if user.is_authenticated %}
+            li
+              img.img-thumbnail.img-responsive(src="{% static 'web/avatars/avatar' %}{{user.pk}}.jpg", width='42px', style='margin-top:10px;')
             li
               a(href="{% url 'account_email' %}" title="Manage your account") My Account
             li
@@ -64,14 +66,15 @@ html(lang="en")
               .col-md-1.col-xs-12
               .col-md-8.col-xs-12
                 | {% if user.is_authenticated %}
-                .alert.alert-dismissible.alert-success.text-center
+                .alert.alert-dismissible.alert-success.text-center(class="{{className}}")
                   h5
-                    strong(style="color:white;") You're successfully signed in.
+                    | {% if not hasMessage %}
+                    strong(style="color:white;") Welcome {{user.first_name}}
+                    | {% else %}
+                    span(style="color:white;") {{message}}
+                    | {% endif %}
                 | {% else %}
-                //a(href="{% url 'account_login' %}")
-                  .alert.alert-dismissible.alert-info.text-center
-                    h5
-                      strong(style="color:white;") Login with different services in one place!!
+                h5 Service Engineering class of MIECT @ UA 2016
                 | {% endif %}
               .col-md-3.col-xs-12
             //.row
