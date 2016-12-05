@@ -11,13 +11,32 @@ class DashboardClientStore {
     this.credits = 0;
     this.creditsToGet = 0;
     this.userDetails = {};
+    this.jump = 0;
+    this.jumpType = '';
   }
+
+
+
+  onUpdateJumpType(event) {
+    this.jumpType = event.target.value;
+  }
+
+  onJumpSuccess(data) {
+    console.log(data);
+  }
+
+
 
   onLoginSuccess(usr) {
     this.user.id = usr.id;
     this.user.uuid = usr.uuid;
     console.log("apos login")
     console.log(this.user)
+  }
+
+  onJumpFail(jqXhr) {
+    // Handle multiple response formats, fallback to HTTP status code number.
+    toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
   }
 
 
@@ -28,6 +47,9 @@ class DashboardClientStore {
   }
 
 
+  onUpdateJump(event) {
+    this.jump = event.target.value;
+  }
 
   onUpdateCreditsToGet(event) {
     this.creditsToGet = event.target.value;

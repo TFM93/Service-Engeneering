@@ -17,8 +17,29 @@ class DashboardClientActions {
       'getCreditsFail',
       'updateCreditsToGet',
       'getUserDetailsSuccess',
-      'getUserDetailsFail'
+      'getUserDetailsFail',
+      'updateJump',
+      'updateJumpType',
+      'jumpSuccess',
+      'jumpFail'
     );
+  }
+
+  jump(payload) {
+    console.log(payload);
+    $.ajax({
+      type: 'POST',
+      url: 'https://esmickettodule.herokuapp.com/client/jumpInQueue',
+      data: { "ticket_type": payload.jumpType, "ticket_uuid": payload.user.uuid,"number_of_jumps": payload.jump}
+    })
+      .done((data) => {
+        this.actions.jumpSuccess(data);
+      })
+      .fail((jqXhr) => {
+        this.actions.jumpFail(jqXhr);
+      });
+
+
   }
 
 
@@ -55,7 +76,7 @@ class DashboardClientActions {
     console.log(payload);
     //nots2.aws.atnog.av.it.pt
     //nots2.aws.atnog.av.it.pt/pay/1000/rui
-    window.location.replace("https://nots2.aws.atnog.av.it.pt/pay/"+ payload.creditsToGet * 100 +"/" + payload.user.id);
+    window.location.replace("https://nots2.aws.atnog.av.it.pt/pay/" + payload.creditsToGet * 100 + "/" + payload.user.id);
     // $.ajax({
     //   url: 'https://esmickettodule.herokuapp.com/lastTickets',
     //   //url: 'http://192.168.1.78/lastTickets',
@@ -111,18 +132,18 @@ class DashboardClientActions {
 
   getCredits(id) {
     //this.actions.getCreditsSuccess(10);
-    
-      $.ajax({
-        url: '/payment/api/get/'+id+ '/',
-        type: 'get'
+
+    $.ajax({
+      url: '/payment/api/get/' + id + '/',
+      type: 'get'
+    })
+      .done((data) => {
+        console.log(data);
+        this.actions.getCreditsSuccess(data.credit_amt);
       })
-        .done((data) => {
-          console.log(data);
-          this.actions.getCreditsSuccess(data.credit_amt);
-        })
-        .fail((jqXhr) => {
-          this.actions.getMyTicketsFail(jqXhr);
-        });
+      .fail((jqXhr) => {
+        this.actions.getMyTicketsFail(jqXhr);
+      });
   }
 
 

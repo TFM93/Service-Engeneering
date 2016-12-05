@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import HomeStore from '../stores/HomeStore'
 import HomeActions from '../actions/HomeActions';
 import { first, without, findWhere } from 'underscore';
-import AuthService from '../AuthService'
+//import AuthService from '../AuthService'
 
 
 
@@ -17,7 +17,7 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    AuthService.login();
+    //AuthService.login();
     HomeStore.listen(this.onChange);
     HomeActions.getTwoCharacters();
     $("#login-form").delay(100).fadeIn(100);
@@ -63,8 +63,10 @@ class Home extends React.Component {
         <div className="row">
           <div className="col-md-4 "></div>
           <div className="col-md-4">
-            <center>
-              <a href="https://authservice-es-2016.heroku.com/accounts/login/" class="btn btn-primary btn-lg" role="buttton">Autenticar</a>
+            <center>          
+            <br/>
+            <br/>
+              <a href="https://authservice-es-2016.heroku.com/accounts/login/" className="btn btn-success btn-block" role="buttton">Autenticar</a>
             </center>
           </div>
           <div className="col-md-4"></div>

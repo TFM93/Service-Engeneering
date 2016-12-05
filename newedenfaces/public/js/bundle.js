@@ -1,49 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var AuthService = function () {
-    function AuthService() {
-        _classCallCheck(this, AuthService);
-    }
-
-    _createClass(AuthService, [{
-        key: "login",
-        value: function login() {
-            // We call the server to log the user in.
-            console.log("dfs");
-            // return when(request({
-            //     url: 'http://localhost:3001/sessions/create',
-            //     method: 'POST',
-            //     crossOrigin: true,
-            //     type: 'json',
-            //     data: {
-            //         username, password
-            //     }
-            // }))
-            //     .then(function (response) {
-            //         // We get a JWT back.
-            //         let jwt = response.id_token;
-            //         // We trigger the LoginAction with that JWT.
-            //         LoginActions.loginUser(jwt);
-            //         return true;
-            //     });
-        }
-    }]);
-
-    return AuthService;
-}();
-
-exports.default = new AuthService();
-
-},{}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -89,7 +44,7 @@ var AddCharacterActions = function () {
 
 exports.default = _alt2.default.createActions(AddCharacterActions);
 
-},{"../alt":9}],3:[function(require,module,exports){
+},{"../alt":8}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -146,7 +101,7 @@ var CharacterActions = function () {
 
 exports.default = _alt2.default.createActions(CharacterActions);
 
-},{"../alt":9}],4:[function(require,module,exports){
+},{"../alt":8}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -167,27 +122,43 @@ var DashboardClientActions = function () {
   function DashboardClientActions() {
     _classCallCheck(this, DashboardClientActions);
 
-    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'loginSuccess', 'loginFail', 'getCreditsSuccess', 'getCreditsFail', 'updateCreditsToGet', 'getUserDetailsSuccess', 'getUserDetailsFail');
+    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'loginSuccess', 'loginFail', 'getCreditsSuccess', 'getCreditsFail', 'updateCreditsToGet', 'getUserDetailsSuccess', 'getUserDetailsFail', 'updateJump', 'updateJumpType', 'jumpSuccess', 'jumpFail');
   }
 
   _createClass(DashboardClientActions, [{
+    key: 'jump',
+    value: function jump(payload) {
+      var _this = this;
+
+      console.log(payload);
+      $.ajax({
+        type: 'POST',
+        url: 'https://esmickettodule.herokuapp.com/client/jumpInQueue',
+        data: { "ticket_type": payload.jumpType, "ticket_uuid": payload.user.uuid, "number_of_jumps": payload.jump }
+      }).done(function (data) {
+        _this.actions.jumpSuccess(data);
+      }).fail(function (jqXhr) {
+        _this.actions.jumpFail(jqXhr);
+      });
+    }
+  }, {
     key: 'getUserDetails',
     value: function getUserDetails(id) {
-      var _this = this;
+      var _this2 = this;
 
       $.ajax({
         type: 'GET',
         url: '/auth/api/authentication/user/details/' + id + '/'
       }).done(function (data) {
-        _this.actions.getUserDetailsSuccess(data);
+        _this2.actions.getUserDetailsSuccess(data);
       }).fail(function (jqXhr) {
-        _this.actions.getUserDetailsFail(jqXhr);
+        _this2.actions.getUserDetailsFail(jqXhr);
       });
     }
   }, {
     key: 'test',
     value: function test(type, nr) {
-      var _this2 = this;
+      var _this3 = this;
 
       console.log(nr + type);
       $.ajax({
@@ -195,9 +166,9 @@ var DashboardClientActions = function () {
         url: 'https://esmickettodule.herokuapp.com/client/cancelTicket',
         data: { "ticket": { "ticket_number": nr, "ticket_type": type } }
       }).done(function (data) {
-        _this2.actions.testSuccess(data);
+        _this3.actions.testSuccess(data);
       }).fail(function (jqXhr) {
-        _this2.actions.testFail(jqXhr);
+        _this3.actions.testFail(jqXhr);
       });
     }
   }, {
@@ -223,22 +194,22 @@ var DashboardClientActions = function () {
   }, {
     key: 'getLastTickets',
     value: function getLastTickets() {
-      var _this3 = this;
+      var _this4 = this;
 
       $.ajax({
         url: 'https://esmickettodule.herokuapp.com/lastTickets',
         //url: 'http://192.168.1.78/lastTickets',
         type: 'get'
       }).done(function (data) {
-        _this3.actions.getLastTicketsSuccess(data);
+        _this4.actions.getLastTicketsSuccess(data);
       }).fail(function (jqXhr) {
-        _this3.actions.getLastTicketsFail(jqXhr);
+        _this4.actions.getLastTicketsFail(jqXhr);
       });
     }
   }, {
     key: 'logUser',
     value: function logUser(usr) {
-      var _this4 = this;
+      var _this5 = this;
 
       //this.actions.login({id:usr.id, token:usr.token});
       $.ajax({
@@ -247,9 +218,9 @@ var DashboardClientActions = function () {
         headers: { 'Authorization': 'Token ' + usr.token }
       }).done(function (data) {
         usr.uuid = data.uuid;
-        _this4.actions.loginSuccess(usr);
+        _this5.actions.loginSuccess(usr);
       }).fail(function (jqXhr) {
-        _this4.actions.loginFail(jqXhr);
+        _this5.actions.loginFail(jqXhr);
       });
       // url = 'http://authservice-es-2016.herokuapp.com/api/authentication/user/uuid/4/'
       // res = requests.get(url, auth=('admin', 'ad.test.min.es'))
@@ -258,7 +229,7 @@ var DashboardClientActions = function () {
   }, {
     key: 'getCredits',
     value: function getCredits(id) {
-      var _this5 = this;
+      var _this6 = this;
 
       //this.actions.getCreditsSuccess(10);
 
@@ -267,38 +238,38 @@ var DashboardClientActions = function () {
         type: 'get'
       }).done(function (data) {
         console.log(data);
-        _this5.actions.getCreditsSuccess(data.credit_amt);
-      }).fail(function (jqXhr) {
-        _this5.actions.getMyTicketsFail(jqXhr);
-      });
-    }
-  }, {
-    key: 'getMyTickets',
-    value: function getMyTickets() {
-      var _this6 = this;
-
-      $.ajax({
-        url: 'https://esmickettodule.herokuapp.com/everyQueue',
-        type: 'get'
-      }).done(function (data) {
-        _this6.actions.getMyTicketsSuccess(data);
+        _this6.actions.getCreditsSuccess(data.credit_amt);
       }).fail(function (jqXhr) {
         _this6.actions.getMyTicketsFail(jqXhr);
       });
     }
   }, {
+    key: 'getMyTickets',
+    value: function getMyTickets() {
+      var _this7 = this;
+
+      $.ajax({
+        url: 'https://esmickettodule.herokuapp.com/everyQueue',
+        type: 'get'
+      }).done(function (data) {
+        _this7.actions.getMyTicketsSuccess(data);
+      }).fail(function (jqXhr) {
+        _this7.actions.getMyTicketsFail(jqXhr);
+      });
+    }
+  }, {
     key: 'report',
     value: function report(DashboardClientId) {
-      var _this7 = this;
+      var _this8 = this;
 
       $.ajax({
         type: 'POST',
         url: '/api/report',
         data: { DashboardClientId: DashboardClientId }
       }).done(function () {
-        _this7.actions.reportSuccess();
+        _this8.actions.reportSuccess();
       }).fail(function (jqXhr) {
-        _this7.actions.reportFail(jqXhr);
+        _this8.actions.reportFail(jqXhr);
       });
     }
   }]);
@@ -308,7 +279,7 @@ var DashboardClientActions = function () {
 
 exports.default = _alt2.default.createActions(DashboardClientActions);
 
-},{"../alt":9}],5:[function(require,module,exports){
+},{"../alt":8}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -435,7 +406,7 @@ var DashboardEmployeeActions = function () {
 
 exports.default = _alt2.default.createActions(DashboardEmployeeActions);
 
-},{"../alt":9}],6:[function(require,module,exports){
+},{"../alt":8}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -477,7 +448,7 @@ var FooterActions = function () {
 
 exports.default = _alt2.default.createActions(FooterActions);
 
-},{"../alt":9}],7:[function(require,module,exports){
+},{"../alt":8}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -534,7 +505,7 @@ var HomeActions = function () {
 
 exports.default = _alt2.default.createActions(HomeActions);
 
-},{"../alt":9}],8:[function(require,module,exports){
+},{"../alt":8}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -593,7 +564,7 @@ var NavbarActions = function () {
 
 exports.default = _alt2.default.createActions(NavbarActions);
 
-},{"../alt":9,"underscore":"underscore"}],9:[function(require,module,exports){
+},{"../alt":8,"underscore":"underscore"}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -608,7 +579,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = new _alt2.default();
 
-},{"alt":"alt"}],10:[function(require,module,exports){
+},{"alt":"alt"}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -773,7 +744,7 @@ var AddCharacter = function (_React$Component) {
 
 exports.default = AddCharacter;
 
-},{"../actions/AddCharacterActions":2,"../stores/AddCharacterStore":20,"react":"react"}],11:[function(require,module,exports){
+},{"../actions/AddCharacterActions":1,"../stores/AddCharacterStore":19,"react":"react"}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -829,7 +800,7 @@ var App = function (_React$Component) {
 
 exports.default = App;
 
-},{"./Footer":15,"./Navbar":17,"react":"react"}],12:[function(require,module,exports){
+},{"./Footer":14,"./Navbar":16,"react":"react"}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1019,7 +990,7 @@ var Character = function (_React$Component) {
 
 exports.default = Character;
 
-},{"../actions/CharacterActions":3,"../stores/CharacterStore":21,"react":"react"}],13:[function(require,module,exports){
+},{"../actions/CharacterActions":2,"../stores/CharacterStore":20,"react":"react"}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1124,6 +1095,26 @@ var DashboardClient = function (_React$Component) {
       }
     }
   }, {
+    key: 'handleJumpSubmit',
+    value: function handleJumpSubmit(event) {
+      event.preventDefault();
+      console.log("CHEGA AKI MPS");
+      console.log(this.state.jump);
+      var jump = this.state.jump;
+
+      if (jump) {
+        console.log("YA POIS AQQUQUQUQUQQ");
+        _DashboardClientActions2.default.jump({
+          jump: jump,
+          jumpType: this.state.jumpType,
+          user: this.state.user,
+          history: this.props.history
+        });
+      } else {
+        console.log("n pintou o if mpt");
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
@@ -1213,6 +1204,28 @@ var DashboardClient = function (_React$Component) {
                   'button',
                   { onClick: _DashboardClientActions2.default.test.bind(_this2, ticket['type'], ticket.queue[i]['ticket_number']), className: 'btn btn-danger' },
                   'Cancelar Senha'
+                )
+              ),
+              _react2.default.createElement(
+                'center',
+                null,
+                _react2.default.createElement(
+                  'form',
+                  { className: 'form-inline', onSubmit: _this2.handleJumpSubmit.bind(_this2) },
+                  _react2.default.createElement(
+                    'div',
+                    { className: 'input-group' },
+                    _react2.default.createElement('input', { type: 'number', className: 'form-control', placeholder: 'Nr de cr\xE9ditos a obter', value: _this2.state.jump, onChange: _DashboardClientActions2.default.updateJump }),
+                    _react2.default.createElement(
+                      'span',
+                      { className: 'input-group-btn' },
+                      _react2.default.createElement(
+                        'button',
+                        { type: 'submit', className: 'btn btn-primary', 'data-toggle': 'tooltip', title: 'Ser\xE1 reencaminhado para a p\xE1gina de pagamentos' },
+                        'Receber cr\xE9ditos'
+                      )
+                    )
+                  )
                 )
               )
             );
@@ -1379,6 +1392,7 @@ var DashboardClient = function (_React$Component) {
             )
           )
         ),
+        _react2.default.createElement('hr', null),
         _react2.default.createElement(
           'div',
           { className: 'row' },
@@ -1405,6 +1419,49 @@ var DashboardClient = function (_React$Component) {
                   { className: 'row' },
                   myTickets
                 )
+              )
+            )
+          )
+        ),
+        _react2.default.createElement('hr', null),
+        _react2.default.createElement(
+          'div',
+          { className: 'row' },
+          _react2.default.createElement(
+            'div',
+            { className: 'col-lg-12' },
+            _react2.default.createElement(
+              'h3',
+              null,
+              'Avan\xE7ar lugares numa fila (1 cr\xE9dito por lugar)'
+            ),
+            _react2.default.createElement(
+              'form',
+              { className: 'form-inline', onSubmit: this.handleJumpSubmit.bind(this) },
+              _react2.default.createElement(
+                'div',
+                { className: 'form-group' },
+                _react2.default.createElement(
+                  'label',
+                  { 'for': 'formGroupExampleInput' },
+                  'Example label'
+                ),
+                _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'formGroupExampleInput', placeholder: 'Nome da fila', value: this.state.jumpType, onChange: _DashboardClientActions2.default.updateJumpType })
+              ),
+              _react2.default.createElement(
+                'div',
+                { className: 'form-group' },
+                _react2.default.createElement(
+                  'label',
+                  { 'for': 'formGroupExampleInput2' },
+                  'Another label'
+                ),
+                _react2.default.createElement('input', { type: 'number', className: 'form-control', id: 'formGroupExampleInput2', placeholder: 'Numero de  lugares a saltar', value: this.state.jump, onChange: _DashboardClientActions2.default.updateJump })
+              ),
+              _react2.default.createElement(
+                'button',
+                { type: 'submit', className: 'btn btn-primary' },
+                'Saltar lugares'
               )
             )
           )
@@ -1445,7 +1502,7 @@ exports.default = DashboardClient;
 
 // </form>
 
-},{"../actions/DashboardClientActions":4,"../stores/DashboardClientStore":22,"react":"react"}],14:[function(require,module,exports){
+},{"../actions/DashboardClientActions":3,"../stores/DashboardClientStore":21,"react":"react"}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1702,7 +1759,7 @@ exports.default = DashboardEmployee;
 //   </div>
 // </div>
 
-},{"../actions/DashboardEmployeeActions":5,"../stores/DashboardEmployeeStore":23,"react":"react"}],15:[function(require,module,exports){
+},{"../actions/DashboardEmployeeActions":4,"../stores/DashboardEmployeeStore":22,"react":"react"}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1839,7 +1896,7 @@ var Footer = function (_React$Component) {
 
 exports.default = Footer;
 
-},{"../actions/FooterActions":6,"../stores/FooterStore":24,"react":"react","react-router":"react-router"}],16:[function(require,module,exports){
+},{"../actions/FooterActions":5,"../stores/FooterStore":23,"react":"react","react-router":"react-router"}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1864,10 +1921,6 @@ var _HomeActions2 = _interopRequireDefault(_HomeActions);
 
 var _underscore = require('underscore');
 
-var _AuthService = require('../AuthService');
-
-var _AuthService2 = _interopRequireDefault(_AuthService);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1875,6 +1928,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+//import AuthService from '../AuthService'
+
 
 var Home = function (_React$Component) {
   _inherits(Home, _React$Component);
@@ -1892,7 +1948,7 @@ var Home = function (_React$Component) {
   _createClass(Home, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      _AuthService2.default.login();
+      //AuthService.login();
       _HomeStore2.default.listen(this.onChange);
       _HomeActions2.default.getTwoCharacters();
       $("#login-form").delay(100).fadeIn(100);
@@ -1948,9 +2004,11 @@ var Home = function (_React$Component) {
             _react2.default.createElement(
               'center',
               null,
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('br', null),
               _react2.default.createElement(
                 'a',
-                { href: 'https://authservice-es-2016.heroku.com/accounts/login/', 'class': 'btn btn-primary btn-lg', role: 'buttton' },
+                { href: 'https://authservice-es-2016.heroku.com/accounts/login/', className: 'btn btn-success btn-block', role: 'buttton' },
                 'Autenticar'
               )
             )
@@ -2016,7 +2074,7 @@ exports.default = Home;
 //   </div>
 // </form>
 
-},{"../AuthService":1,"../actions/HomeActions":7,"../stores/HomeStore":25,"react":"react","react-router":"react-router","underscore":"underscore"}],17:[function(require,module,exports){
+},{"../actions/HomeActions":6,"../stores/HomeStore":24,"react":"react","react-router":"react-router","underscore":"underscore"}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2174,7 +2232,7 @@ exports.default = Navbar;
 //   </div>
 // </form>
 
-},{"../actions/NavbarActions":8,"../stores/NavbarStore":26,"react":"react","react-router":"react-router"}],18:[function(require,module,exports){
+},{"../actions/NavbarActions":7,"../stores/NavbarStore":25,"react":"react","react-router":"react-router"}],17:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -2207,7 +2265,7 @@ _reactDom2.default.render(_react2.default.createElement(
   _routes2.default
 ), document.getElementById('app'));
 
-},{"./routes":19,"history/lib/createBrowserHistory":35,"react":"react","react-dom":"react-dom","react-router":"react-router"}],19:[function(require,module,exports){
+},{"./routes":18,"history/lib/createBrowserHistory":34,"react":"react","react-dom":"react-dom","react-router":"react-router"}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2256,7 +2314,7 @@ exports.default = _react2.default.createElement(
     _react2.default.createElement(_reactRouter.Route, { path: '/dashboardEmployee', component: _DashboardEmployee2.default })
 );
 
-},{"./components/AddCharacter":10,"./components/App":11,"./components/Character":12,"./components/DashboardClient":13,"./components/DashboardEmployee":14,"./components/Home":16,"react":"react","react-router":"react-router"}],20:[function(require,module,exports){
+},{"./components/AddCharacter":9,"./components/App":10,"./components/Character":11,"./components/DashboardClient":12,"./components/DashboardEmployee":13,"./components/Home":15,"react":"react","react-router":"react-router"}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2332,7 +2390,7 @@ var AddCharacterStore = function () {
 
 exports.default = _alt2.default.createStore(AddCharacterStore);
 
-},{"../actions/AddCharacterActions":2,"../alt":9}],21:[function(require,module,exports){
+},{"../actions/AddCharacterActions":1,"../alt":8}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2409,7 +2467,7 @@ var CharacterStore = function () {
 
 exports.default = _alt2.default.createStore(CharacterStore);
 
-},{"../actions/CharacterActions":3,"../alt":9,"underscore":"underscore"}],22:[function(require,module,exports){
+},{"../actions/CharacterActions":2,"../alt":8,"underscore":"underscore"}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2443,9 +2501,21 @@ var DashboardClientStore = function () {
     this.credits = 0;
     this.creditsToGet = 0;
     this.userDetails = {};
+    this.jump = 0;
+    this.jumpType = '';
   }
 
   _createClass(DashboardClientStore, [{
+    key: 'onUpdateJumpType',
+    value: function onUpdateJumpType(event) {
+      this.jumpType = event.target.value;
+    }
+  }, {
+    key: 'onJumpSuccess',
+    value: function onJumpSuccess(data) {
+      console.log(data);
+    }
+  }, {
     key: 'onLoginSuccess',
     value: function onLoginSuccess(usr) {
       this.user.id = usr.id;
@@ -2454,10 +2524,21 @@ var DashboardClientStore = function () {
       console.log(this.user);
     }
   }, {
+    key: 'onJumpFail',
+    value: function onJumpFail(jqXhr) {
+      // Handle multiple response formats, fallback to HTTP status code number.
+      toastr.error(jqXhr.responseJSON && jqXhr.responseJSON.message || jqXhr.responseText || jqXhr.statusText);
+    }
+  }, {
     key: 'onGetCreditsSuccess',
     value: function onGetCreditsSuccess(data) {
 
       this.credits = data;
+    }
+  }, {
+    key: 'onUpdateJump',
+    value: function onUpdateJump(event) {
+      this.jump = event.target.value;
     }
   }, {
     key: 'onUpdateCreditsToGet',
@@ -2529,7 +2610,7 @@ var DashboardClientStore = function () {
 
 exports.default = _alt2.default.createStore(DashboardClientStore);
 
-},{"../actions/DashboardClientActions":4,"../alt":9,"underscore":"underscore"}],23:[function(require,module,exports){
+},{"../actions/DashboardClientActions":3,"../alt":8,"underscore":"underscore"}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2635,7 +2716,7 @@ var DashboardEmployeeStore = function () {
 
 exports.default = _alt2.default.createStore(DashboardEmployeeStore);
 
-},{"../actions/DashboardEmployeeActions":5,"../alt":9,"underscore":"underscore"}],24:[function(require,module,exports){
+},{"../actions/DashboardEmployeeActions":4,"../alt":8,"underscore":"underscore"}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2682,7 +2763,7 @@ var FooterStore = function () {
 
 exports.default = _alt2.default.createStore(FooterStore);
 
-},{"../actions/FooterActions":6,"../alt":9}],25:[function(require,module,exports){
+},{"../actions/FooterActions":5,"../alt":8}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2733,7 +2814,7 @@ var HomeStore = function () {
 
 exports.default = _alt2.default.createStore(HomeStore);
 
-},{"../actions/HomeActions":7,"../alt":9}],26:[function(require,module,exports){
+},{"../actions/HomeActions":6,"../alt":8}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2810,7 +2891,7 @@ var NavbarStore = function () {
 
 exports.default = _alt2.default.createStore(NavbarStore);
 
-},{"../actions/NavbarActions":8,"../alt":9}],27:[function(require,module,exports){
+},{"../actions/NavbarActions":7,"../alt":8}],26:[function(require,module,exports){
 var pSlice = Array.prototype.slice;
 var objectKeys = require('./lib/keys.js');
 var isArguments = require('./lib/is_arguments.js');
@@ -2906,7 +2987,7 @@ function objEquiv(a, b, opts) {
   return typeof a === typeof b;
 }
 
-},{"./lib/is_arguments.js":28,"./lib/keys.js":29}],28:[function(require,module,exports){
+},{"./lib/is_arguments.js":27,"./lib/keys.js":28}],27:[function(require,module,exports){
 var supportsArgumentsClass = (function(){
   return Object.prototype.toString.call(arguments)
 })() == '[object Arguments]';
@@ -2928,7 +3009,7 @@ function unsupported(object){
     false;
 };
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 exports = module.exports = typeof Object.keys === 'function'
   ? Object.keys : shim;
 
@@ -2939,7 +3020,7 @@ function shim (obj) {
   return keys;
 }
 
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /**
  * Indicates that navigation was caused by a call to history.push.
  */
@@ -2971,7 +3052,7 @@ exports['default'] = {
   REPLACE: REPLACE,
   POP: POP
 };
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -2998,7 +3079,7 @@ function loopAsync(turns, work, callback) {
 
   next();
 }
-},{}],32:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (process){
 /*eslint-disable no-empty */
 'use strict';
@@ -3070,7 +3151,7 @@ function readState(key) {
 }
 }).call(this,require('_process'))
 
-},{"_process":44,"warning":45}],33:[function(require,module,exports){
+},{"_process":43,"warning":44}],32:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3151,13 +3232,13 @@ function supportsGoWithoutReloadUsingHash() {
   var ua = navigator.userAgent;
   return ua.indexOf('Firefox') === -1;
 }
-},{}],34:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
 var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
 exports.canUseDOM = canUseDOM;
-},{}],35:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3339,7 +3420,7 @@ exports['default'] = createBrowserHistory;
 module.exports = exports['default'];
 }).call(this,require('_process'))
 
-},{"./Actions":30,"./DOMStateStorage":32,"./DOMUtils":33,"./ExecutionEnvironment":34,"./createDOMHistory":36,"./parsePath":41,"_process":44,"invariant":43}],36:[function(require,module,exports){
+},{"./Actions":29,"./DOMStateStorage":31,"./DOMUtils":32,"./ExecutionEnvironment":33,"./createDOMHistory":35,"./parsePath":40,"_process":43,"invariant":42}],35:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3383,7 +3464,7 @@ exports['default'] = createDOMHistory;
 module.exports = exports['default'];
 }).call(this,require('_process'))
 
-},{"./DOMUtils":33,"./ExecutionEnvironment":34,"./createHistory":37,"_process":44,"invariant":43}],37:[function(require,module,exports){
+},{"./DOMUtils":32,"./ExecutionEnvironment":33,"./createHistory":36,"_process":43,"invariant":42}],36:[function(require,module,exports){
 //import warning from 'warning'
 'use strict';
 
@@ -3675,7 +3756,7 @@ function createHistory() {
 
 exports['default'] = createHistory;
 module.exports = exports['default'];
-},{"./Actions":30,"./AsyncUtils":31,"./createLocation":38,"./deprecate":39,"./parsePath":41,"./runTransitionHook":42,"deep-equal":27}],38:[function(require,module,exports){
+},{"./Actions":29,"./AsyncUtils":30,"./createLocation":37,"./deprecate":38,"./parsePath":40,"./runTransitionHook":41,"deep-equal":26}],37:[function(require,module,exports){
 //import warning from 'warning'
 'use strict';
 
@@ -3730,7 +3811,7 @@ function createLocation() {
 
 exports['default'] = createLocation;
 module.exports = exports['default'];
-},{"./Actions":30,"./parsePath":41}],39:[function(require,module,exports){
+},{"./Actions":29,"./parsePath":40}],38:[function(require,module,exports){
 //import warning from 'warning'
 
 "use strict";
@@ -3746,7 +3827,7 @@ function deprecate(fn) {
 
 exports["default"] = deprecate;
 module.exports = exports["default"];
-},{}],40:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -3760,7 +3841,7 @@ function extractPath(string) {
 
 exports["default"] = extractPath;
 module.exports = exports["default"];
-},{}],41:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3808,7 +3889,7 @@ exports['default'] = parsePath;
 module.exports = exports['default'];
 }).call(this,require('_process'))
 
-},{"./extractPath":40,"_process":44,"warning":45}],42:[function(require,module,exports){
+},{"./extractPath":39,"_process":43,"warning":44}],41:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3836,7 +3917,7 @@ exports['default'] = runTransitionHook;
 module.exports = exports['default'];
 }).call(this,require('_process'))
 
-},{"_process":44,"warning":45}],43:[function(require,module,exports){
+},{"_process":43,"warning":44}],42:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -3892,7 +3973,7 @@ module.exports = invariant;
 
 }).call(this,require('_process'))
 
-},{"_process":44}],44:[function(require,module,exports){
+},{"_process":43}],43:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -4074,7 +4155,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],45:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -4139,7 +4220,7 @@ module.exports = warning;
 
 }).call(this,require('_process'))
 
-},{"_process":44}]},{},[18])
+},{"_process":43}]},{},[17])
 
 
 //# sourceMappingURL=bundle.js.map
