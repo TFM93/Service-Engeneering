@@ -60,11 +60,11 @@ class removeCredits(APIView):
             print user.credit_amt
             print 'credits to remove:'
             print credits
-            if int(user.credit_amt) >= credits:
-                user.credit_amt = int(user.credit_amt) - credits
+            if float(user.credit_amt) >= float(credits):
+                user.credit_amt = float(user.credit_amt) - float(credits)
                 user.save()
             else:
-                return Response(status=status.HTTP_400_BAD_REQUEST, data={'error': 'Insufficient funds!'})
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={'error': 'Insufficient funds! ' + str(user.credit_amt) + 'ret' + str(credits)})
         except ObjectDoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'error':'User id not found!'})
         return Response(status=status.HTTP_200_OK, data={'credit_amt': user.credit_amt})
