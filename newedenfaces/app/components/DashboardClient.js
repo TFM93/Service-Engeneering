@@ -78,6 +78,7 @@ class DashboardClient extends React.Component {
     event.preventDefault();
     console.log("CHEGA AKI MPS")
     console.log(this.state.jump)
+    alert("Está prestes a saltar " + this.state.jump + " lugares! Vai custar-lhe " + 10 * this.state.jump + " créditos")
     let jump = this.state.jump;
 
     if (jump) {
@@ -144,17 +145,6 @@ class DashboardClient extends React.Component {
 
               </div>
               <center><button onClick={DashboardClientActions.test.bind(this, ticket['type'], ticket.queue[i]['ticket_number'])} className="btn btn-danger">Cancelar Senha</button></center>
-              <center>
-                <form className='form-inline' onSubmit={this.handleJumpSubmit.bind(this)}>
-                  <div className='input-group'>
-                    <input type='number' className='form-control' placeholder="Nr de créditos a obter" value={this.state.jump} onChange={DashboardClientActions.updateJump} />
-                    <span className='input-group-btn'>
-                      <button type="submit" className="btn btn-primary" data-toggle="tooltip" title="Será reencaminhado para a página de pagamentos">Receber créditos</button>
-                    </span>
-                  </div>
-                </form>
-
-              </center>
             </div>
 
           );
@@ -265,14 +255,14 @@ class DashboardClient extends React.Component {
         <div className="row">
           <div className="col-lg-12">
 
-            <h3>Avançar lugares numa fila (1 crédito por lugar)</h3>
-            <form className='form-inline' onSubmit={this.handleJumpSubmit.bind(this)}>
+            <h3>Avançar lugares numa fila (10 créditos por lugar)</h3>
+            <form onSubmit={this.handleJumpSubmit.bind(this)}>
               <div className="form-group">
-                <label for="formGroupExampleInput">Example label</label>
+                <label for="formGroupExampleInput">Nome da fila</label>
                 <input type="text" className="form-control" id="formGroupExampleInput" placeholder="Nome da fila" value={this.state.jumpType} onChange={DashboardClientActions.updateJumpType}/>
               </div>
               <div className="form-group">
-                <label for="formGroupExampleInput2">Another label</label>
+                <label for="formGroupExampleInput2">Número de lugares a saltar</label>
                 <input type="number" className="form-control" id="formGroupExampleInput2" placeholder="Numero de  lugares a saltar" value={this.state.jump} onChange={DashboardClientActions.updateJump}/>
               </div>
               <button type="submit" className="btn btn-primary">Saltar lugares</button>

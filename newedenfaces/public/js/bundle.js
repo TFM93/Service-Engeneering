@@ -122,7 +122,7 @@ var DashboardClientActions = function () {
   function DashboardClientActions() {
     _classCallCheck(this, DashboardClientActions);
 
-    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'loginSuccess', 'loginFail', 'getCreditsSuccess', 'getCreditsFail', 'updateCreditsToGet', 'getUserDetailsSuccess', 'getUserDetailsFail', 'updateJump', 'updateJumpType', 'jumpSuccess', 'jumpFail');
+    this.generateActions('reportSuccess', 'reportFail', 'getLastTicketsSuccess', 'getLastTicketsFail', 'getMyTicketsSuccess', 'getMyTicketsFail', 'testSuccess', 'testFail', 'loginSuccess', 'loginFail', 'getCreditsSuccess', 'getCreditsFail', 'updateCreditsToGet', 'getUserDetailsSuccess', 'getUserDetailsFail', 'updateJump', 'updateJumpType', 'jumpSuccess', 'jumpFail', 'reduceCredit');
   }
 
   _createClass(DashboardClientActions, [{
@@ -140,6 +140,19 @@ var DashboardClientActions = function () {
       }).fail(function (jqXhr) {
         _this.actions.jumpFail(jqXhr);
       });
+
+      $.ajax({
+        type: 'GET',
+        url: '/payment/api/remove/' + payload.user.id + '/' + payload.jump * 10 + '/'
+      }).done(function (data) {
+        //this.actions.jumpSuccess(data);
+        _this.actions.reduceCredit(data);
+      }).fail(function (jqXhr) {
+        //this.actions.jumpFail(jqXhr);
+      });
+
+      //GET /api/remove/{uid}/{credits}/
+
     }
   }, {
     key: 'getUserDetails',
@@ -1100,6 +1113,7 @@ var DashboardClient = function (_React$Component) {
       event.preventDefault();
       console.log("CHEGA AKI MPS");
       console.log(this.state.jump);
+      alert("Está prestes a saltar " + this.state.jump + " lugares! Vai custar-lhe " + 10 * this.state.jump + " créditos");
       var jump = this.state.jump;
 
       if (jump) {
@@ -1204,28 +1218,6 @@ var DashboardClient = function (_React$Component) {
                   'button',
                   { onClick: _DashboardClientActions2.default.test.bind(_this2, ticket['type'], ticket.queue[i]['ticket_number']), className: 'btn btn-danger' },
                   'Cancelar Senha'
-                )
-              ),
-              _react2.default.createElement(
-                'center',
-                null,
-                _react2.default.createElement(
-                  'form',
-                  { className: 'form-inline', onSubmit: _this2.handleJumpSubmit.bind(_this2) },
-                  _react2.default.createElement(
-                    'div',
-                    { className: 'input-group' },
-                    _react2.default.createElement('input', { type: 'number', className: 'form-control', placeholder: 'Nr de cr\xE9ditos a obter', value: _this2.state.jump, onChange: _DashboardClientActions2.default.updateJump }),
-                    _react2.default.createElement(
-                      'span',
-                      { className: 'input-group-btn' },
-                      _react2.default.createElement(
-                        'button',
-                        { type: 'submit', className: 'btn btn-primary', 'data-toggle': 'tooltip', title: 'Ser\xE1 reencaminhado para a p\xE1gina de pagamentos' },
-                        'Receber cr\xE9ditos'
-                      )
-                    )
-                  )
                 )
               )
             );
@@ -1433,18 +1425,18 @@ var DashboardClient = function (_React$Component) {
             _react2.default.createElement(
               'h3',
               null,
-              'Avan\xE7ar lugares numa fila (1 cr\xE9dito por lugar)'
+              'Avan\xE7ar lugares numa fila (10 cr\xE9ditos por lugar)'
             ),
             _react2.default.createElement(
               'form',
-              { className: 'form-inline', onSubmit: this.handleJumpSubmit.bind(this) },
+              { onSubmit: this.handleJumpSubmit.bind(this) },
               _react2.default.createElement(
                 'div',
                 { className: 'form-group' },
                 _react2.default.createElement(
                   'label',
                   { 'for': 'formGroupExampleInput' },
-                  'Example label'
+                  'Nome da fila'
                 ),
                 _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'formGroupExampleInput', placeholder: 'Nome da fila', value: this.state.jumpType, onChange: _DashboardClientActions2.default.updateJumpType })
               ),
@@ -1454,7 +1446,7 @@ var DashboardClient = function (_React$Component) {
                 _react2.default.createElement(
                   'label',
                   { 'for': 'formGroupExampleInput2' },
-                  'Another label'
+                  'N\xFAmero de lugares a saltar'
                 ),
                 _react2.default.createElement('input', { type: 'number', className: 'form-control', id: 'formGroupExampleInput2', placeholder: 'Numero de  lugares a saltar', value: this.state.jump, onChange: _DashboardClientActions2.default.updateJump })
               ),
@@ -2514,6 +2506,11 @@ var DashboardClientStore = function () {
     key: 'onJumpSuccess',
     value: function onJumpSuccess(data) {
       console.log(data);
+    }
+  }, {
+    key: 'onReduceCredit',
+    value: function onReduceCredit(data) {
+      this.credits = data.credit_amt;
     }
   }, {
     key: 'onLoginSuccess',

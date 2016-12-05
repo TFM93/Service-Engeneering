@@ -25,6 +25,10 @@ class DashboardClientStore {
     console.log(data);
   }
 
+  onReduceCredit(data){
+    this.credits = data.credit_amt;
+  }
+
 
 
   onLoginSuccess(usr) {

@@ -21,7 +21,8 @@ class DashboardClientActions {
       'updateJump',
       'updateJumpType',
       'jumpSuccess',
-      'jumpFail'
+      'jumpFail',
+      'reduceCredit'
     );
   }
 
@@ -30,7 +31,7 @@ class DashboardClientActions {
     $.ajax({
       type: 'POST',
       url: 'https://esmickettodule.herokuapp.com/client/jumpInQueue',
-      data: { "ticket_type": payload.jumpType, "ticket_uuid": payload.user.uuid,"number_of_jumps": payload.jump}
+      data: { "ticket_type": payload.jumpType, "ticket_uuid": payload.user.uuid, "number_of_jumps": payload.jump }
     })
       .done((data) => {
         this.actions.jumpSuccess(data);
@@ -38,6 +39,20 @@ class DashboardClientActions {
       .fail((jqXhr) => {
         this.actions.jumpFail(jqXhr);
       });
+
+    $.ajax({
+      type: 'GET',
+      url: '/payment/api/remove/'+ payload.user.id+'/' + payload.jump * 10 + '/'
+    })
+      .done((data) => {
+        //this.actions.jumpSuccess(data);
+        this.actions.reduceCredit(data);
+      })
+      .fail((jqXhr) => {
+        //this.actions.jumpFail(jqXhr);
+      });
+
+//GET /api/remove/{uid}/{credits}/
 
 
   }
