@@ -99,5 +99,7 @@ class addCredits(APIView):
             user.save()
         except ObjectDoesNotExist:
             user = UserCredits(user_id=uid, credit_amt=credits)
+            user.save()
+
         return Response(status=status.HTTP_200_OK, data={'credit_amt': user.credit_amt})
 
