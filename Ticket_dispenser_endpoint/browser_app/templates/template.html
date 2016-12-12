@@ -1,0 +1,48 @@
+<!--<html>
+	<body>
+		<h1>what will you do?</h1>
+		<form>
+			<input type="submit" name="submit" value="turnOnLight">
+			<input type="submit" name="submit" value="turnOffLight">
+		</form>
+	</body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>ES - SmarTicket</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div style="width: 100%; overflow: hidden;">
+<div class="col-md-4" >
+
+<!--
+<div class="col-md-4" style="margin-left: 20px; width: 300px; float: left;">
+-->
+<h2>Choose Ticket Type</h2>
+<form id="type_form" action="passCard_prev" >
+	<!--<input type="submit" class="btn btn-lg btn-warning" name="submit" value="turnOnLight">-->
+	{% for name in a_ticket_types %}
+        <input type="submit" class="btn btn-lg btn-warning" name='type' value={{ name }}>
+      {% endfor %}
+</form>  
+
+</br>
+
+  
+<div class="col-md-4">
+	<h2 class="text-primary" >Tickets to get:</h2>
+	{% for name in a_tickets_to_get %}
+        <h2>{{ name['type'] }} : {{ name['num'] }}</h2>
+      {% endfor %}
+
+</div>
+</div>
+</body>
+</html>
