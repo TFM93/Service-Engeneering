@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'^paypal/do/(?P<token>.*)/(?P<uid>[a-zA-Z0-9]+)/$', views.paypal_do, name='paypal_do'),
     url(r'^paypal/status/(?P<token>.*)/(?P<uid>[a-zA-Z0-9]+)/$', views.paypal_status, name='paypal_status'),
     url(r'^paypal/confirm/(?P<uid>[a-zA-Z0-9]+)/$', views.paypal_confirm, name='paypal_confirm'),
+    url(r'^paypal/gohome/(?P<uid>.*)/$', views.go_home, name='paypal_go_home'),
     url(r'^paypal/cancel/$', views.paypal_cancel, name='paypal_cancel'),
 ]

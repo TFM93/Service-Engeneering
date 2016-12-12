@@ -76,7 +76,8 @@ def paypal_status(request,token,uid=None):
             template = loader.get_template('core/already.html')
         context = RequestContext(request, {
             'value': checkout_response['AMT'],
-            'currency': checkout_response['CURRENCYCODE']
+            'currency': checkout_response['CURRENCYCODE'],
+	    'uid': uid
         })
     else:
         template = loader.get_template('core/error.html')
@@ -85,6 +86,12 @@ def paypal_status(request,token,uid=None):
         })
     return HttpResponse(template.render(context))
 
+def go_home(request,uid=None):
+    host_composer = 'http://localhost/dashboardClient'
+    url = host_composer + '/?id=' + str(uid)
+    data = {'id': str(uid)}
+    print url
+    return redirect(url,data)
 
 def paypal_cancel(request):
     return redirect(resolve_url('index'))
